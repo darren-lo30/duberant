@@ -23,11 +23,15 @@
     <jacoco.unit-tests.limit.class-complexity>20</jacoco.unit-tests.limit.class-complexity>
     <jacoco.unit-tests.limit.method-complexity>5</jacoco.unit-tests.limit.method-complexity>
 
-    <!-- LWJGL library -->
+    <!-- LWJGL Library -->
     <lwjgl.version>3.2.3</lwjgl.version>
     <lwjgl.natives>natives-windows</lwjgl.natives>
-  </properties>
 
+    <!-- Java Math Library for Open GL -->
+    <joml.version>1.9.6</joml.version>
+    
+  </properties>
+  
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -365,9 +369,13 @@
       <artifactId>lwjgl-zstd</artifactId>
       <classifier>${lwjgl.natives}</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.joml</groupId>
+      <artifactId>joml</artifactId>
+      <version>${joml.version}</version>
+    </dependency>
   </dependencies>
-
-
+  
   <build>
     <plugins>
       <plugin>
