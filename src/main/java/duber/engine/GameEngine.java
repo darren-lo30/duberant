@@ -94,6 +94,7 @@ public class GameEngine implements Runnable {
     }
 
     protected void input(){
+        mouseInput.updateDisplacementVec();
         gameLogic.input(window, mouseInput);
     }
 

@@ -35,7 +35,7 @@ public class Renderer {
 
     private static final float Z_NEAR = 0.01f;
 
-    private static final float Z_FAR = 1000.0f;
+    private static final float Z_FAR = 5000.0f;
 
     private final Transformation transformation;
     
@@ -108,7 +108,7 @@ public class Renderer {
     
 
     public void clear(){
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
     public void render(Window window, Camera camera, Scene scene){
@@ -126,7 +126,7 @@ public class Renderer {
         renderSkyBox(window, camera, scene);
     }
 
-    private void renderNonInstancedMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix, Matrix4f lightViewMatrix){
+    private void renderNonInstancedMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix){
         sceneShaderProgram.setUniform("isInstanced", 0);
 
         Map<Mesh, List<GameItem>> meshMap = scene.getMeshMap();
@@ -198,7 +198,7 @@ public class Renderer {
         
         //Draw the mesh
         renderInstancedMeshes(scene, sceneShaderProgram, viewMatrix, lightViewMatrix);
-        renderNonInstancedMeshes(scene, sceneShaderProgram, viewMatrix, lightViewMatrix);
+        renderNonInstancedMeshes(scene, sceneShaderProgram, viewMatrix);
 
         sceneShaderProgram.unbind();
     }
@@ -292,8 +292,8 @@ public class Renderer {
         if(skyBox == null){
             return;
         }
-
-
+        
+        
         skyBoxShaderProgram.bind();
         skyBoxShaderProgram.setUniform("texture_sampler", 0);
 
@@ -307,7 +307,6 @@ public class Renderer {
         float m31 = viewMatrix.m31();
         float m32 = viewMatrix.m32();
         
-
         //Make it so skybox is not translated
         viewMatrix.m30(0);
         viewMatrix.m31(0);

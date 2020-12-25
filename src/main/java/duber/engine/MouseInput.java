@@ -17,7 +17,7 @@ public class MouseInput {
     private boolean rightButtonIsPressed = false;
 
     public MouseInput(){
-        previousPos = new Vector2d(-1, -1);
+        previousPos = new Vector2d(0, 0);
         currentPos = new Vector2d(0, 0);
         displacementVec = new Vector2f();
     }

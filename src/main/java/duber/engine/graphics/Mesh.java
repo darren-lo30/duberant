@@ -165,6 +165,10 @@ public class Mesh {
 		return vaoId;
     }
 
+    public boolean isRigid(){
+        return rigid;
+    }
+
     public int getVertexCount(){
         return vertexCount;
     }

@@ -22,15 +22,15 @@ public class Controls {
     private final Window window;
     private final Vector3f cameraDisplacement;
 
-    public Controls(Window window){
+    public Controls(Window window) {
         this.window = window;
         cameraDisplacement = new Vector3f();
 
-        moveSpeed = 0.25f;
+        moveSpeed = 3.0f;
         mouseSensitivity = 0.020f;
     }
 
-    public void input(){
+    public void input() {
         if(window.isKeyPressed(GLFW_KEY_W)){
             cameraDisplacement.z = -1;
         } else if(window.isKeyPressed(GLFW_KEY_S)){
@@ -51,7 +51,7 @@ public class Controls {
     }
 
 
-    public void updateCameraView(Camera camera, MouseInput mouseInput){
+    public void updateCameraView(Camera camera, MouseInput mouseInput) {
         //Updates the position of the camera
         camera.movePosition(
             cameraDisplacement.x * moveSpeed, 

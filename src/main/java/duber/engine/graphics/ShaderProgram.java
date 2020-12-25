@@ -159,13 +159,7 @@ public class ShaderProgram {
         createUniform(uniformName + ".hasTexture");
         createUniform(uniformName + ".hasNormalMap");
     }
-    
-    public void createFogUniform(String uniformName) throws LWJGLException {
-        createUniform(uniformName + ".isActive");
-        createUniform(uniformName + ".colour");
-        createUniform(uniformName + ".density");
-    }
-    
+
     public void setUniform(String uniformName, Vector3f value){
         glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
     }

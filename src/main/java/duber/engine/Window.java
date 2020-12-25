@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
@@ -50,6 +51,8 @@ public class Window {
     private Matrix4f projectionMatrix;
 
     private Options options;
+
+    private GUI gui;
 
     public Window(String title, int width, int height, boolean vSync){
         this.title = title;
@@ -118,6 +121,8 @@ public class Window {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+
         glClearColor(0.f, 0.f, 0.f, 0.f);
     }
 
@@ -217,11 +222,13 @@ public class Window {
         public static final int DISPLAY_TRIANGLES = 2;
         public static final int DISPLAY_FPS = 3;
         public static final int SHOW_CURSOR = 4;
+        public static final int ANTI_ALIASING = 5;
 
         private Options(){
             optionsMap = new HashMap<>();
             optionsMap.put(DISPLAY_FPS, true);
             optionsMap.put(SHOW_CURSOR, false);
+            optionsMap.put(ANTI_ALIASING, true);
         }
 
         public boolean isTurnedOn(int option){
