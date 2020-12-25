@@ -12,11 +12,11 @@ import org.lwjgl.glfw.GLFWVidMode;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11.GL_LINE;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
 import static org.lwjgl.opengl.GL11.GL_FILL;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -52,8 +52,6 @@ public class Window {
 
     private Options options;
 
-    private GUI gui;
-
     public Window(String title, int width, int height, boolean vSync){
         this.title = title;
         this.width = width;
@@ -79,7 +77,7 @@ public class Window {
         glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -118,12 +116,15 @@ public class Window {
         glfwShowWindow(windowHandle);
         GL.createCapabilities();
 
+        restoreState();
+    }
+
+    public void restoreState(){
+        glClearColor(0.f, 0.f, 0.f, 0.f);
+        glEnable(GL_STENCIL_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_STENCIL_TEST);
-
-        glClearColor(0.f, 0.f, 0.f, 0.f);
     }
 
     public int getWidth(){

@@ -3,7 +3,6 @@ package duber.game;
 import java.io.IOException;
 
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import duber.engine.IGameLogic;
 import duber.engine.MouseInput;
@@ -11,29 +10,29 @@ import duber.engine.Scene;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.graphics.Camera;
-import duber.engine.graphics.Material;
 import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Renderer;
-import duber.engine.graphics.Texture;
 import duber.engine.graphics.lighting.DirectionalLight;
 import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.items.GameItem;
-import duber.engine.items.SkyBox;
 import duber.engine.loaders.MeshLoader;
-import duber.engine.loaders.OBJLoader;
+import duber.game.scenes.Crosshair;
 
 public class Duberant implements IGameLogic {
 
     private final Renderer renderer;
     private final Camera camera;
-
+    private Crosshair currCrosshair;
     private Scene currentScene;
 
     private Controls controls;
+    private HUD hud;
 
     public Duberant() {
+        hud = new HUD();
         renderer = new Renderer();
         camera = new Camera();
+        currCrosshair = new Crosshair();
     }
 
     @Override
@@ -41,6 +40,7 @@ public class Duberant implements IGameLogic {
         window.applyOptions();
         try { 
             renderer.init(window);
+            hud.init(window);
         } catch (IOException ioe){
             throw new LWJGLException("Could not initialize renderer");
         }
@@ -109,6 +109,7 @@ public class Duberant implements IGameLogic {
         sceneLight.setDirectionalLight(directionalLight);
     }
 
+
     @Override
     public void input(Window window, MouseInput mouseInput) {
         controls.input();
@@ -122,6 +123,7 @@ public class Duberant implements IGameLogic {
     @Override
     public void render(Window window) {
         renderer.render(window, camera, currentScene);
+        hud.displayCrosshair(window, currCrosshair, window.getWidth()/2, window.getHeight()/2);
     }
 
     @Override
