@@ -5,7 +5,6 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 
-
 import org.lwjgl.opengl.GL;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -17,8 +16,10 @@ import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11.GL_LINE;
+import static org.lwjgl.opengl.GL11.GL_FILL;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_BACK;
 
@@ -27,25 +28,37 @@ import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.joml.Matrix4f;
+
 
 public class Window {
+    private long windowHandle;
+    
 	private String title;
     
     private int width;
 
     private int height;
-    
-    private long windowHandle;
 
     private boolean resized;
     
     private boolean vSync;
+
+    private Matrix4f projectionMatrix;
+
+    private Options options;
 
     public Window(String title, int width, int height, boolean vSync){
         this.title = title;
         this.width = width;
         this.height = height;
         this.vSync = vSync;
+
+        projectionMatrix = new Matrix4f();
+        options = new Options();
     }
 
     public void init(){
@@ -102,19 +115,8 @@ public class Window {
         glfwShowWindow(windowHandle);
         GL.createCapabilities();
 
-
-        // displays outline
-        //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        //Cull faces
-        //glEnable(GL_CULL_FACE);
-        //glCullFace(GL_BACK);
-
-        //glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.f, 0.f, 0.f, 0.f);
     }
@@ -160,6 +162,41 @@ public class Window {
         return glfwWindowShouldClose(windowHandle);
     }
 
+    public final Matrix4f getProjectionMatrix(){
+        return projectionMatrix;
+    }
+
+    public final Matrix4f updateProjectionMatrix(float fov, float zNear, float zFar){
+        float aspectRatio = (float) width / height;
+        return projectionMatrix.identity().setPerspective(fov, aspectRatio, zNear, zFar);
+    }
+
+    public Options getOptions(){
+        return options;
+    }
+
+
+    public void applyOptions(){
+        if(options.isTurnedOn(Options.CULL_FACES)){
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+        } else {
+            glDisable(GL_CULL_FACE);
+        }
+
+        if(options.isTurnedOn(Options.SHOW_CURSOR)){
+            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+
+        if(options.isTurnedOn(Options.DISPLAY_TRIANGLES)){
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        } else {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+    }
+
     public void update(){
         glfwPollEvents();
         glfwSwapBuffers(windowHandle);
@@ -173,7 +210,30 @@ public class Window {
         return glfwGetWindowMonitor(windowHandle) != NULL;
     }
 
-    private static class Options{
-        
+    public static class Options {
+        private Map<Integer, Boolean> optionsMap;
+
+        public static final int CULL_FACES = 1;
+        public static final int DISPLAY_TRIANGLES = 2;
+        public static final int DISPLAY_FPS = 3;
+        public static final int SHOW_CURSOR = 4;
+
+        private Options(){
+            optionsMap = new HashMap<>();
+            optionsMap.put(DISPLAY_FPS, true);
+            optionsMap.put(SHOW_CURSOR, false);
+        }
+
+        public boolean isTurnedOn(int option){
+            //Default is option turned off
+            if(!optionsMap.keySet().contains(option)){
+                return false;
+            }
+            return optionsMap.get(option);
+        }
+
+        public void setOption(int option, boolean turnedOn){
+            optionsMap.put(option, turnedOn);
+        }
     }
 }

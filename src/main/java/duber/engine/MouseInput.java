@@ -12,8 +12,6 @@ public class MouseInput {
 
     private final Vector2f displacementVec;
 
-    private boolean inWindow = false;
-
     private boolean leftButtonIsPressed = false;
 
     private boolean rightButtonIsPressed = false;
@@ -30,8 +28,6 @@ public class MouseInput {
             currentPos.y = yPos;
         });
 
-        glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> inWindow = entered);
-
         glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
             leftButtonIsPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
             rightButtonIsPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
@@ -42,16 +38,16 @@ public class MouseInput {
         return displacementVec;
     }
 
-    public void input(){
-        displacementVec.x = 0;
-        displacementVec.y = 0;
-        if(previousPos.x > 0 && previousPos.y > 0 && inWindow){
-            displacementVec.x = (float) (currentPos.x - previousPos.x);
-            displacementVec.y = (float) (currentPos.y - previousPos.y);
-        }
+    public void updateDisplacementVec(){
+        displacementVec.x = (float) (currentPos.x - previousPos.x);
+        displacementVec.y = (float) (currentPos.y - previousPos.y);
 
         previousPos.x = currentPos.x;
         previousPos.y = currentPos.y;
+    }
+
+    public void setMousePosition(Window window, float xPos, float yPos){
+        glfwSetCursorPos(window.getWindowHandle(), xPos, yPos);
     }
 
     public boolean leftButtonIsPressed(){

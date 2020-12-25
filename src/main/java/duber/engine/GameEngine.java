@@ -9,28 +9,28 @@ public class GameEngine implements Runnable {
     //Targetted amount of updates per second
     private static final int TARGET_UPS = 30;
 
+    String windowTitle;
     private final Window window;
     
     private final Timer updateTimer;
-
-    private final Timer fpsTimer;
     
     private final IGameLogic gameLogic;
-
+    
+    private final MouseInput mouseInput;
+    
+    private final Timer fpsTimer;
     private int fps;
 
-    String title;
-
-    private final MouseInput mouseInput;
-
-    public GameEngine(String title, int width, int height, boolean vSync, IGameLogic gameLogic){
-        this.title = title;
-        window = new Window(title, width, height, vSync);
+    public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic){
+        this.windowTitle = windowTitle;
         this.gameLogic = gameLogic;
+        window = new Window(windowTitle, width, height, vSync);
         updateTimer = new Timer();
-        fpsTimer = new Timer();
 
         mouseInput = new MouseInput();
+
+        fpsTimer = new Timer();
+        fps = 0;
     }
 
     @Override
@@ -38,7 +38,6 @@ public class GameEngine implements Runnable {
         try {
             init();
             gameLoop();
-            
         } catch (LWJGLException lwjgle){
             lwjgle.printStackTrace();
         } finally {
@@ -49,7 +48,7 @@ public class GameEngine implements Runnable {
     protected void init() throws LWJGLException {
         window.init();
         updateTimer.init();
-        updateTimer.init();
+        fpsTimer.init();
         gameLogic.init(window);
         mouseInput.init(window);
     }
@@ -95,7 +94,6 @@ public class GameEngine implements Runnable {
     }
 
     protected void input(){
-        mouseInput.input();
         gameLogic.input(window, mouseInput);
     }
 
@@ -103,13 +101,17 @@ public class GameEngine implements Runnable {
         gameLogic.update(interval, mouseInput);
     }
 
-    protected void render(){
+    private void calculateAndDisplayFps(){
         if (fpsTimer.secondHasPassed()) {
-            fpsTimer.getLastLoopTime();
-            window.setTitle(title + " - " + fps + " FPS");
+            fpsTimer.getElapsedTime();
+            window.setTitle(windowTitle + " - " + fps + " FPS");
             fps = 0;
         }
         fps++;
+    }
+
+    protected void render(){
+        calculateAndDisplayFps();        
         gameLogic.render(window);
         window.update();
     }
