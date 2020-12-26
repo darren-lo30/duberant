@@ -53,11 +53,9 @@ public class Transformation {
     
     public static final Matrix4f updateGeneralViewMatrix(Vector3f position, Vector3f rotation, Matrix4f viewMatrix){
         //Rotate and translate the object relative to the camera
-        viewMatrix.identity()
-            .rotateX((float) Math.toRadians(rotation.x))
-            .rotateY((float) Math.toRadians(rotation.y))
-            .translate(-position.x, -position.y, -position.z);
-        return viewMatrix;
+        return viewMatrix.rotationX((float)Math.toRadians(rotation.x))
+                .rotateY((float)Math.toRadians(rotation.y))
+                .translate(-position.x, -position.y, -position.z);
     }
 
     public final Matrix4f getLightViewMatrix(){
@@ -70,7 +68,7 @@ public class Transformation {
 
     public final Matrix4f buildModelMatrix(GameItem gameItem){
         Vector3f position = gameItem.getPosition();
-        Quaternionf rotation = gameItem.getRotation();
+        Quaternionf rotation = gameItem.getRotationQuat();
         return modelMatrix.translationRotateScale(
             position.x, position.y, position.z,
             rotation.x, rotation.y, rotation.z, rotation.w,

@@ -9,19 +9,19 @@ import duber.engine.MouseInput;
 import duber.engine.Scene;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
-import duber.engine.graphics.Camera;
 import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Renderer;
 import duber.engine.graphics.lighting.DirectionalLight;
 import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.items.GameItem;
 import duber.engine.loaders.MeshLoader;
+import duber.game.entities.Player;
 import duber.game.scenes.Crosshair;
 
 public class Duberant implements IGameLogic {
 
     private final Renderer renderer;
-    private final Camera camera;
+    private Player player;
     private Crosshair currCrosshair;
     private Scene currentScene;
 
@@ -31,7 +31,6 @@ public class Duberant implements IGameLogic {
     public Duberant() {
         hud = new HUD();
         renderer = new Renderer();
-        camera = new Camera();
         currCrosshair = new Crosshair();
     }
 
@@ -45,10 +44,12 @@ public class Duberant implements IGameLogic {
             throw new LWJGLException("Could not initialize renderer");
         }
         controls = new Controls(window);
+        player = new Player();
 
         
         currentScene = new Scene();
         currentScene.setShaded(false);
+        currentScene.addGameItem(player.getModel());
 
         createSceneLighting();
 
@@ -86,7 +87,7 @@ public class Duberant implements IGameLogic {
         Mesh[] csgoMapMesh = MeshLoader.load("models/map/de_dust2-cs-map/source/de_dust2/de_dust2.obj", "models/map/de_dust2-cs-map/source/de_dust2");
         GameItem map = new GameItem(csgoMapMesh);
         map.setScale(0.3f);
-        map.getRotation().rotateX((float) Math.toRadians(270));
+        map.rotate(270.0f, 0f, 0f);
         currentScene.addGameItems(new GameItem[]{map});
 
         
@@ -117,12 +118,12 @@ public class Duberant implements IGameLogic {
 
     @Override
     public void update(float interval, MouseInput mouseInput) {
-        controls.updateCameraView(camera, mouseInput);
+        controls.updatePlayer(player, mouseInput);
     }
 
     @Override
     public void render(Window window) {
-        renderer.render(window, camera, currentScene);
+        renderer.render(window, player.getCamera(), currentScene);
         hud.displayCrosshair(window, currCrosshair, window.getWidth()/2, window.getHeight()/2);
     }
 

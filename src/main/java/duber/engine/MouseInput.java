@@ -16,13 +16,16 @@ public class MouseInput {
 
     private boolean rightButtonIsPressed = false;
 
+    private boolean firstUpdate = true;
+
     public MouseInput(){
         previousPos = new Vector2d(0, 0);
         currentPos = new Vector2d(0, 0);
         displacementVec = new Vector2f();
     }
-
+    
     public void init(Window window){
+        glfwSetCursorPos(window.getWindowHandle(), 0, 0);
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xPos, yPos) -> {
             currentPos.x = xPos;
             currentPos.y = yPos;
@@ -39,8 +42,13 @@ public class MouseInput {
     }
 
     public void updateDisplacementVec(){
-        displacementVec.x = (float) (currentPos.x - previousPos.x);
-        displacementVec.y = (float) (currentPos.y - previousPos.y);
+
+        if(!firstUpdate){
+            displacementVec.x = (float) (currentPos.x - previousPos.x);
+            displacementVec.y = (float) (currentPos.y - previousPos.y);
+        } else {
+            firstUpdate = false;
+        }
 
         previousPos.x = currentPos.x;
         previousPos.y = currentPos.y;

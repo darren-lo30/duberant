@@ -28,6 +28,8 @@ import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.opengl.GL11.glViewport;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -90,7 +92,7 @@ public class Window {
         glfwSetFramebufferSizeCallback(windowHandle, (window, windowWidth, windowHeight) -> {
             Window.this.width = windowWidth;
             Window.this.height = windowHeight;
-            Window.this.setResized(true);
+            Window.this.resized = true;
         });
 
         //Call back to close window on key press

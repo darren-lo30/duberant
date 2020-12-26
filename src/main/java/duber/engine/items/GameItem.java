@@ -2,22 +2,15 @@ package duber.engine.items;
 
 import duber.engine.graphics.Mesh;
 
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
-
-public class GameItem {
+public class GameItem extends Entity {
     private Mesh[] meshes;
-    private final Vector3f position;
-    private final Quaternionf rotation;  
     private float scale;
 
     private int textureIndex = 0;
     
     public GameItem(){
         meshes = null;
-        position = new Vector3f(0, 0, 0);
-        rotation = new Quaternionf();
         scale = 1.0f;
     }
 
@@ -29,25 +22,6 @@ public class GameItem {
     public GameItem(Mesh[] meshes){
         this();
         this.meshes = meshes;
-    }
-
-    public Vector3f getPosition(){
-        return position;
-    }
-
-    public void setPosition(float x, float y, float z){
-        position.x = x;
-        position.y = y;
-        position.z = z;
-    }
-
-
-    public Quaternionf getRotation(){
-        return rotation;
-    }
-
-    public void setRotation(Quaternionf q){
-        rotation.set(q);
     }
 
     public float getScale(){

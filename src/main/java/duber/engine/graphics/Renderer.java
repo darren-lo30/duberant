@@ -2,6 +2,7 @@ package duber.engine.graphics;
 
 import duber.engine.items.GameItem;
 import duber.engine.items.SkyBox;
+import duber.engine.items.Camera;
 import duber.engine.Scene;
 import duber.engine.Transformation;
 import duber.engine.graphics.lighting.*;
@@ -118,7 +119,9 @@ public class Renderer {
         camera.updateViewMatrix();
 
         //Resize the window
-        glViewport(0, 0, window.getWidth(), window.getHeight());
+        if(window.isResized()){
+            glViewport(0, 0, window.getWidth(), window.getHeight());
+        }
 
         window.updateProjectionMatrix(FOV, Z_NEAR, Z_FAR);
         
