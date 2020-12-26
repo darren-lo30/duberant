@@ -31,21 +31,21 @@ public class Controls {
     }
 
     public void input() {
-        if(window.isKeyPressed(GLFW_KEY_W)){
+        if(window.isKeyPressed(GLFW_KEY_W)) {
             moveDisplacement.z = -1;
-        } else if(window.isKeyPressed(GLFW_KEY_S)){
+        } else if(window.isKeyPressed(GLFW_KEY_S)) {
             moveDisplacement.z = 1;
         }
 
-        if(window.isKeyPressed(GLFW_KEY_A)){
+        if(window.isKeyPressed(GLFW_KEY_A)) {
             moveDisplacement.x = -1;
-        } else if(window.isKeyPressed(GLFW_KEY_D)){
+        } else if(window.isKeyPressed(GLFW_KEY_D)) {
             moveDisplacement.x = 1;
         }
 
-        if(window.isKeyPressed(GLFW_KEY_Z)){
+        if(window.isKeyPressed(GLFW_KEY_Z)) {
             moveDisplacement.y = -1;
-        } else if(window.isKeyPressed(GLFW_KEY_X)){
+        } else if(window.isKeyPressed(GLFW_KEY_X)) {
             moveDisplacement.y = 1;
         }
     }

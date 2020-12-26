@@ -21,7 +21,7 @@ public class GameEngine implements Runnable {
     private final Timer fpsTimer;
     private int fps;
 
-    public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic){
+    public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic) {
         this.windowTitle = windowTitle;
         this.gameLogic = gameLogic;
         window = new Window(windowTitle, width, height, vSync);
@@ -38,7 +38,7 @@ public class GameEngine implements Runnable {
         try {
             init();
             gameLoop();
-        } catch (LWJGLException lwjgle){
+        } catch (LWJGLException lwjgle) {
             lwjgle.printStackTrace();
         } finally {
             cleanup();
@@ -53,12 +53,12 @@ public class GameEngine implements Runnable {
         mouseInput.init(window);
     }
 
-    protected void gameLoop(){
+    protected void gameLoop() {
         float elapsedTime;
         float accumulator = 0f;
         float interval = 1.0f/TARGET_UPS;
 
-        while(!window.shouldClose()){
+        while(!window.shouldClose()) {
             elapsedTime = updateTimer.getElapsedTime();
             accumulator += elapsedTime;
 
@@ -66,7 +66,7 @@ public class GameEngine implements Runnable {
             input();
 
             //Calculate updates in the scene
-            while(accumulator >= interval){
+            while(accumulator >= interval) {
                 update(interval);
                 accumulator -= interval;
             }
@@ -74,35 +74,35 @@ public class GameEngine implements Runnable {
             //Render the scene
             render();
 
-            if(!window.isvSync()){
+            if(!window.isvSync()) {
                 sync();
             }
         }
     }
 
-    private void sync(){
+    private void sync() {
         float loopSlot = 1.0f/TARGET_FPS;
         double endTime = updateTimer.getLastLoopTime() + loopSlot;
-        while(updateTimer.getTime() < endTime){
+        while(updateTimer.getTime() < endTime) {
             try {
                 Thread.sleep(1);
-            } catch (InterruptedException ie){
+            } catch (InterruptedException ie) {
                 ie.printStackTrace();
                 Thread.currentThread().interrupt();
             }
         }
     }
 
-    protected void input(){
+    protected void input() {
         mouseInput.updateDisplacementVec();
         gameLogic.input(window, mouseInput);
     }
 
-    protected void update(float interval){
+    protected void update(float interval) {
         gameLogic.update(interval, mouseInput);
     }
 
-    private void calculateAndDisplayFps(){
+    private void calculateAndDisplayFps() {
         if (fpsTimer.secondHasPassed()) {
             fpsTimer.getElapsedTime();
             window.setTitle(windowTitle + " - " + fps + " FPS");
@@ -111,13 +111,13 @@ public class GameEngine implements Runnable {
         fps++;
     }
 
-    protected void render(){
+    protected void render() {
         calculateAndDisplayFps();        
         gameLogic.render(window);
         window.update();
     }
 
-    protected void cleanup(){
+    protected void cleanup() {
         gameLogic.cleanup();
     }
 }

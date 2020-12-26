@@ -23,7 +23,7 @@ import duber.engine.graphics.Texture;
 import static org.lwjgl.assimp.Assimp.*;
 
 public class MeshLoader {
-    private MeshLoader(){}
+    private MeshLoader() {}
     public static Mesh[] load(String resourcePath, String textureDirectory) throws LWJGLException {
         return load(resourcePath, textureDirectory, 
             aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_FixInfacingNormals);
@@ -31,7 +31,7 @@ public class MeshLoader {
 
     public static Mesh[] load(String resourcePath, String textureDirectory, int flags) throws LWJGLException {
         AIScene aiScene = aiImportFile(resourcePath, flags);
-        if(aiScene == null){
+        if(aiScene == null) {
             throw new LWJGLException("Could not load model");
         }
 
@@ -39,7 +39,7 @@ public class MeshLoader {
         PointerBuffer aiMaterials = aiScene.mMaterials();
         List<Material> materials = new ArrayList<>();
 
-        for(int i = 0; i<numMaterials; i++){
+        for(int i = 0; i<numMaterials; i++) {
             AIMaterial aiMaterial = AIMaterial.create(aiMaterials.get(i));
             processMaterial(aiMaterial, materials, textureDirectory);
         }
@@ -47,7 +47,7 @@ public class MeshLoader {
         int numMeshes = aiScene.mNumMeshes();
         PointerBuffer aiMeshes = aiScene.mMeshes();
         Mesh[] meshes = new Mesh[numMeshes];
-        for(int i = 0; i<numMeshes; i++){
+        for(int i = 0; i<numMeshes; i++) {
             AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
             Mesh mesh = processMesh(aiMesh, materials);
             meshes[i] = mesh;
@@ -63,7 +63,7 @@ public class MeshLoader {
         String texturePath = path.dataString();
 
         Texture texture = null;
-        if(texturePath != null && texturePath.length() > 0){
+        if(texturePath != null && texturePath.length() > 0) {
             TextureDatabase textureDatabase = TextureDatabase.getInstance();
             texture = textureDatabase.getTexture(textureDirectory + "/" + texturePath);
         }
@@ -78,19 +78,19 @@ public class MeshLoader {
 
         //Get materials ambient colour
         int ambientDefined = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, colour);
-        if(ambientDefined == 0){
+        if(ambientDefined == 0) {
             ambientColour = new Vector4f(colour.r(), colour.g(), colour.b(), colour.a());
         }
 
         //Get materials diffuse colour
         int diffuseDefined = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, aiTextureType_NONE, 0, colour);
-        if(diffuseDefined == 0){
+        if(diffuseDefined == 0) {
             diffuseColour = new Vector4f(colour.r(), colour.g(), colour.b(), colour.a());
         }
 
         //Get materials specular colour
         int specularDefined = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, colour);
-        if(specularDefined == 0){
+        if(specularDefined == 0) {
             specularColour = new Vector4f(colour.r(), colour.g(), colour.b(), colour.a());
         }
 
@@ -100,7 +100,7 @@ public class MeshLoader {
         materials.add(material);
     }
 
-    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials){
+    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
         List<Float> vertexPositions = new ArrayList<>();
         List<Float> textureCoords = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
@@ -120,7 +120,7 @@ public class MeshLoader {
 
         Material material;
         int materialIdx = aiMesh.mMaterialIndex();
-        if(materialIdx >= 0 && materialIdx < materials.size()){
+        if(materialIdx >= 0 && materialIdx < materials.size()) {
             material = materials.get(materialIdx);
         } else {
             material = new Material();
@@ -131,10 +131,10 @@ public class MeshLoader {
         return mesh;
     }
 
-    private static void processVertexPositions(AIMesh aiMesh, List<Float> vertexPositions){
+    private static void processVertexPositions(AIMesh aiMesh, List<Float> vertexPositions) {
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
         
-        while(aiVertices.remaining() > 0){
+        while(aiVertices.remaining() > 0) {
             AIVector3D aiVertex = aiVertices.get();
             vertexPositions.add(aiVertex.x());
             vertexPositions.add(aiVertex.y());
@@ -142,26 +142,26 @@ public class MeshLoader {
         }
     }
 
-    private static void processTextureCoords(AIMesh aiMesh, List<Float> textureCoords){
+    private static void processTextureCoords(AIMesh aiMesh, List<Float> textureCoords) {
         AIVector3D.Buffer aiTextureCoords = aiMesh.mTextureCoords(0);
-        if(aiTextureCoords == null){
+        if(aiTextureCoords == null) {
             return;
         }
         
-        while(aiTextureCoords.remaining() > 0){
+        while(aiTextureCoords.remaining() > 0) {
             AIVector3D textCoord = aiTextureCoords.get();
             textureCoords.add(textCoord.x());
             textureCoords.add(1 - textCoord.y());
         }
     }
 
-    private static void processNormals(AIMesh aiMesh, List<Float> normals){
+    private static void processNormals(AIMesh aiMesh, List<Float> normals) {
         AIVector3D.Buffer aiNormals = aiMesh.mNormals();
-        if(aiNormals == null){
+        if(aiNormals == null) {
             return;
         }
 
-        while(aiNormals.remaining() > 0){
+        while(aiNormals.remaining() > 0) {
             AIVector3D normal = aiNormals.get();
             normals.add(normal.x());
             normals.add(normal.y());
@@ -169,12 +169,12 @@ public class MeshLoader {
         }
     }
 
-    private static void processVertexIndices(AIMesh aiMesh, List<Integer> vertexIndices){
+    private static void processVertexIndices(AIMesh aiMesh, List<Integer> vertexIndices) {
         AIFace.Buffer aiFaces = aiMesh.mFaces();
-        while(aiFaces.remaining() > 0){
+        while(aiFaces.remaining() > 0) {
             AIFace aiFace = aiFaces.get();
             IntBuffer indexBuffer = aiFace.mIndices();
-            while(indexBuffer.remaining() > 0){
+            while(indexBuffer.remaining() > 0) {
                 vertexIndices.add(indexBuffer.get());
             }
         }

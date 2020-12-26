@@ -20,12 +20,12 @@ import org.lwjgl.BufferUtils;
 import static org.lwjgl.BufferUtils.*;
 
 public class Utils {
-    private Utils(){}
+    private Utils() {}
 
     public static String loadResource(String fileName) throws IOException {
         String result;
         try(InputStream in = Utils.class.getResourceAsStream(fileName);
-            Scanner sc = new Scanner(in, java.nio.charset.StandardCharsets.UTF_8.name())){
+            Scanner sc = new Scanner(in, java.nio.charset.StandardCharsets.UTF_8.name())) {
                 result = sc.useDelimiter("\\A").next();
         }
 
@@ -34,25 +34,25 @@ public class Utils {
 
     public static List<String> readAllLines(String fileName) throws IOException {
         List<String> allLines = new ArrayList<>();
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(Utils.class.getResourceAsStream(fileName)))){
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(Utils.class.getResourceAsStream(fileName)))) {
             String nextLine;
-            while((nextLine = br.readLine()) != null){
+            while((nextLine = br.readLine()) != null) {
                 allLines.add(nextLine);
             }
         }
         return allLines;
     }
 
-    public static float[] listToFloatArray(List<Float> list){
+    public static float[] listToFloatArray(List<Float> list) {
         float[] floatArr = new float[list.size()];
-        for(int i = 0; i<list.size(); i++){
+        for(int i = 0; i<list.size(); i++) {
             floatArr[i] = list.get(i);
         }
 
         return floatArr;
     }
 
-    public static int[] listToIntArray(List<Integer> list){
+    public static int[] listToIntArray(List<Integer> list) {
         return list.stream().mapToInt(i -> i).toArray();
     }
 

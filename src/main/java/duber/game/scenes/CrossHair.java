@@ -8,7 +8,7 @@ public class Crosshair {
     private int thickness;
     private Vector4f colour;
 
-    public Crosshair(){
+    public Crosshair() {
         width = 20;
         height = 20;
         thickness = 5;
@@ -39,11 +39,11 @@ public class Crosshair {
         this.thickness = thickness;
     }
 
-    public Vector4f getColour(){
+    public Vector4f getColour() {
         return colour;
     }
 
-    public void setColour(Vector4f colour){
+    public void setColour(Vector4f colour) {
         this.colour = colour;
     }
 

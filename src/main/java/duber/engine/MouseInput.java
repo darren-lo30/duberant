@@ -18,13 +18,13 @@ public class MouseInput {
 
     private boolean firstUpdate = true;
 
-    public MouseInput(){
+    public MouseInput() {
         previousPos = new Vector2d(0, 0);
         currentPos = new Vector2d(0, 0);
         displacementVec = new Vector2f();
     }
     
-    public void init(Window window){
+    public void init(Window window) {
         glfwSetCursorPos(window.getWindowHandle(), 0, 0);
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xPos, yPos) -> {
             currentPos.x = xPos;
@@ -37,13 +37,13 @@ public class MouseInput {
         });
     }
 
-    public Vector2f getDisplacementVec(){
+    public Vector2f getDisplacementVec() {
         return displacementVec;
     }
 
-    public void updateDisplacementVec(){
+    public void updateDisplacementVec() {
 
-        if(!firstUpdate){
+        if(!firstUpdate) {
             displacementVec.x = (float) (currentPos.x - previousPos.x);
             displacementVec.y = (float) (currentPos.y - previousPos.y);
         } else {
@@ -54,15 +54,15 @@ public class MouseInput {
         previousPos.y = currentPos.y;
     }
 
-    public void setMousePosition(Window window, float xPos, float yPos){
+    public void setMousePosition(Window window, float xPos, float yPos) {
         glfwSetCursorPos(window.getWindowHandle(), xPos, yPos);
     }
 
-    public boolean leftButtonIsPressed(){
+    public boolean leftButtonIsPressed() {
         return leftButtonIsPressed;
     }
 
-    public boolean rightButtonIsPressed(){
+    public boolean rightButtonIsPressed() {
         return rightButtonIsPressed;
     }
 }

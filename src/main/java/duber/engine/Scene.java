@@ -20,63 +20,63 @@ public class Scene {
 
     private boolean shaded;
 
-    public Scene(){
+    public Scene() {
         instancedMeshMap = new HashMap<>();
         meshMap = new HashMap<>();
         
         shaded = true;
     }
 
-    public boolean isShaded(){
+    public boolean isShaded() {
         return shaded;
     }
 
-    public void setShaded(boolean shaded){
+    public void setShaded(boolean shaded) {
         this.shaded = shaded;
     }
 
-    public SceneLighting getSceneLighting(){
+    public SceneLighting getSceneLighting() {
         return sceneLighting;
     }
 
-    public void setSceneLighting(SceneLighting sceneLighting){
+    public void setSceneLighting(SceneLighting sceneLighting) {
         this.sceneLighting = sceneLighting;
     }
 
-    public SkyBox getSkyBox(){
+    public SkyBox getSkyBox() {
         return skyBox;
     }
 
-    public void setSkyBox(SkyBox skyBox){
+    public void setSkyBox(SkyBox skyBox) {
         this.skyBox = skyBox;
     }
 
-    public Map<Mesh, List<GameItem>> getMeshMap(){
+    public Map<Mesh, List<GameItem>> getMeshMap() {
         return meshMap;
     }
 
-    public Map<InstancedMesh, List<GameItem>> getInstancedMeshMap(){
+    public Map<InstancedMesh, List<GameItem>> getInstancedMeshMap() {
         return instancedMeshMap;
     }
 
-    public void addGameItems(GameItem[] gameItems){
-        if(gameItems == null){
+    public void addGameItems(GameItem[] gameItems) {
+        if(gameItems == null) {
             return;
         }
-        for(GameItem gameItem: gameItems){
+        for(GameItem gameItem: gameItems) {
             addGameItem(gameItem);
         }
     }
 
-    public void addGameItem(GameItem gameItem){
-        if(gameItem == null){
+    public void addGameItem(GameItem gameItem) {
+        if(gameItem == null) {
             return;
         }
 
         Mesh[] meshes = gameItem.getMeshes();
-        for(Mesh mesh: meshes){
+        for(Mesh mesh: meshes) {
             List<GameItem> associatedGameItems;
-            if(mesh instanceof InstancedMesh){
+            if(mesh instanceof InstancedMesh) {
                 associatedGameItems = instancedMeshMap.computeIfAbsent((InstancedMesh) mesh, list -> new ArrayList<>());
             } else {
                 associatedGameItems = meshMap.computeIfAbsent(mesh, list -> new ArrayList<>());
@@ -85,8 +85,8 @@ public class Scene {
         }
     }
 
-    public void cleanup(){
-        for(Mesh mesh: meshMap.keySet()){
+    public void cleanup() {
+        for(Mesh mesh: meshMap.keySet()) {
             mesh.cleanup();
         }
     }

@@ -62,8 +62,8 @@ vec4 ambientColour;
 vec4 diffuseColour;
 vec4 specularColour;
 
-void setupColours(Material material, vec2 textureCoord){
-    if(material.hasTexture == 1){
+void setupColours(Material material, vec2 textureCoord) {
+    if(material.hasTexture == 1) {
         ambientColour = texture(texture_sampler, textureCoord);
         diffuseColour = ambientColour;
         specularColour = ambientColour;
@@ -74,7 +74,7 @@ void setupColours(Material material, vec2 textureCoord){
     }
 }
 
-vec4 calculateAdjustedLightColour(vec3 lightColour, float lightIntensity, vec3 position, vec3 vectorToLightSource, vec3 normal){
+vec4 calculateAdjustedLightColour(vec3 lightColour, float lightIntensity, vec3 position, vec3 vectorToLightSource, vec3 normal) {
     vec4 adjustedDiffuseColour = vec4(0, 0, 0, 0);
     vec4 adjustedSpecularColour = vec4(0, 0, 0, 0);
 
@@ -94,7 +94,7 @@ vec4 calculateAdjustedLightColour(vec3 lightColour, float lightIntensity, vec3 p
     return (adjustedDiffuseColour + adjustedSpecularColour);
 }
 
-vec4 calculatePointLight(PointLight light, vec3 position, vec3 normal){
+vec4 calculatePointLight(PointLight light, vec3 position, vec3 normal) {
     //Calculate adjusted light colour factoring in diffuse and specular light
     vec3 lightDirection = light.position - position;
     vec3 vectorToLightSource = normalize(lightDirection);
@@ -107,7 +107,7 @@ vec4 calculatePointLight(PointLight light, vec3 position, vec3 normal){
     return adjustedLightColour / attenuationFactor;
 }
 
-vec4 calculateSpotLight(SpotLight light, vec3 position, vec3 normal){
+vec4 calculateSpotLight(SpotLight light, vec3 position, vec3 normal) {
     vec3 lightDirection = light.pointLight.position - position;
     vec3 vectorToLightSource = normalize(lightDirection);
     vec3 vectorFromLightSource = -vectorToLightSource;
@@ -116,7 +116,7 @@ vec4 calculateSpotLight(SpotLight light, vec3 position, vec3 normal){
     
     float cosCutOffAngle = cos(light.cutOffAngle);
     vec4 adjustedColour = vec4(0, 0, 0, 0);
-    if(cosAngleBetween > cosCutOffAngle){
+    if(cosAngleBetween > cosCutOffAngle) {
         adjustedColour = calculatePointLight(light.pointLight, position, normal);
         adjustedColour *= (1.0 - (1.0 - cosAngleBetween)/(1.0 - cosCutOffAngle));
     } 
@@ -124,14 +124,14 @@ vec4 calculateSpotLight(SpotLight light, vec3 position, vec3 normal){
     return adjustedColour;
 }
 
-vec4 calculateDirectionalLight(DirectionalLight light, vec3 position, vec3 normal){
+vec4 calculateDirectionalLight(DirectionalLight light, vec3 position, vec3 normal) {
     return calculateAdjustedLightColour(light.colour, light.intensity, position, 
         normalize(light.direction), normal);
 }
 
-vec3 calculateNormal(Material material, vec3 normal, vec2 textureCoord, mat4 modelViewMatrix){
+vec3 calculateNormal(Material material, vec3 normal, vec2 textureCoord, mat4 modelViewMatrix) {
     vec3 adjustedNormal = normal;
-    if(material.hasNormalMap == 1){
+    if(material.hasNormalMap == 1) {
         adjustedNormal = texture(normalMap, textureCoord).rgb;
         //Map to [-1, 1]
         adjustedNormal = normalize(adjustedNormal * 2 - 1);
@@ -142,21 +142,21 @@ vec3 calculateNormal(Material material, vec3 normal, vec2 textureCoord, mat4 mod
 }
 
 
-void main(){
+void main() {
     setupColours(material, outTextureCoord);
 
     vec3 mappedNormal = calculateNormal(material, modelViewVertexNormal, outTextureCoord, outModelViewMatrix);
     //Calculate lighting component from diffuse and specular lighting
     vec4 pointLightComponent = vec4(0, 0, 0, 0);
-    for(int i = 0; i<MAX_POINT_LIGHTS; i++){
-        if(pointLights[i].intensity > 0){
+    for(int i = 0; i<MAX_POINT_LIGHTS; i++) {
+        if(pointLights[i].intensity > 0) {
             pointLightComponent += calculatePointLight(pointLights[i], modelViewVertexPosition, mappedNormal);
         }
     }
 
     vec4 spotLightComponent = vec4(0, 0, 0, 0);
-    for(int i = 0; i<MAX_SPOT_LIGHTS; i++){
-        if(spotLights[i].pointLight.intensity > 0){
+    for(int i = 0; i<MAX_SPOT_LIGHTS; i++) {
+        if(spotLights[i].pointLight.intensity > 0) {
             spotLightComponent += calculateSpotLight(spotLights[i], modelViewVertexPosition, mappedNormal);
         }
     }

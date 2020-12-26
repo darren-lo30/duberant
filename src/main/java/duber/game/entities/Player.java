@@ -15,7 +15,7 @@ public class Player {
     GameItem model;
     Camera camera;
 
-    public Player(){
+    public Player() {
         camera = new Camera();
         try{ 
             Mesh playerMesh = OBJLoader.loadMesh("/models/cube.obj");
@@ -23,25 +23,25 @@ public class Player {
             model = new GameItem(playerMesh);
             model.setPosition(0, -30, 50);
             model.setScale(5.0f);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Could not load model");
         }
     }
 
-    public Camera getCamera(){
+    public Camera getCamera() {
         return camera;
     }
 
-    public GameItem getModel(){
+    public GameItem getModel() {
         return model;
     }
 
-    public void move(float offsetX, float offsetY, float offsetZ){
+    public void move(float offsetX, float offsetY, float offsetZ) {
         camera.movePosition(offsetX, offsetY, offsetZ);
         model.movePosition(offsetX, offsetY, offsetZ);
     }
 
-    public void rotate(float rotationX, float rotationY, float rotationZ){
+    public void rotate(float rotationX, float rotationY, float rotationZ) {
         model.rotate(rotationX, rotationY, 0);
         camera.rotate(rotationX, rotationY, rotationZ);
     }

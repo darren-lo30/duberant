@@ -9,7 +9,7 @@ public class Main {
             IGameLogic gameLogic = new Duberant();
             GameEngine gameEngine = new GameEngine("Test game", 1000, 1000, true, gameLogic);
             gameEngine.run();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
         }

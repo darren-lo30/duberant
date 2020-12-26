@@ -9,56 +9,56 @@ public class GameItem extends Entity {
 
     private int textureIndex = 0;
     
-    public GameItem(){
+    public GameItem() {
         meshes = null;
         scale = 1.0f;
     }
 
-    public GameItem(Mesh mesh){
+    public GameItem(Mesh mesh) {
         this();
         meshes = new Mesh[]{mesh};
     }
 
-    public GameItem(Mesh[] meshes){
+    public GameItem(Mesh[] meshes) {
         this();
         this.meshes = meshes;
     }
 
-    public float getScale(){
+    public float getScale() {
         return scale;
     }
 
-    public void setScale(float scale){
+    public void setScale(float scale) {
         this.scale = scale;
     }
 
-    public Mesh getMesh(){
+    public Mesh getMesh() {
         return meshes[0];
     }
     
-    public Mesh[] getMeshes(){
+    public Mesh[] getMeshes() {
         return meshes;
     }
 
-    public void setMesh(Mesh mesh){
+    public void setMesh(Mesh mesh) {
         meshes = new Mesh[]{mesh};
     }
 
-    public void setMeshes(Mesh[] meshes){
+    public void setMeshes(Mesh[] meshes) {
         this.meshes = meshes;
     }
 
-    public int getTextureIndex(){
+    public int getTextureIndex() {
         return textureIndex;
     }
 
-    public void setTextureIndex(int textureIndex){
+    public void setTextureIndex(int textureIndex) {
         this.textureIndex = textureIndex;
     }
 
-    public void cleanup(){
-        if(meshes != null){
-            for(Mesh mesh: meshes){
+    public void cleanup() {
+        if(meshes != null) {
+            for(Mesh mesh: meshes) {
                 mesh.cleanup();
             }
         }

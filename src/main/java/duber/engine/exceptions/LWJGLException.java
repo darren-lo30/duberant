@@ -7,7 +7,7 @@ public class LWJGLException extends Exception {
         super();
     }
     
-    public LWJGLException(String message){
+    public LWJGLException(String message) {
         super(message);    
     }
 }

@@ -40,7 +40,7 @@ public class Duberant implements IGameLogic {
         try { 
             renderer.init(window);
             hud.init(window);
-        } catch (IOException ioe){
+        } catch (IOException ioe) {
             throw new LWJGLException("Could not initialize renderer");
         }
         controls = new Controls(window);
@@ -74,7 +74,7 @@ public class Duberant implements IGameLogic {
             quadGameItem.setPosition(0, -1, 0);
             quadGameItem.setScale(2.5f);
             currentScene.addGameItems(new GameItem[]{quadGameItem, cubeGameItem});
-        } catch (Exception e){}
+        } catch (Exception e) {}
         /*
         Mesh skyBoxMesh = OBJLoader.loadMesh("/models/skybox.obj");
         skyBoxMesh.setMaterial(new Material(new Texture("textures/skybox.png")));
@@ -93,7 +93,7 @@ public class Duberant implements IGameLogic {
         
     }
 
-    private void createSceneLighting(){
+    private void createSceneLighting() {
         SceneLighting sceneLight = new SceneLighting();
         currentScene.setSceneLighting(sceneLight);
 

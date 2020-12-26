@@ -11,12 +11,12 @@ public class TextureDatabase {
 
     private Map<String, Texture> texturesMap;
 
-    private TextureDatabase(){
+    private TextureDatabase() {
         texturesMap = new HashMap<>();
     }
 
-    public static synchronized TextureDatabase getInstance(){
-        if(instance == null){
+    public static synchronized TextureDatabase getInstance() {
+        if(instance == null) {
             instance = new TextureDatabase();
         }
         return instance;
@@ -24,7 +24,7 @@ public class TextureDatabase {
 
     public Texture getTexture(String filePath) throws LWJGLException {
         Texture texture;
-        if(!texturesMap.containsKey(filePath)){
+        if(!texturesMap.containsKey(filePath)) {
             texture = new Texture(filePath);
             texturesMap.put(filePath, texture);
         } else {

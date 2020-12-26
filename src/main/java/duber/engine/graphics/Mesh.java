@@ -44,13 +44,13 @@ public class Mesh {
 
     private Material material;
 
-    public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices){
+    public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
         this(positions, textureCoords, normals, indices, 
             new int[MAX_WEIGHTS * positions.length / 3],
             new float[MAX_WEIGHTS * positions.length / 3]);
     }
 
-    public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices, int[] jointIndices, float[] weights){
+    public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices, int[] jointIndices, float[] weights) {
         material = new Material();
         vboIdList = new ArrayList<>();
         
@@ -99,7 +99,7 @@ public class Mesh {
             //Create normal VBO
             int normalsVboId = glGenBuffers();
             vboIdList.add(normalsVboId);
-            if(normals.length == 0){
+            if(normals.length == 0) {
                 normalsBuffer = MemoryUtil.memAllocFloat(normals.length);
             } else {
                 normalsBuffer = MemoryUtil.memAllocFloat(positions.length);
@@ -147,17 +147,17 @@ public class Mesh {
         }
     }
 
-    protected void freeBuffer(Buffer buffer){
-        if(buffer != null){
+    protected void freeBuffer(Buffer buffer) {
+        if(buffer != null) {
             MemoryUtil.memFree(buffer);
         }
     }
 
-    public void setMaterial(Material material){
+    public void setMaterial(Material material) {
         this.material = material;
     }
 
-    public Material getMaterial(){
+    public Material getMaterial() {
         return material;
     }
 
@@ -165,22 +165,22 @@ public class Mesh {
 		return vaoId;
     }
 
-    public boolean isRigid(){
+    public boolean isRigid() {
         return rigid;
     }
 
-    public int getVertexCount(){
+    public int getVertexCount() {
         return vertexCount;
     }
 
-    protected void initRender(){
+    protected void initRender() {
         //Set active texture if it exists
-        if(material.hasTexture()){
+        if(material.hasTexture()) {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
         }
 
-        if(material.hasNormalMap()){
+        if(material.hasNormalMap()) {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, material.getNormalMap().getId());
         }
@@ -194,7 +194,7 @@ public class Mesh {
         glEnableVertexAttribArray(4);
     }
 
-    protected void endRender(){
+    protected void endRender() {
         //Restore state by unbinding everything
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
@@ -207,7 +207,7 @@ public class Mesh {
     }
 
 
-    public void render(){
+    public void render() {
         initRender();
 
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
@@ -215,16 +215,16 @@ public class Mesh {
         endRender();
     }
 
-    public void render(List<? extends GameItem> gameItems, Consumer<GameItem> consumer){
+    public void render(List<? extends GameItem> gameItems, Consumer<GameItem> consumer) {
         initRender();
-        for(GameItem gameItem: gameItems){
+        for(GameItem gameItem: gameItems) {
             consumer.accept(gameItem);
             glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
         }
         endRender();
     }
     
-    public void cleanup(){
+    public void cleanup() {
         //Disable vertex array indices
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
@@ -232,15 +232,15 @@ public class Mesh {
 
         //Deletes VBOS
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        for(int vboId: vboIdList){
+        for(int vboId: vboIdList) {
             glDeleteBuffers(vboId);
         }
 
         //Delete texture if it exists
-        if(material.hasTexture()){
+        if(material.hasTexture()) {
             material.getTexture().cleanup();
         }
-        if(material.hasNormalMap()){
+        if(material.hasNormalMap()) {
             material.getNormalMap().cleanup();
         }
 

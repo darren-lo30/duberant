@@ -28,7 +28,6 @@ import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import static org.lwjgl.opengl.GL11.glViewport;
 
 
 import java.util.HashMap;
@@ -54,7 +53,7 @@ public class Window {
 
     private Options options;
 
-    public Window(String title, int width, int height, boolean vSync){
+    public Window(String title, int width, int height, boolean vSync) {
         this.title = title;
         this.width = width;
         this.height = height;
@@ -64,10 +63,10 @@ public class Window {
         options = new Options();
     }
 
-    public void init(){
+    public void init() {
         GLFWErrorCallback.createPrint(System.err).set();
 
-        if(!glfwInit()){
+        if(!glfwInit()) {
             throw new IllegalStateException("Could not start glfw");
         }
 
@@ -84,7 +83,7 @@ public class Window {
 
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         windowHandle = glfwCreateWindow(vidmode.width(), vidmode.height(), title, NULL, NULL);
-        if(windowHandle == NULL){
+        if(windowHandle == NULL) {
             throw new IllegalStateException("Could not start the window");
         }
 
@@ -97,8 +96,8 @@ public class Window {
 
         //Call back to close window on key press
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
-            if(key == GLFW_KEY_F11 && action == GLFW_RELEASE){
-                if(isFullScreen()){
+            if(key == GLFW_KEY_F11 && action == GLFW_RELEASE) {
+                if(isFullScreen()) {
                     glfwSetWindowMonitor(windowHandle, NULL, 0, 0, width, height, GLFW_DONT_CARE);
                 } else {
                     long monitor = glfwGetPrimaryMonitor();
@@ -110,7 +109,7 @@ public class Window {
         glfwMakeContextCurrent(windowHandle);
 
         //Enable vsync
-        if(isvSync()){
+        if(isvSync()) {
             glfwSwapInterval(1);
         }
 
@@ -121,7 +120,7 @@ public class Window {
         restoreState();
     }
 
-    public void restoreState(){
+    public void restoreState() {
         glClearColor(0.f, 0.f, 0.f, 0.f);
         glEnable(GL_STENCIL_TEST);
         glEnable(GL_BLEND);
@@ -129,92 +128,92 @@ public class Window {
         glEnable(GL_DEPTH_TEST);
     }
 
-    public int getWidth(){
+    public int getWidth() {
         return width;
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return height;
     }
 
-    public long getWindowHandle(){
+    public long getWindowHandle() {
         return windowHandle;
     }
 
-    public void setTitle(String title){
+    public void setTitle(String title) {
         this.title = title;
         glfwSetWindowTitle(windowHandle, title);
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return title;
     }
 
-    public boolean isKeyPressed(int keyCode){
+    public boolean isKeyPressed(int keyCode) {
         return glfwGetKey(windowHandle, keyCode) == GLFW_PRESS;
     }
 
-    public boolean isvSync(){
+    public boolean isvSync() {
         return vSync;
     }
 
-    public boolean isResized(){
+    public boolean isResized() {
         return resized;
     }
 
-    public void setResized(boolean resized){
+    public void setResized(boolean resized) {
         this.resized = resized;
     }
 
-    public boolean shouldClose(){
+    public boolean shouldClose() {
         return glfwWindowShouldClose(windowHandle);
     }
 
-    public final Matrix4f getProjectionMatrix(){
+    public final Matrix4f getProjectionMatrix() {
         return projectionMatrix;
     }
 
-    public final Matrix4f updateProjectionMatrix(float fov, float zNear, float zFar){
+    public final Matrix4f updateProjectionMatrix(float fov, float zNear, float zFar) {
         float aspectRatio = (float) width / height;
         return projectionMatrix.identity().setPerspective(fov, aspectRatio, zNear, zFar);
     }
 
-    public Options getOptions(){
+    public Options getOptions() {
         return options;
     }
 
 
-    public void applyOptions(){
-        if(options.isTurnedOn(Options.CULL_FACES)){
+    public void applyOptions() {
+        if(options.isTurnedOn(Options.CULL_FACES)) {
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
         } else {
             glDisable(GL_CULL_FACE);
         }
 
-        if(options.isTurnedOn(Options.SHOW_CURSOR)){
+        if(options.isTurnedOn(Options.SHOW_CURSOR)) {
             glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
             glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
 
-        if(options.isTurnedOn(Options.DISPLAY_TRIANGLES)){
+        if(options.isTurnedOn(Options.DISPLAY_TRIANGLES)) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         } else {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
     }
 
-    public void update(){
+    public void update() {
         glfwPollEvents();
         glfwSwapBuffers(windowHandle);
     }
 
-    public void setClearColour(float r, float g, float b, float alpha){
+    public void setClearColour(float r, float g, float b, float alpha) {
         glClearColor(r, g, b, alpha);
     }
 
-    private boolean isFullScreen(){
+    private boolean isFullScreen() {
         return glfwGetWindowMonitor(windowHandle) != NULL;
     }
 
@@ -227,22 +226,22 @@ public class Window {
         public static final int SHOW_CURSOR = 4;
         public static final int ANTI_ALIASING = 5;
 
-        private Options(){
+        private Options() {
             optionsMap = new HashMap<>();
             optionsMap.put(DISPLAY_FPS, true);
             optionsMap.put(SHOW_CURSOR, false);
             optionsMap.put(ANTI_ALIASING, true);
         }
 
-        public boolean isTurnedOn(int option){
+        public boolean isTurnedOn(int option) {
             //Default is option turned off
-            if(!optionsMap.keySet().contains(option)){
+            if(!optionsMap.keySet().contains(option)) {
                 return false;
             }
             return optionsMap.get(option);
         }
 
-        public void setOption(int option, boolean turnedOn){
+        public void setOption(int option, boolean turnedOn) {
             optionsMap.put(option, turnedOn);
         }
     }

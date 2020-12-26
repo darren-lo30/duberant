@@ -27,10 +27,10 @@ uniform mat4 jointsMatrix[MAX_JOINTS];
 uniform int numRows;
 uniform int numColumns;
 
-void main(){
+void main() {
     mat4 modelViewMatrix;
 
-    if(isInstanced == 1){
+    if(isInstanced == 1) {
         modelViewMatrix = instancedModelViewMatrix;
     } else {
         modelViewMatrix = nonInstancedModelViewMatrix;

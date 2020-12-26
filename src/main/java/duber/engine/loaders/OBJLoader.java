@@ -12,7 +12,7 @@ import duber.engine.graphics.InstancedMesh;
 import duber.engine.graphics.Mesh;
 
 public class OBJLoader {
-    private OBJLoader(){}   
+    private OBJLoader() {}   
 
     public static Mesh loadMesh(String fileName) throws IOException {
         return loadMesh(fileName, 1);
@@ -27,9 +27,9 @@ public class OBJLoader {
         
         List<Face> faces = new ArrayList<>();
 
-        for(String line: allLines){
+        for(String line: allLines) {
             String[] tokens = line.split("\\s+");
-            switch (tokens[0]){
+            switch (tokens[0]) {
                 case "v":
                     Vector3f vertexPosition = new Vector3f(
                         Float.parseFloat(tokens[1]),
@@ -66,12 +66,12 @@ public class OBJLoader {
     }
 
     public static Mesh meshFromFaces(List<Vector3f> vertexPositionsList, List<Vector2f> textureCoordsList, 
-        List<Vector3f> vertexNormalsList, List<Face> facesList, int instances){
+        List<Vector3f> vertexNormalsList, List<Face> facesList, int instances) {
         List<Integer> vertexIndices = new ArrayList<>();
         
         //Fill the position array used in the mesh
         float[] positionsArray = new float[vertexPositionsList.size() * 3];
-        for(int i = 0; i<vertexPositionsList.size(); i++){
+        for(int i = 0; i<vertexPositionsList.size(); i++) {
             positionsArray[i * 3] = vertexPositionsList.get(i).x;
             positionsArray[i*3 + 1] = vertexPositionsList.get(i).y;
             positionsArray[i*3 + 2] = vertexPositionsList.get(i).z;
@@ -81,16 +81,16 @@ public class OBJLoader {
         float[] normalsArray = new float[vertexPositionsList.size() * 3];
 
         //Extracts face data into arrays that the mesh can use
-        for(Face face: facesList){
+        for(Face face: facesList) {
             IndexGroup[] faceVertices = face.getVertices();
-            for(IndexGroup faceVertex: faceVertices){
+            for(IndexGroup faceVertex: faceVertices) {
                 processFaceVertex(faceVertex, textureCoordsList, vertexNormalsList, vertexIndices, textureCoordsArray, normalsArray);
             }
         }
 
         int[] vertexIndicesArray = vertexIndices.stream().mapToInt((Integer i) -> i).toArray();
 
-        if(instances > 1){
+        if(instances > 1) {
             return new InstancedMesh(positionsArray, textureCoordsArray, normalsArray, vertexIndicesArray, instances);
         } else {
             return new Mesh(positionsArray, textureCoordsArray, normalsArray, vertexIndicesArray);
@@ -98,21 +98,21 @@ public class OBJLoader {
     }
 
     public static void processFaceVertex(IndexGroup faceVertex, List<Vector2f> textureCoordList, 
-        List<Vector3f> vertexNormalsList, List<Integer> vertexIndices, float[] textureCoordsArray, float[] normalsArray){
+        List<Vector3f> vertexNormalsList, List<Integer> vertexIndices, float[] textureCoordsArray, float[] normalsArray) {
 
             //Set vertex indices
             int vertexIndex = faceVertex.getPositionIndex();
             vertexIndices.add(vertexIndex);
 
             //Set texture coordinate in array
-            if(faceVertex.getTextureCoordIndex() >= 0){
+            if(faceVertex.getTextureCoordIndex() >= 0) {
                 Vector2f textureCoord = textureCoordList.get(faceVertex.getTextureCoordIndex());
                 textureCoordsArray[vertexIndex * 2] = textureCoord.x;
                 textureCoordsArray[vertexIndex * 2 + 1] = 1 - textureCoord.y;
             }
 
             //Set vertexNormal vector in array
-            if(faceVertex.getVertexNormalIndex() >= 0){
+            if(faceVertex.getVertexNormalIndex() >= 0) {
                 Vector3f vertexNormal = vertexNormalsList.get(faceVertex.getVertexNormalIndex());
                 normalsArray[vertexIndex * 3] = vertexNormal.x;
                 normalsArray[vertexIndex * 3 + 1] = vertexNormal.y;
@@ -123,25 +123,25 @@ public class OBJLoader {
     private static class Face {
         private IndexGroup[] vertices;
 
-        public Face(String vertex1, String vertex2, String vertex3){
+        public Face(String vertex1, String vertex2, String vertex3) {
             vertices = new IndexGroup[3];
             vertices[0] = strToIndexGroup(vertex1);
             vertices[1] = strToIndexGroup(vertex2);
             vertices[2] = strToIndexGroup(vertex3);
         }
 
-        public IndexGroup strToIndexGroup(String str){
+        public IndexGroup strToIndexGroup(String str) {
             IndexGroup indexGroup = new IndexGroup();
 
             String[] tokens = str.split("/");
             int length = tokens.length;
 
             indexGroup.setPositionIndex(Integer.parseInt(tokens[0]) - 1);
-            if(length > 1){
-                if(tokens[1].length() > 0){
+            if(length > 1) {
+                if(tokens[1].length() > 0) {
                     indexGroup.setTextureCoordIndex(Integer.parseInt(tokens[1]) - 1);
                 }
-                if(length > 2){
+                if(length > 2) {
                     indexGroup.setVertexNormalIndex(Integer.parseInt(tokens[2]) - 1);
                 }
             }
@@ -149,7 +149,7 @@ public class OBJLoader {
             return indexGroup;
         }
 
-        public IndexGroup[] getVertices(){
+        public IndexGroup[] getVertices() {
             return vertices;
         }
     }
@@ -161,7 +161,7 @@ public class OBJLoader {
         private int textureCoordIndex;
         private int vertexNormalIndex;
 
-        public IndexGroup(){
+        public IndexGroup() {
             positionIndex = NO_INDEX;
             textureCoordIndex = NO_INDEX;
             vertexNormalIndex = NO_INDEX;

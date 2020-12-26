@@ -27,7 +27,7 @@ public class Texture {
         ByteBuffer textureBuffer;
 
         //Load the texture
-        try(MemoryStack stack = MemoryStack.stackPush()){
+        try(MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             //Number of channels in the image(4 if there's rgba)
@@ -35,7 +35,7 @@ public class Texture {
 
             //Load the image to the buffer
             textureBuffer = stbi_load(fileName, w, h, channels, 4);
-            if(textureBuffer == null){
+            if(textureBuffer == null) {
                 throw new LWJGLException(String.format("Could not load texture %s: Reason: %s", fileName, stbi_failure_reason()));
             }
             
@@ -66,11 +66,11 @@ public class Texture {
         this.numColumns = numColumns;
     }
 
-    public void bind(){
+    public void bind() {
         glBindTexture(GL_TEXTURE_2D, id);
     }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
     
@@ -88,15 +88,15 @@ public class Texture {
         return textureId;
     }
 
-    public int getNumRows(){
+    public int getNumRows() {
         return numRows;
     }
 
-    public int getNumColumns(){
+    public int getNumColumns() {
         return numColumns;
     }
 
-    public void cleanup(){
+    public void cleanup() {
         glDeleteTextures(id);
     }
 }

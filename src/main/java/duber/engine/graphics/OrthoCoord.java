@@ -8,11 +8,11 @@ public class OrthoCoord {
     private float near;
     private float far;
 
-    public float getLeft(){
+    public float getLeft() {
         return left;
     }
 
-    public void setLeft(float left){
+    public void setLeft(float left) {
         this.left = left;
     }
 
@@ -20,7 +20,7 @@ public class OrthoCoord {
         return right;
     }
 
-    public void setRight(float right){
+    public void setRight(float right) {
         this.right = right;
     }
 
@@ -28,23 +28,23 @@ public class OrthoCoord {
         return bottom;
     }
 
-    public void setBottom(float bottom){
+    public void setBottom(float bottom) {
         this.bottom = bottom;
     }
 
-    public float getTop(){
+    public float getTop() {
         return top;
     }
 
-    public void setTop(float top){
+    public void setTop(float top) {
         this.top = top;
     }
 
-    public float getNear(){
+    public float getNear() {
         return near;
     }
 
-    public void setNear(float near){
+    public void setNear(float near) {
         this.near = near;
     }
 
@@ -52,7 +52,7 @@ public class OrthoCoord {
         return far;
     }
 
-    public void setFar(float far){
+    public void setFar(float far) {
         this.far = far;
     }
 }

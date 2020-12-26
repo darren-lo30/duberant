@@ -42,7 +42,7 @@ public class Renderer {
     
     private float specularPower;
 
-    public Renderer(){
+    public Renderer() {
         //Intiialize vertex transformer
         transformation = new Transformation();
         specularPower = 10.0f;
@@ -108,18 +108,18 @@ public class Renderer {
 
     
 
-    public void clear(){
+    public void clear() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
-    public void render(Window window, Camera camera, Scene scene){
+    public void render(Window window, Camera camera, Scene scene) {
         clear();
         
         //Update camera view matrix
         camera.updateViewMatrix();
 
         //Resize the window
-        if(window.isResized()){
+        if(window.isResized()) {
             glViewport(0, 0, window.getWidth(), window.getHeight());
         }
 
@@ -129,29 +129,29 @@ public class Renderer {
         renderSkyBox(window, camera, scene);
     }
 
-    private void renderNonInstancedMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix){
+    private void renderNonInstancedMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix) {
         sceneShaderProgram.setUniform("isInstanced", 0);
 
         Map<Mesh, List<GameItem>> meshMap = scene.getMeshMap();
 
-        for(Map.Entry<Mesh, List<GameItem>> meshMapEntry: meshMap.entrySet()){
+        for(Map.Entry<Mesh, List<GameItem>> meshMapEntry: meshMap.entrySet()) {
             Mesh mesh = meshMapEntry.getKey();
             List<GameItem> gameItems = meshMapEntry.getValue();
             Texture texture = mesh.getMaterial().getTexture();
 
-            if(texture != null){
+            if(texture != null) {
                 sceneShaderProgram.setUniform("numColumns", texture.getNumColumns());
                 sceneShaderProgram.setUniform("numRows", texture.getNumRows());
             }
 
-            if(viewMatrix != null){
+            if(viewMatrix != null) {
                 shaderProgram.setUniform("material", mesh.getMaterial());
             }
 
             mesh.render(gameItems, (GameItem gameItem) -> {
                 Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
                 
-                if(viewMatrix != null){
+                if(viewMatrix != null) {
                     Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
                     sceneShaderProgram.setUniform("nonInstancedModelViewMatrix", modelViewMatrix);
                 }
@@ -159,21 +159,21 @@ public class Renderer {
         }
     }
 
-    private void renderInstancedMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix, Matrix4f lightViewMatrix){
+    private void renderInstancedMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         sceneShaderProgram.setUniform("isInstanced", 1);
         Map<InstancedMesh, List<GameItem>> meshMap = scene.getInstancedMeshMap();
         
-        for(Map.Entry<InstancedMesh, List<GameItem>> meshMapEntry: meshMap.entrySet()){
+        for(Map.Entry<InstancedMesh, List<GameItem>> meshMapEntry: meshMap.entrySet()) {
             InstancedMesh mesh = meshMapEntry.getKey();
             Texture texture = mesh.getMaterial().getTexture();
             List<GameItem> gameItems = meshMapEntry.getValue();
 
-            if(texture != null){
+            if(texture != null) {
                 sceneShaderProgram.setUniform("numColumns", texture.getNumColumns());
                 sceneShaderProgram.setUniform("numRows", texture.getNumRows());
             }
             
-            if(viewMatrix != null){
+            if(viewMatrix != null) {
                 shaderProgram.setUniform("material", mesh.getMaterial());
             }
 
@@ -181,7 +181,7 @@ public class Renderer {
         }
     }
 
-    private void renderScene(Window window, Camera camera, Scene scene){
+    private void renderScene(Window window, Camera camera, Scene scene) {
         sceneShaderProgram.bind();
 
         //Set projection matrix uniform
@@ -206,7 +206,7 @@ public class Renderer {
         sceneShaderProgram.unbind();
     }
 
-    private void renderLights(Matrix4f viewMatrix, SceneLighting sceneLighting){
+    private void renderLights(Matrix4f viewMatrix, SceneLighting sceneLighting) {
 
         //Update light uniforms for ambient lighting
         sceneShaderProgram.setUniform("ambientLight", sceneLighting.getAmbientLight());
@@ -217,13 +217,13 @@ public class Renderer {
         renderDirectionalLights(viewMatrix, sceneLighting.getDirectionalLight()); 
     }
 
-    private void renderPointLights(Matrix4f viewMatrix, PointLight[] pointLights){
-        if(pointLights == null){
+    private void renderPointLights(Matrix4f viewMatrix, PointLight[] pointLights) {
+        if(pointLights == null) {
             return;
         }
         
-        for(int i = 0; i<pointLights.length; i++){
-            if(pointLights[i] == null){
+        for(int i = 0; i<pointLights.length; i++) {
+            if(pointLights[i] == null) {
                 continue;
             }
 
@@ -242,13 +242,13 @@ public class Renderer {
         }
     }
 
-    private void renderSpotLights(Matrix4f viewMatrix, SpotLight[] spotLights){
-        if(spotLights == null){
+    private void renderSpotLights(Matrix4f viewMatrix, SpotLight[] spotLights) {
+        if(spotLights == null) {
             return;
         }
         
-        for(int i = 0; i<spotLights.length; i++){
-            if(spotLights[i] == null){
+        for(int i = 0; i<spotLights.length; i++) {
+            if(spotLights[i] == null) {
                 continue;
             }
 
@@ -272,8 +272,8 @@ public class Renderer {
         }
     }
 
-    private void renderDirectionalLights(Matrix4f viewMatrix, DirectionalLight directionalLight){
-        if(directionalLight == null){
+    private void renderDirectionalLights(Matrix4f viewMatrix, DirectionalLight directionalLight) {
+        if(directionalLight == null) {
             return;
         }
         
@@ -289,10 +289,10 @@ public class Renderer {
         sceneShaderProgram.setUniform("directionalLight", viewDirectionalLight);
     }
 
-    private void renderSkyBox(Window window, Camera camera, Scene scene){
+    private void renderSkyBox(Window window, Camera camera, Scene scene) {
         SkyBox skyBox = scene.getSkyBox();
         
-        if(skyBox == null){
+        if(skyBox == null) {
             return;
         }
         
@@ -339,12 +339,12 @@ public class Renderer {
 
 
 
-    public void cleanup(){
-        if(sceneShaderProgram != null){
+    public void cleanup() {
+        if(sceneShaderProgram != null) {
             sceneShaderProgram.cleanup();
         }
 
-        if(skyBoxShaderProgram != null){
+        if(skyBoxShaderProgram != null) {
             skyBoxShaderProgram.cleanup();
         }
 

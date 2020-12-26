@@ -18,22 +18,22 @@ public class HUD {
         vgContext = window.getOptions().isTurnedOn(Window.Options.ANTI_ALIASING) ? 
             nvgCreate(NVG_ANTIALIAS | NVG_STENCIL_STROKES) :
             nvgCreate(NVG_STENCIL_STROKES);
-            if(vgContext == NULL){
+            if(vgContext == NULL) {
                 throw new LWJGLException("Could not create a HUD with NanoVG");
             }
         colour = NVGColor.create();
     }
 
-    public void displayInit(Window window){
+    public void displayInit(Window window) {
         nvgBeginFrame(vgContext, window.getWidth(), window.getHeight(), 1);
     }
 
-    public void displayEnd(Window window){
+    public void displayEnd(Window window) {
         nvgEndFrame(vgContext);
         window.restoreState();
     }
 
-    public void displayCrosshair(Window window, Crosshair crosshair, int posX, int posY){
+    public void displayCrosshair(Window window, Crosshair crosshair, int posX, int posY) {
         displayInit(window);
 
         
@@ -55,7 +55,7 @@ public class HUD {
         displayEnd(window);
     }
 
-    public NVGColor setColour(float r, float g, float b, float a){
+    public NVGColor setColour(float r, float g, float b, float a) {
         colour.r(r / 255.0f);
         colour.g(g / 255.0f);
         colour.b(b / 255.0f);
@@ -63,7 +63,7 @@ public class HUD {
         return colour;
     }
 
-    public NVGColor setColour(Vector4f colour){
+    public NVGColor setColour(Vector4f colour) {
         return setColour(colour.x() * 255.0f, colour.y() * 255.0f, colour.z() * 255.0f, colour.w() * 255.0f);
     }
 }

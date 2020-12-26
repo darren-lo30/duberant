@@ -9,31 +9,31 @@ public class SceneLighting {
     private SpotLight[] spotLights;
     private DirectionalLight directionalLight;
 
-    public Vector3f getAmbientLight(){
+    public Vector3f getAmbientLight() {
         return ambientLight;
     }
 
-    public void setAmbientLight(Vector3f ambientLight){
+    public void setAmbientLight(Vector3f ambientLight) {
         this.ambientLight = ambientLight;
     }
 
-    public Vector3f getSkyBoxLight(){
+    public Vector3f getSkyBoxLight() {
         return skyBoxLight;
     }
 
-    public void setSkyBoxLight(Vector3f skyBoxLight){
+    public void setSkyBoxLight(Vector3f skyBoxLight) {
         this.skyBoxLight = skyBoxLight;
     }
 
-    public PointLight[] getPointLights(){
+    public PointLight[] getPointLights() {
         return pointLights;
     }
 
-    public void setPointLights(PointLight[] pointLights){
+    public void setPointLights(PointLight[] pointLights) {
         this.pointLights = pointLights;
     }
 
-    public SpotLight[] getSpotLights(){
+    public SpotLight[] getSpotLights() {
         return spotLights;
     }
 
@@ -41,11 +41,11 @@ public class SceneLighting {
         this.spotLights = spotLights;
     }
 
-    public DirectionalLight getDirectionalLight(){
+    public DirectionalLight getDirectionalLight() {
         return directionalLight;
     }
 
-    public void setDirectionalLight(DirectionalLight directionalLight){
+    public void setDirectionalLight(DirectionalLight directionalLight) {
         this.directionalLight = directionalLight;
     }
 

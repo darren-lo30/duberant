@@ -44,7 +44,7 @@ public class InstancedMesh extends Mesh {
     private FloatBuffer instanceDataBuffer = null;
 
     
-    public InstancedMesh(float[] positions, float[] textureCoords, float[] normals, int[] indices, int numInstances){
+    public InstancedMesh(float[] positions, float[] textureCoords, float[] normals, int[] indices, int numInstances) {
         super(positions, textureCoords, normals, indices);
         this.numInstances = numInstances;
 
@@ -59,7 +59,7 @@ public class InstancedMesh extends Mesh {
         int stride = 0;
 
         //Add model view matrix
-        for(int i = 0; i<4; i++){
+        for(int i = 0; i<4; i++) {
             glVertexAttribPointer(currIdx, 4, GL_FLOAT, false, INSTANCE_DATA_SIZE_BYTES, stride);
             glVertexAttribDivisor(currIdx, 1);
             glEnableVertexAttribArray(currIdx);
@@ -68,7 +68,7 @@ public class InstancedMesh extends Mesh {
         }
 
         //Add model light view matrix
-        for(int i = 0; i<4; i++){
+        for(int i = 0; i<4; i++) {
             glVertexAttribPointer(currIdx, 4, GL_FLOAT, false, INSTANCE_DATA_SIZE_BYTES, stride);
             glVertexAttribDivisor(currIdx, 1);
             glEnableVertexAttribArray(currIdx);
@@ -84,16 +84,16 @@ public class InstancedMesh extends Mesh {
         glBindVertexArray(0);     
     }
 
-    public void render(List<? extends GameItem> gameItems, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix){
+    public void render(List<? extends GameItem> gameItems, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         render(gameItems, false, transformation, viewMatrix, lightViewMatrix);
     }
 
-    public void render(List<? extends GameItem> gameItems, boolean billBoard, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix){
+    public void render(List<? extends GameItem> gameItems, boolean billBoard, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         initRender();
 
         int chunkSize = numInstances;
         int length = gameItems.size();
-        for(int i = 0; i<length; i+=chunkSize){
+        for(int i = 0; i<length; i+=chunkSize) {
             int end = Math.min(length, i + chunkSize);
             List<? extends GameItem> subList = gameItems.subList(i, end);
             renderChunkInstanced(subList, billBoard, transformation, viewMatrix, lightViewMatrix);
@@ -101,32 +101,32 @@ public class InstancedMesh extends Mesh {
         endRender();
     }
 
-    private void renderChunkInstanced(List<? extends GameItem> gameItems, boolean billBoard, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix){
+    private void renderChunkInstanced(List<? extends GameItem> gameItems, boolean billBoard, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         instanceDataBuffer.clear();
 
         Texture texture = getMaterial().getTexture();
 
-        for(int i = 0; i<gameItems.size(); i++){
+        for(int i = 0; i<gameItems.size(); i++) {
             GameItem gameItem = gameItems.get(i);
 
             Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
-            if(viewMatrix != null){
-                if(billBoard){
+            if(viewMatrix != null) {
+                if(billBoard) {
                     viewMatrix.transpose3x3(modelMatrix);
                 }
                 Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
-                if(billBoard){
+                if(billBoard) {
                     modelViewMatrix.scale(gameItem.getScale());
                 }
                 modelViewMatrix.get(INSTANCE_DATA_SIZE_FLOATS * i, instanceDataBuffer);
             }
 
-            if(lightViewMatrix != null){
+            if(lightViewMatrix != null) {
                 Matrix4f modelLightViewMatrix = transformation.buildModelLightViewMatrix(modelMatrix, lightViewMatrix);
                 modelLightViewMatrix.get(INSTANCE_DATA_SIZE_FLOATS * i + MATRIX4_NUM_ELEMENTS, instanceDataBuffer);
             }
 
-            if(texture != null){
+            if(texture != null) {
                 int textureColumn = gameItem.getTextureIndex() % texture.getNumColumns();
                 int textureRow = gameItem.getTextureIndex() / texture.getNumRows();
                 float textureOffsetX = (float) textureColumn / texture.getNumColumns();
@@ -146,30 +146,30 @@ public class InstancedMesh extends Mesh {
         glBindBuffer(GL_ARRAY_BUFFER, 0);      
     }
 
-    public int getNumInstances(){
+    public int getNumInstances() {
         return numInstances;
     }
 
     @Override 
-    public void initRender(){
+    public void initRender() {
         super.initRender();
         int start = 5;
-        for(int i = start; i<start + 8; i++){
+        for(int i = start; i<start + 8; i++) {
             glEnableVertexAttribArray(i);
         }
     }
 
     @Override
-    public void endRender(){
+    public void endRender() {
         int start = 5;
-        for(int i = start; i<start + 8; i++){
+        for(int i = start; i<start + 8; i++) {
             glDisableVertexAttribArray(i);
         }
         super.endRender();
     }
 
     @Override
-    public void cleanup(){
+    public void cleanup() {
         freeBuffer(instanceDataBuffer);
     }
 

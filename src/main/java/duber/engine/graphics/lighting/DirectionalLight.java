@@ -20,29 +20,29 @@ public class DirectionalLight extends Light {
         shadowPositionMultiplier = 1;
     }
 
-    public DirectionalLight(DirectionalLight directionalLight){
+    public DirectionalLight(DirectionalLight directionalLight) {
         this(new Vector3f(directionalLight.getColour()),
              new Vector3f(directionalLight.getDirection()),
              directionalLight.getIntensity());
     }
 
-    public Vector3f getDirection(){
+    public Vector3f getDirection() {
         return this.direction;
     }
 
-    public void setDirection(Vector3f direction){
+    public void setDirection(Vector3f direction) {
         this.direction = direction;
     }
 
-    public float getShadowPositionMultipler(){
+    public float getShadowPositionMultipler() {
         return shadowPositionMultiplier;
     }
 
-    public void setShadowPositionMultipler(float shadowPositionMultiplier){
+    public void setShadowPositionMultipler(float shadowPositionMultiplier) {
         this.shadowPositionMultiplier = shadowPositionMultiplier;
     }
 
-    public OrthoCoord getOrthoCoord(){
+    public OrthoCoord getOrthoCoord() {
         return orthoCoord;
     }
     
