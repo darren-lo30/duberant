@@ -19,18 +19,20 @@ public class GameEngine implements Runnable {
     private final MouseInput mouseInput;
     
     private final Timer fpsTimer;
+    
     private int fps;
 
+    
     public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic) {
         this.windowTitle = windowTitle;
         this.gameLogic = gameLogic;
         window = new Window(windowTitle, width, height, vSync);
         updateTimer = new Timer();
-
+        
         mouseInput = new MouseInput();
-
-        fpsTimer = new Timer();
+        
         fps = 0;
+        fpsTimer = new Timer();
     }
 
     @Override
