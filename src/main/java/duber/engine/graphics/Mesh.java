@@ -30,9 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
-import duber.engine.items.GameItem;
+import duber.engine.entities.ConcreteEntity;
 
 public class Mesh {    
     private static final int MAX_WEIGHTS = 4;
@@ -43,6 +44,9 @@ public class Mesh {
     private boolean rigid;
 
     private Material material;
+
+    private Vector3f[] vertices;
+    private Face[] faces;
 
     public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
         this(positions, textureCoords, normals, indices, 
@@ -145,6 +149,36 @@ public class Mesh {
             freeBuffer(weightsBuffer);
             freeBuffer(jointIndicesBuffer);
         }
+
+        //Update faces
+        updateVertices(positions);
+        updateFaces(indices);
+    }
+
+    private void updateVertices(float[] positions){
+        vertices = new Vector3f[positions.length/3];
+        for(int i = 0; i<positions.length; i+=3) {
+            vertices[i/3] = new Vector3f(positions[i], positions[i+1], positions[i+2]);
+        }
+    }
+    
+    private void updateFaces(int[] indices) {
+        faces = new Face[indices.length/3];
+        for(int i = 0; i<indices.length; i+=3) {
+            Vector3f[] faceVertices = new Vector3f[3];
+            for(int j = 0; j<3; j++) {
+                faceVertices[j] = vertices[indices[i+j]];
+            }
+            faces[i/3] = new Face(faceVertices);
+        }
+    }
+
+    public Vector3f[] getVertices() {
+        return vertices;
+    }
+
+    public Face[] getFaces() {
+        return faces;
     }
 
     protected void freeBuffer(Buffer buffer) {
@@ -215,10 +249,10 @@ public class Mesh {
         endRender();
     }
 
-    public void render(List<? extends GameItem> gameItems, Consumer<GameItem> consumer) {
+    public void render(List<? extends ConcreteEntity> concreteEntities, Consumer<ConcreteEntity> consumer) {
         initRender();
-        for(GameItem gameItem: gameItems) {
-            consumer.accept(gameItem);
+        for(ConcreteEntity concreteEntity: concreteEntities) {
+            consumer.accept(concreteEntity);
             glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
         }
         endRender();

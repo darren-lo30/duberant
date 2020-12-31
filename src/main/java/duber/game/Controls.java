@@ -5,62 +5,57 @@ import org.joml.Vector3f;
 
 import duber.engine.MouseInput;
 import duber.engine.Window;
-import duber.game.entities.Player;
+import duber.engine.physics.RigidBody;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
+
+import java.util.Optional;
+
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_X;
 
 
 public class Controls {
-    private float moveSpeed;
     private float mouseSensitivity;
 
     private final Window window;
-    private final Vector3f moveDisplacement;
+    private Player player;
 
-    public Controls(Window window) {
+    public Controls(Window window, Player player) {
         this.window = window;
-        moveDisplacement = new Vector3f();
+        this.player = player;
 
-        moveSpeed = 3.0f;
         mouseSensitivity = 0.02f;
     }
 
     public void input() {
+        Vector3f playerVelocity = player.getPlayerBody().getVelocity();
+        playerVelocity.set(0, 0, 0);
+        
         if(window.isKeyPressed(GLFW_KEY_W)) {
-            moveDisplacement.z = -1;
+            playerVelocity.add(0, 0, -player.getSpeed());
         } else if(window.isKeyPressed(GLFW_KEY_S)) {
-            moveDisplacement.z = 1;
+            playerVelocity.add(0, 0, player.getSpeed());
         }
 
         if(window.isKeyPressed(GLFW_KEY_A)) {
-            moveDisplacement.x = -1;
+            playerVelocity.add(-player.getSpeed(), 0, 0);
         } else if(window.isKeyPressed(GLFW_KEY_D)) {
-            moveDisplacement.x = 1;
+            playerVelocity.add(player.getSpeed(), 0, 0);
         }
 
         if(window.isKeyPressed(GLFW_KEY_Z)) {
-            moveDisplacement.y = -1;
+            playerVelocity.add(0, -player.getSpeed(), 0);
         } else if(window.isKeyPressed(GLFW_KEY_X)) {
-            moveDisplacement.y = 1;
+            playerVelocity.add(0, player.getSpeed(), 0);
         }
     }
 
 
-    public void updatePlayer(Player player, MouseInput mouseInput) {
-        //Updates the position of the camera
-        player.move(
-            moveDisplacement.x * moveSpeed, 
-            moveDisplacement.y * moveSpeed, 
-            moveDisplacement.z * moveSpeed);
-            
-        //Reset displacement
-        moveDisplacement.zero();
-            
+    public void updatePlayer(MouseInput mouseInput) {
         //Rotate the way that is being viewed
         Vector2f cameraRotation = mouseInput.getDisplacementVec();
         player.rotate(cameraRotation.y * mouseSensitivity, cameraRotation.x * mouseSensitivity, 0.0f);

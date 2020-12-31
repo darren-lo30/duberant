@@ -8,12 +8,12 @@ import java.util.Map;
 import duber.engine.graphics.InstancedMesh;
 import duber.engine.graphics.Mesh;
 import duber.engine.graphics.lighting.SceneLighting;
-import duber.engine.items.GameItem;
-import duber.engine.items.SkyBox;
+import duber.engine.entities.ConcreteEntity;
+import duber.engine.entities.SkyBox;
 
 public class Scene {
-    private final Map<Mesh, List<GameItem>> meshMap;
-    private final Map<InstancedMesh, List<GameItem>> instancedMeshMap;
+    private final Map<Mesh, List<ConcreteEntity>> meshMap;
+    private final Map<InstancedMesh, List<ConcreteEntity>> instancedMeshMap;
 
     private SceneLighting sceneLighting;
     private SkyBox skyBox;
@@ -51,37 +51,37 @@ public class Scene {
         this.skyBox = skyBox;
     }
 
-    public Map<Mesh, List<GameItem>> getMeshMap() {
+    public Map<Mesh, List<ConcreteEntity>> getMeshMap() {
         return meshMap;
     }
 
-    public Map<InstancedMesh, List<GameItem>> getInstancedMeshMap() {
+    public Map<InstancedMesh, List<ConcreteEntity>> getInstancedMeshMap() {
         return instancedMeshMap;
     }
 
-    public void addGameItems(GameItem[] gameItems) {
-        if(gameItems == null) {
+    public void addConcreteEntitys(ConcreteEntity[] concreteEntities) {
+        if(concreteEntities == null) {
             return;
         }
-        for(GameItem gameItem: gameItems) {
-            addGameItem(gameItem);
+        for(ConcreteEntity concreteEntity: concreteEntities) {
+            addConcreteEntity(concreteEntity);
         }
     }
 
-    public void addGameItem(GameItem gameItem) {
-        if(gameItem == null) {
+    public void addConcreteEntity(ConcreteEntity concreteEntity) {
+        if(concreteEntity == null) {
             return;
         }
 
-        Mesh[] meshes = gameItem.getMeshes();
+        Mesh[] meshes = concreteEntity.getMeshes();
         for(Mesh mesh: meshes) {
-            List<GameItem> associatedGameItems;
+            List<ConcreteEntity> associatedConcreteEntitys;
             if(mesh instanceof InstancedMesh) {
-                associatedGameItems = instancedMeshMap.computeIfAbsent((InstancedMesh) mesh, list -> new ArrayList<>());
+                associatedConcreteEntitys = instancedMeshMap.computeIfAbsent((InstancedMesh) mesh, list -> new ArrayList<>());
             } else {
-                associatedGameItems = meshMap.computeIfAbsent(mesh, list -> new ArrayList<>());
+                associatedConcreteEntitys = meshMap.computeIfAbsent(mesh, list -> new ArrayList<>());
             }
-            associatedGameItems.add(gameItem);
+            associatedConcreteEntitys.add(concreteEntity);
         }
     }
 

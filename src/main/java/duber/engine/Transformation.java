@@ -1,7 +1,7 @@
 package duber.engine;
 
+import duber.engine.entities.Entity;
 import duber.engine.graphics.OrthoCoord;
-import duber.engine.items.GameItem;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -9,7 +9,7 @@ import org.joml.Vector3f;
 
 
 public class Transformation {
-    //Maps an object to its coordinates in the world (worldMatrix)
+    //Maps an object to its coordinates in the world
     private final Matrix4f modelMatrix;
 
     //Maps an object relative to the camera and the world
@@ -66,13 +66,14 @@ public class Transformation {
         return updateGeneralViewMatrix(lightPosition, lightRotation, lightViewMatrix);
     }
 
-    public final Matrix4f buildModelMatrix(GameItem gameItem) {
-        Vector3f position = gameItem.getPosition();
-        Quaternionf rotation = gameItem.getRotationQuat();
+    public final Matrix4f buildModelMatrix(Entity entity) {
+        Transform entityTransform = entity.getTransform();
+        Vector3f position = entityTransform.getPosition();
+        Quaternionf rotation = entityTransform.getRotationQuat();
         return modelMatrix.translationRotateScale(
             position.x, position.y, position.z,
             rotation.x, rotation.y, rotation.z, rotation.w,
-            gameItem.getScale(), gameItem.getScale(), gameItem.getScale()
+            entityTransform.getScale(), entityTransform.getScale(), entityTransform.getScale()
         );
     }
 
@@ -80,19 +81,19 @@ public class Transformation {
         return viewMatrix.mulAffine(modelMatrix, modelViewMatrix);
     }
 
-    public final Matrix4f buildModelViewMatrix(GameItem gameItem, Matrix4f viewMatrix) {
-        return buildModelViewMatrix(buildModelMatrix(gameItem), viewMatrix);
+    public final Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix) {
+        return buildModelViewMatrix(buildModelMatrix(entity), viewMatrix);
     }
 
     public final Matrix4f buildModelLightViewMatrix(Matrix4f modelMatrix, Matrix4f lightViewMatrix) {
         return lightViewMatrix.mulAffine(modelMatrix, modelLightViewMatrix);
     }
 
-    public final Matrix4f buildModelLightViewMatrix(GameItem gameItem, Matrix4f lightViewMatrix) {
-        return buildModelLightViewMatrix(buildModelMatrix(gameItem), lightViewMatrix);
+    public final Matrix4f buildModelLightViewMatrix(Entity entity, Matrix4f lightViewMatrix) {
+        return buildModelLightViewMatrix(buildModelMatrix(entity), lightViewMatrix);
     }
 
-    public Matrix4f buildOrthoProjectionModelMatrix(GameItem gameItem, Matrix4f orthoMatrix) {
-        return orthoMatrix.mulOrthoAffine(buildModelMatrix(gameItem), orthoProjectionModelMatrix);
+    public Matrix4f buildOrthoProjectionModelMatrix(Entity entity, Matrix4f orthoMatrix) {
+        return orthoMatrix.mulOrthoAffine(buildModelMatrix(entity), orthoProjectionModelMatrix);
     }
 }

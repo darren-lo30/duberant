@@ -1,21 +1,24 @@
 package duber.game;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import duber.engine.IGameLogic;
 import duber.engine.MouseInput;
 import duber.engine.Scene;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
+import duber.engine.graphics.Material;
 import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Renderer;
 import duber.engine.graphics.lighting.DirectionalLight;
 import duber.engine.graphics.lighting.SceneLighting;
-import duber.engine.items.GameItem;
+import duber.engine.entities.ConcreteEntity;
+import duber.engine.entities.SkyBox;
 import duber.engine.loaders.MeshLoader;
-import duber.game.entities.Player;
 import duber.game.scenes.Crosshair;
 
 public class Duberant implements IGameLogic {
@@ -38,58 +41,37 @@ public class Duberant implements IGameLogic {
     public void init(Window window) throws LWJGLException {
         window.applyOptions();
         try { 
-            renderer.init(window);
+            renderer.init();
             hud.init(window);
         } catch (IOException ioe) {
             throw new LWJGLException("Could not initialize renderer");
         }
-        controls = new Controls(window);
-        player = new Player();
+
+        Mesh[] playerMeshes = MeshLoader.load("models/player/player.obj", "/models/player");
+        playerMeshes[0].setMaterial(new Material(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 1.0f));
+        player = new Player(playerMeshes);
+        
+        controls = new Controls(window, player);
 
         
         currentScene = new Scene();
         currentScene.setShaded(false);
-        currentScene.addGameItem(player.getModel());
+        currentScene.addConcreteEntity(player.getModel());
 
         createSceneLighting();
-
-
         currentScene.setShaded(true);
 
-        /*
-        try {
-
-            float reflectance = 1f;
-            Mesh cubeMesh = OBJLoader.loadMesh("/models/cube.obj");
-            Material cubeMaterial = new Material(new Vector4f(0, 1, 0, 1), reflectance);
-            cubeMesh.setMaterial(cubeMaterial);
-            GameItem cubeGameItem = new GameItem(cubeMesh);
-            cubeGameItem.setPosition(0, 0, 0);
-            cubeGameItem.setScale(0.5f);
-            cubeGameItem.getRotation().rotateX((float)Math.toRadians(45));
-            Mesh quadMesh = OBJLoader.loadMesh("/models/plane.obj");
-            Material quadMaterial = new Material(new Vector4f(0.0f, 0.0f, 1.0f, 1.0f), 1.0f);
-            quadMesh.setMaterial(quadMaterial);
-            GameItem quadGameItem = new GameItem(quadMesh);
-            quadGameItem.setPosition(0, -1, 0);
-            quadGameItem.setScale(2.5f);
-            currentScene.addGameItems(new GameItem[]{quadGameItem, cubeGameItem});
-        } catch (Exception e) {}
-        /*
-        Mesh skyBoxMesh = OBJLoader.loadMesh("/models/skybox.obj");
-        skyBoxMesh.setMaterial(new Material(new Texture("textures/skybox.png")));
-        SkyBox skyBox = new SkyBox(skyBoxMesh);
-        skyBox.setScale(10.0f);
-        currentScene.setSkyBox(skyBox);
-        */
-
-        
         Mesh[] csgoMapMesh = MeshLoader.load("models/map/de_dust2-cs-map/source/de_dust2/de_dust2.obj", "models/map/de_dust2-cs-map/source/de_dust2");
-        GameItem map = new GameItem(csgoMapMesh);
-        map.setScale(0.3f);
-        map.rotate(270.0f, 0f, 0f);
-        currentScene.addGameItems(new GameItem[]{map});
+        ConcreteEntity map = new ConcreteEntity(csgoMapMesh);
+        map.getTransform().setScale(0.3f);
+        map.getTransform().rotate(270.0f, 0f, 0f);
+        currentScene.addConcreteEntitys(new ConcreteEntity[]{map});
 
+        Mesh[] skyBoxMesh = MeshLoader.load("models/skybox/skybox.obj", "models/skybox");
+        SkyBox skyBox = new SkyBox(skyBoxMesh[0]);
+        skyBox.getTransform().setScale(4000.0f);
+        
+        currentScene.setSkyBox(skyBox);
         
     }
 
@@ -99,7 +81,7 @@ public class Duberant implements IGameLogic {
 
         // Ambient Light
         sceneLight.setAmbientLight(new Vector3f(1.0f, 1.0f, 1.0f));
-        sceneLight.setSkyBoxLight(new Vector3f(0.5f, 0.5f, 0.5f));
+        sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
         float lightIntensity = 0.0f;
@@ -118,7 +100,7 @@ public class Duberant implements IGameLogic {
 
     @Override
     public void update(float interval, MouseInput mouseInput) {
-        controls.updatePlayer(player, mouseInput);
+        player.update();
     }
 
     @Override
