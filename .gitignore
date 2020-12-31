@@ -26,4 +26,7 @@ buildNumber.properties
 .factorypath
 .project
 .vscode/
-.log
+
+
+#Ignore log files
+*.log
