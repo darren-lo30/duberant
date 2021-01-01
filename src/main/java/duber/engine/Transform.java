@@ -1,57 +1,49 @@
 package duber.engine;
 
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Transform {
     private final Vector3f position;
-    private final Quaternionf rotationQuat;  
-    private final Vector3f rotationDegrees;
+    private final Vector3f rotation;  
     private float scale;
     
     public Transform() {
-        position = new Vector3f(0, 0, 0);
-        rotationQuat = new Quaternionf();
-        rotationDegrees = new Vector3f();
+        position = new Vector3f();
+        rotation = new Vector3f();
+        scale = 1.0f;
     }
 
     public Vector3f getPosition() {
         return position;
     }
 
-    public void setPosition(float x, float y, float z) {
-        position.x = x;
-        position.y = y;
-        position.z = z;
-    }
-
-    public Quaternionf getRotationQuat() {
-        return rotationQuat;
-    }
-
-    public Vector3f getRotationDegrees() {
-        return rotationDegrees;
+    public Vector3f getRotation() {
+        return rotation;
     }
 
     public void rotate(float rotationX, float rotationY, float rotationZ) {
-        rotationQuat.rotateXYZ(
-            (float) Math.toRadians(rotationX), 
+        rotation.set(
+            (rotation.x()  + rotationX) % (float) Math.toRadians(360.0f),
+            (rotation.y()  + rotationY) % (float) Math.toRadians(360.0f),
+            (rotation.z()  + rotationZ) % (float) Math.toRadians(360.0f));
+    }
+
+    public void rotateDegrees(float rotationX, float rotationY, float rotationZ) {
+        rotate(
+            (float) Math.toRadians(rotationX),
             (float) Math.toRadians(rotationY),
             (float) Math.toRadians(rotationZ));
-        
-        rotationDegrees.x = (rotationDegrees.x + rotationX) % 360;
-        rotationDegrees.y = (rotationDegrees.y + rotationY) % 360;
-        rotationDegrees.z = (rotationDegrees.z + rotationZ) % 360;
     }
 
     public void movePosition(float offsetX, float offsetY, float offsetZ) {
         if(offsetZ != 0) {
-            position.x += (float)Math.sin(Math.toRadians(rotationDegrees.y)) * -1.0f * offsetZ;
-            position.z += (float)Math.cos(Math.toRadians(rotationDegrees.y)) * offsetZ;
+            position.x += (float)Math.sin(rotation.y()) * -1.0f * offsetZ;
+            position.z += (float)Math.cos(rotation.y()) * offsetZ;
         }
+        
         if(offsetX != 0) {
-            position.x += (float)Math.sin(Math.toRadians(rotationDegrees.y - 90)) * -1.0f * offsetX;
-            position.z += (float)Math.cos(Math.toRadians(rotationDegrees.y - 90)) * offsetX;
+            position.x += (float)Math.sin(rotation.y() - Math.toRadians(90)) * -1.0f * offsetX;
+            position.z += (float)Math.cos(rotation.y() - Math.toRadians(90)) * offsetX;
         }
         position.y += offsetY;
     }

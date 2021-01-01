@@ -4,7 +4,6 @@ import duber.engine.entities.Entity;
 import duber.engine.graphics.OrthoCoord;
 
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 
@@ -33,7 +32,6 @@ public class Transformation {
 
         modelLightViewMatrix = new Matrix4f();
         
-        
         orthoProjectionMatrix = new Matrix4f();
         orthoProjectionModelMatrix = new Matrix4f();
     }
@@ -53,9 +51,10 @@ public class Transformation {
     
     public static final Matrix4f updateGeneralViewMatrix(Vector3f position, Vector3f rotation, Matrix4f viewMatrix) {
         //Rotate and translate the object relative to the camera
-        return viewMatrix.rotationX((float)Math.toRadians(rotation.x))
-                .rotateY((float)Math.toRadians(rotation.y))
-                .translate(-position.x, -position.y, -position.z);
+        return viewMatrix
+            .rotationX(rotation.x)
+            .rotateY(rotation.y)
+            .translate(-position.x, -position.y, -position.z);
     }
 
     public final Matrix4f getLightViewMatrix() {
@@ -69,12 +68,16 @@ public class Transformation {
     public final Matrix4f buildModelMatrix(Entity entity) {
         Transform entityTransform = entity.getTransform();
         Vector3f position = entityTransform.getPosition();
-        Quaternionf rotation = entityTransform.getRotationQuat();
-        return modelMatrix.translationRotateScale(
-            position.x, position.y, position.z,
-            rotation.x, rotation.y, rotation.z, rotation.w,
-            entityTransform.getScale(), entityTransform.getScale(), entityTransform.getScale()
-        );
+        Vector3f rotation = entityTransform.getRotation();
+        float scale = entityTransform.getScale();
+
+        return modelMatrix
+            .identity()
+            .translate(position)
+            .rotateX(-rotation.x())
+            .rotateY(-rotation.y())
+            .rotateZ(-rotation.z())
+            .scale(scale);
     }
 
     public final Matrix4f buildModelViewMatrix(Matrix4f modelMatrix, Matrix4f viewMatrix) {        
