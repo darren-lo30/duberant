@@ -6,20 +6,20 @@ import java.util.Map;
 import java.util.Set;
 
 
-import duber.engine.entities.ConcreteEntity;
+import duber.engine.entities.RenderableEntity;
 
 public class PairManager {
-    private Map<ConcreteEntity, Set<ConcreteEntity>> collidingEntities;
+    private Map<RenderableEntity, Set<RenderableEntity>> collidingEntities;
 
-    public void addEntityPair(ConcreteEntity entity1, ConcreteEntity entity2) {
-        Set<ConcreteEntity> collidingEntities1 = collidingEntities.computeIfAbsent(entity1, k -> new HashSet<>());
-        Set<ConcreteEntity> collidingEntities2 = collidingEntities.computeIfAbsent(entity2, k -> new HashSet<>());
+    public void addEntityPair(RenderableEntity entity1, RenderableEntity entity2) {
+        Set<RenderableEntity> collidingEntities1 = collidingEntities.computeIfAbsent(entity1, k -> new HashSet<>());
+        Set<RenderableEntity> collidingEntities2 = collidingEntities.computeIfAbsent(entity2, k -> new HashSet<>());
 
         collidingEntities1.add(entity2);
         collidingEntities2.add(entity1);
     }
 
-    public void removeEntityPair(ConcreteEntity entity1, ConcreteEntity entity2) { 
+    public void removeEntityPair(RenderableEntity entity1, RenderableEntity entity2) { 
         try {
             collidingEntities.get(entity1).remove(entity2);
             collidingEntities.get(entity2).remove(entity1);
@@ -28,11 +28,11 @@ public class PairManager {
         }
     }
 
-    public boolean isColliding(ConcreteEntity entity){
+    public boolean isColliding(RenderableEntity entity){
         return !collidingEntities.get(entity).isEmpty();
     }
 
-    public Set<ConcreteEntity> getCollidingEntities(ConcreteEntity entity) {
+    public Set<RenderableEntity> getCollidingEntities(RenderableEntity entity) {
         return collidingEntities.get(entity);
     }
     

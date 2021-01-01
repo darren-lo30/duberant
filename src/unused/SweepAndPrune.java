@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import duber.engine.entities.ConcreteEntity;
+import duber.engine.entities.RenderableEntity;
 
 public class SweepAndPrune extends BroadPhaseAlgorithm {
     private static final int NUM_AXES = 3;
@@ -15,7 +15,7 @@ public class SweepAndPrune extends BroadPhaseAlgorithm {
     private static final int INVALID_BOX_INDEX = Integer.MAX_VALUE;
     
     private Box[] boxes;
-    Map<ConcreteEntity, Integer> entityBoxIndex;
+    Map<RenderableEntity, Integer> entityBoxIndex;
     private EndPoint[][] endPointsXYZ;
     
     private final Queue<Integer> freeBoxIndices;
@@ -40,7 +40,7 @@ public class SweepAndPrune extends BroadPhaseAlgorithm {
     }
 
     @Override
-    public void addEntity(ConcreteEntity entity) {
+    public void addEntity(RenderableEntity entity) {
         AABB boundingBox = entity.getBoundingBox();
         
         if(boundingBox == null){
@@ -104,12 +104,12 @@ public class SweepAndPrune extends BroadPhaseAlgorithm {
     }
 
     @Override
-    public void updateEntity(ConcreteEntity entity){
+    public void updateEntity(RenderableEntity entity){
         AABBLong aabbLong = new AABBLong(entity.getBoundingBox());
         updateEntity(entity, aabbLong);
     }
 
-    private void updateEntity(ConcreteEntity entity, AABBLong aabbLong) {
+    private void updateEntity(RenderableEntity entity, AABBLong aabbLong) {
         int boxIndex = entityBoxIndex.get(entity);
         Box box = boxes[boxIndex];
         
@@ -120,7 +120,7 @@ public class SweepAndPrune extends BroadPhaseAlgorithm {
         }
     }
 
-    private void updateMinEndPoint(ConcreteEntity entity, Box box, int axis, AABBLong aabbLong){
+    private void updateMinEndPoint(RenderableEntity entity, Box box, int axis, AABBLong aabbLong){
         int otherAxis1 = (axis+1) % NUM_AXES;
         int otherAxis2 = (axis+2) % NUM_AXES;
         EndPoint[] currAxisEndPoints = endPointsXYZ[axis];
@@ -157,7 +157,7 @@ public class SweepAndPrune extends BroadPhaseAlgorithm {
                 if(box != currEndPointBox && compute2DIntersect(box, currEndPointBox, otherAxis1, otherAxis2) && 
                     compute1DIntersect(currEndPointBox, aabbLong, currAxisEndPoints, axis)){
                     
-                    ConcreteEntity otherEntity = currEndPointBox.getEntity();
+                    RenderableEntity otherEntity = currEndPointBox.getEntity();
                     if(shiftDirection == -1) {
                         //If you are shifting left and are the min index, then you go to the left of a max index, you will intersect  
                         collidingPairs.addEntityPair(entity, otherEntity);
@@ -185,7 +185,7 @@ public class SweepAndPrune extends BroadPhaseAlgorithm {
         }
     }
 
-    private void updateMaxEndPoint(ConcreteEntity entity, Box box, int axis, AABBLong aabbLong){
+    private void updateMaxEndPoint(RenderableEntity entity, Box box, int axis, AABBLong aabbLong){
         int otherAxis1 = (axis+1) % NUM_AXES;
         int otherAxis2 = (axis+2) % NUM_AXES;
         EndPoint[] currAxisEndPoints = endPointsXYZ[axis];
@@ -223,7 +223,7 @@ public class SweepAndPrune extends BroadPhaseAlgorithm {
                     compute1DIntersect(currEndPointBox, aabbLong, currAxisEndPoints, axis)){
 
                         
-                    ConcreteEntity otherEntity = currEndPointBox.getEntity();
+                    RenderableEntity otherEntity = currEndPointBox.getEntity();
                     if(shiftDirection == -1) {
                         //If you are shifting left and are a max index, then you pass a min index, you stop intersecting
                         collidingPairs.removeEntityPair(entity, otherEntity);
@@ -253,7 +253,7 @@ public class SweepAndPrune extends BroadPhaseAlgorithm {
     }
 
     @Override
-    public void removeEntity(ConcreteEntity entity) {
+    public void removeEntity(RenderableEntity entity) {
         AABBLong aabbLong = new AABBLong(removedMinEndPointValue, removedMaxEndPointValue);
         updateEntity(entity, aabbLong);
 
@@ -424,13 +424,13 @@ public class SweepAndPrune extends BroadPhaseAlgorithm {
     private class Box {
         private int[] minEndPointIdx = new int[3];
         private int[] maxEndPointIdx = new int[3];
-        private ConcreteEntity entity;
+        private RenderableEntity entity;
 
-        public ConcreteEntity getEntity() {
+        public RenderableEntity getEntity() {
             return entity;
         }
 
-        public void setEntity(ConcreteEntity entity) {
+        public void setEntity(RenderableEntity entity) {
             this.entity = entity;
         }
         
