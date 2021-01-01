@@ -1,6 +1,7 @@
 package duber.engine;
 
 import duber.engine.exceptions.LWJGLException;
+import duber.engine.utilities.Timer;
 
 public class GameEngine implements Runnable {
     //Targeted FPS
@@ -26,6 +27,7 @@ public class GameEngine implements Runnable {
     public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic) {
         this.windowTitle = windowTitle;
         this.gameLogic = gameLogic;
+
         window = new Window(windowTitle, width, height, vSync);
         updateTimer = new Timer();
         
@@ -49,8 +51,6 @@ public class GameEngine implements Runnable {
 
     protected void init() throws LWJGLException {
         window.init();
-        updateTimer.init();
-        fpsTimer.init();
         gameLogic.init(window);
         mouseInput.init(window);
     }
