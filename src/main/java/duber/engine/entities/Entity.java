@@ -2,7 +2,11 @@ package duber.engine.entities;
 
 import java.util.Optional;
 
+import org.joml.Vector3f;
+
 import duber.engine.Transform;
+import duber.engine.Face;
+import duber.engine.physics.IPhysicsWorld;
 import duber.engine.physics.RigidBody;
 import duber.engine.physics.collisions.Collider;
 
@@ -37,9 +41,17 @@ public abstract class Entity {
         return transform;
     }
 
-    public void update() {
+    public abstract Vector3f[] getVertices();
+    public abstract Face[] getFaces();
+
+    public void update(IPhysicsWorld physicsWorld) {
+        if(collider.isPresent()) {
+            collider.get().update(physicsWorld.getIntersectingConstantFaces(collider.get().getBox()));
+        }
+
         if(rigidBody.isPresent()) {
             rigidBody.get().update();
         }
     }
+
 }
