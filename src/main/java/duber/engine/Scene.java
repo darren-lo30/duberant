@@ -8,12 +8,12 @@ import java.util.Map;
 import duber.engine.graphics.InstancedMesh;
 import duber.engine.graphics.Mesh;
 import duber.engine.graphics.lighting.SceneLighting;
-import duber.engine.entities.ConcreteEntity;
+import duber.engine.entities.RenderableEntity;
 import duber.engine.entities.SkyBox;
 
 public class Scene {
-    private final Map<Mesh, List<ConcreteEntity>> meshMap;
-    private final Map<InstancedMesh, List<ConcreteEntity>> instancedMeshMap;
+    private final Map<Mesh, List<RenderableEntity>> meshMap;
+    private final Map<InstancedMesh, List<RenderableEntity>> instancedMeshMap;
 
     private SceneLighting sceneLighting;
     private SkyBox skyBox;
@@ -51,37 +51,37 @@ public class Scene {
         this.skyBox = skyBox;
     }
 
-    public Map<Mesh, List<ConcreteEntity>> getMeshMap() {
+    public Map<Mesh, List<RenderableEntity>> getMeshMap() {
         return meshMap;
     }
 
-    public Map<InstancedMesh, List<ConcreteEntity>> getInstancedMeshMap() {
+    public Map<InstancedMesh, List<RenderableEntity>> getInstancedMeshMap() {
         return instancedMeshMap;
     }
 
-    public void addConcreteEntitys(ConcreteEntity[] concreteEntities) {
-        if(concreteEntities == null) {
+    public void addRenderableEntities(RenderableEntity[] renderableEntities) {
+        if(renderableEntities == null) {
             return;
         }
-        for(ConcreteEntity concreteEntity: concreteEntities) {
-            addConcreteEntity(concreteEntity);
+        for(RenderableEntity renderableEntity: renderableEntities) {
+            addRenderableEntity(renderableEntity);
         }
     }
 
-    public void addConcreteEntity(ConcreteEntity concreteEntity) {
-        if(concreteEntity == null) {
+    public void addRenderableEntity(RenderableEntity renderableEntity) {
+        if(renderableEntity == null) {
             return;
         }
 
-        Mesh[] meshes = concreteEntity.getMeshes();
+        Mesh[] meshes = renderableEntity.getMeshes();
         for(Mesh mesh: meshes) {
-            List<ConcreteEntity> associatedConcreteEntitys;
+            List<RenderableEntity> associatedRenderableEntities;
             if(mesh instanceof InstancedMesh) {
-                associatedConcreteEntitys = instancedMeshMap.computeIfAbsent((InstancedMesh) mesh, list -> new ArrayList<>());
+                associatedRenderableEntities = instancedMeshMap.computeIfAbsent((InstancedMesh) mesh, list -> new ArrayList<>());
             } else {
-                associatedConcreteEntitys = meshMap.computeIfAbsent(mesh, list -> new ArrayList<>());
+                associatedRenderableEntities = meshMap.computeIfAbsent(mesh, list -> new ArrayList<>());
             }
-            associatedConcreteEntitys.add(concreteEntity);
+            associatedRenderableEntities.add(renderableEntity);
         }
     }
 

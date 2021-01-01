@@ -22,7 +22,7 @@ import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryUtil;
 
 import duber.engine.Transformation;
-import duber.engine.entities.ConcreteEntity;
+import duber.engine.entities.RenderableEntity;
 
 
 public class InstancedMesh extends Mesh {
@@ -84,39 +84,39 @@ public class InstancedMesh extends Mesh {
         glBindVertexArray(0);     
     }
 
-    public void render(List<? extends ConcreteEntity> concreteEntities, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
-        render(concreteEntities, false, transformation, viewMatrix, lightViewMatrix);
+    public void render(List<? extends RenderableEntity> renderableEntities, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
+        render(renderableEntities, false, transformation, viewMatrix, lightViewMatrix);
     }
 
-    public void render(List<? extends ConcreteEntity> concreteEntities, boolean billBoard, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
+    public void render(List<? extends RenderableEntity> renderableEntities, boolean billBoard, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         initRender();
 
         int chunkSize = numInstances;
-        int length = concreteEntities.size();
+        int length = renderableEntities.size();
         for(int i = 0; i<length; i+=chunkSize) {
             int end = Math.min(length, i + chunkSize);
-            List<? extends ConcreteEntity> subList = concreteEntities.subList(i, end);
+            List<? extends RenderableEntity> subList = renderableEntities.subList(i, end);
             renderChunkInstanced(subList, billBoard, transformation, viewMatrix, lightViewMatrix);
         }
         endRender();
     }
 
-    private void renderChunkInstanced(List<? extends ConcreteEntity> concreteEntities, boolean billBoard, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
+    private void renderChunkInstanced(List<? extends RenderableEntity> renderableEntities, boolean billBoard, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         instanceDataBuffer.clear();
 
         Texture texture = getMaterial().getTexture();
 
-        for(int i = 0; i<concreteEntities.size(); i++) {
-            ConcreteEntity concreteEntity = concreteEntities.get(i);
+        for(int i = 0; i<renderableEntities.size(); i++) {
+            RenderableEntity renderableEntity = renderableEntities.get(i);
             
-            Matrix4f modelMatrix = transformation.buildModelMatrix(concreteEntity);
+            Matrix4f modelMatrix = transformation.buildModelMatrix(renderableEntity);
             if(viewMatrix != null) {
                 if(billBoard) {
                     viewMatrix.transpose3x3(modelMatrix);
                 }
                 Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
                 if(billBoard) {
-                    modelViewMatrix.scale(concreteEntity.getTransform().getScale());
+                    modelViewMatrix.scale(renderableEntity.getTransform().getScale());
                 }
                 modelViewMatrix.get(INSTANCE_DATA_SIZE_FLOATS * i, instanceDataBuffer);
             }
@@ -127,8 +127,8 @@ public class InstancedMesh extends Mesh {
             }
 
             if(texture != null) {
-                int textureColumn = concreteEntity.getTextureIndex() % texture.getNumColumns();
-                int textureRow = concreteEntity.getTextureIndex() / texture.getNumRows();
+                int textureColumn = renderableEntity.getTextureIndex() % texture.getNumColumns();
+                int textureRow = renderableEntity.getTextureIndex() / texture.getNumRows();
                 float textureOffsetX = (float) textureColumn / texture.getNumColumns();
                 float textureOffsetY = (float) textureRow / texture.getNumRows();
 
@@ -142,7 +142,7 @@ public class InstancedMesh extends Mesh {
         glBindBuffer(GL_ARRAY_BUFFER, instanceDataVBO);
         glBufferData(GL_ARRAY_BUFFER, instanceDataBuffer, GL_DYNAMIC_DRAW);
 
-        glDrawElementsInstanced(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0, concreteEntities.size());
+        glDrawElementsInstanced(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0, renderableEntities.size());
         glBindBuffer(GL_ARRAY_BUFFER, 0);      
     }
 

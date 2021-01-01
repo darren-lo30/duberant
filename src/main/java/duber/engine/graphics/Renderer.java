@@ -1,12 +1,12 @@
 package duber.engine.graphics;
 
-import duber.engine.entities.ConcreteEntity;
+import duber.engine.entities.RenderableEntity;
 import duber.engine.entities.SkyBox;
 import duber.engine.entities.Camera;
 import duber.engine.Scene;
 import duber.engine.Transformation;
 import duber.engine.graphics.lighting.*;
-import duber.engine.Utils;
+import duber.engine.utilities.Utils;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 
@@ -36,7 +36,7 @@ public class Renderer {
 
     private static final float Z_NEAR = 0.01f;
 
-    private static final float Z_FAR = 5000.0f;
+    private static final float Z_FAR = 6000.0f;
 
     private final Transformation transformation;
     
@@ -132,11 +132,11 @@ public class Renderer {
     private void renderNonInstancedMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix) {
         sceneShaderProgram.setUniform("isInstanced", 0);
 
-        Map<Mesh, List<ConcreteEntity>> meshMap = scene.getMeshMap();
+        Map<Mesh, List<RenderableEntity>> meshMap = scene.getMeshMap();
 
-        for(Map.Entry<Mesh, List<ConcreteEntity>> meshMapEntry: meshMap.entrySet()) {
+        for(Map.Entry<Mesh, List<RenderableEntity>> meshMapEntry: meshMap.entrySet()) {
             Mesh mesh = meshMapEntry.getKey();
-            List<ConcreteEntity> concreteEntities = meshMapEntry.getValue();
+            List<RenderableEntity> renderableEntities = meshMapEntry.getValue();
             Texture texture = mesh.getMaterial().getTexture();
 
             if(texture != null) {
@@ -148,8 +148,8 @@ public class Renderer {
                 shaderProgram.setUniform("material", mesh.getMaterial());
             }
 
-            mesh.render(concreteEntities, (ConcreteEntity concreteEntity) -> {
-                Matrix4f modelMatrix = transformation.buildModelMatrix(concreteEntity);
+            mesh.render(renderableEntities, (RenderableEntity renderableEntity) -> {
+                Matrix4f modelMatrix = transformation.buildModelMatrix(renderableEntity);
                 
                 if(viewMatrix != null) {
                     Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
@@ -161,12 +161,12 @@ public class Renderer {
 
     private void renderInstancedMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         sceneShaderProgram.setUniform("isInstanced", 1);
-        Map<InstancedMesh, List<ConcreteEntity>> meshMap = scene.getInstancedMeshMap();
+        Map<InstancedMesh, List<RenderableEntity>> meshMap = scene.getInstancedMeshMap();
         
-        for(Map.Entry<InstancedMesh, List<ConcreteEntity>> meshMapEntry: meshMap.entrySet()) {
+        for(Map.Entry<InstancedMesh, List<RenderableEntity>> meshMapEntry: meshMap.entrySet()) {
             InstancedMesh mesh = meshMapEntry.getKey();
             Texture texture = mesh.getMaterial().getTexture();
-            List<ConcreteEntity> concreteEntities = meshMapEntry.getValue();
+            List<RenderableEntity> renderableEntities = meshMapEntry.getValue();
 
             if(texture != null) {
                 sceneShaderProgram.setUniform("numColumns", texture.getNumColumns());
@@ -177,7 +177,7 @@ public class Renderer {
                 shaderProgram.setUniform("material", mesh.getMaterial());
             }
 
-            mesh.render(concreteEntities, transformation, viewMatrix, lightViewMatrix);
+            mesh.render(renderableEntities, transformation, viewMatrix, lightViewMatrix);
         }
     }
 

@@ -1,40 +1,37 @@
 package duber.game;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import duber.engine.IGameLogic;
 import duber.engine.MouseInput;
 import duber.engine.Scene;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
-import duber.engine.graphics.Material;
 import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Renderer;
 import duber.engine.graphics.lighting.DirectionalLight;
 import duber.engine.graphics.lighting.SceneLighting;
-import duber.engine.entities.ConcreteEntity;
+import duber.engine.entities.RenderableEntity;
 import duber.engine.entities.SkyBox;
 import duber.engine.loaders.MeshLoader;
-import duber.game.scenes.Crosshair;
 
 public class Duberant implements IGameLogic {
 
     private final Renderer renderer;
-    private Player player;
-    private Crosshair currCrosshair;
-    private Scene currentScene;
+    private final DuberantPhysicsWorld physicsWorld;
+
+    private Player currPlayer;
+    private Scene currScene;
 
     private Controls controls;
     private HUD hud;
 
     public Duberant() {
         hud = new HUD();
+        physicsWorld = new DuberantPhysicsWorld();
         renderer = new Renderer();
-        currCrosshair = new Crosshair();
     }
 
     @Override
@@ -46,38 +43,34 @@ public class Duberant implements IGameLogic {
         } catch (IOException ioe) {
             throw new LWJGLException("Could not initialize renderer");
         }
-
-        Mesh[] playerMeshes = MeshLoader.load("models/player/player.obj", "/models/player");
-        playerMeshes[0].setMaterial(new Material(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 1.0f));
-        player = new Player(playerMeshes);
         
-        controls = new Controls(window, player);
-
+        currScene = new Scene();
+        currScene.setShaded(false); 
         
-        currentScene = new Scene();
-        currentScene.setShaded(false);
-        currentScene.addConcreteEntity(player.getModel());
-
         createSceneLighting();
-        currentScene.setShaded(true);
+
+
+        Mesh[] playerMesh = MeshLoader.load("models/player/model.obj", "models/player");
+        currPlayer = new Player(playerMesh);
+        addRenderableDynamicEntity(currPlayer.getModel());
+        
+        controls = new Controls(window, currPlayer);
 
         Mesh[] csgoMapMesh = MeshLoader.load("models/map/de_dust2-cs-map/source/de_dust2/de_dust2.obj", "models/map/de_dust2-cs-map/source/de_dust2");
-        ConcreteEntity map = new ConcreteEntity(csgoMapMesh);
+        RenderableEntity map = new RenderableEntity(csgoMapMesh);
         map.getTransform().setScale(0.3f);
-        map.getTransform().rotate(270.0f, 0f, 0f);
-        currentScene.addConcreteEntitys(new ConcreteEntity[]{map});
+        map.getTransform().rotateDegrees(90.0f, 0f, 0f);
+        addRenderableConstantEntity(map);
 
         Mesh[] skyBoxMesh = MeshLoader.load("models/skybox/skybox.obj", "models/skybox");
         SkyBox skyBox = new SkyBox(skyBoxMesh[0]);
-        skyBox.getTransform().setScale(4000.0f);
-        
-        currentScene.setSkyBox(skyBox);
-        
+        skyBox.getTransform().setScale(3000.0f);
+        currScene.setSkyBox(skyBox);
     }
 
     private void createSceneLighting() {
         SceneLighting sceneLight = new SceneLighting();
-        currentScene.setSceneLighting(sceneLight);
+        currScene.setSceneLighting(sceneLight);
 
         // Ambient Light
         sceneLight.setAmbientLight(new Vector3f(1.0f, 1.0f, 1.0f));
@@ -92,26 +85,38 @@ public class Duberant implements IGameLogic {
         sceneLight.setDirectionalLight(directionalLight);
     }
 
+    private void addRenderableDynamicEntity(RenderableEntity entity) {
+        currScene.addRenderableEntity(entity);
+        physicsWorld.addDynamicEntity(entity);
+    }
+
+    private void addRenderableConstantEntity(RenderableEntity entity) {
+        currScene.addRenderableEntity(entity);
+        physicsWorld.addConstantEntity(entity);
+    }
+
+
 
     @Override
     public void input(Window window, MouseInput mouseInput) {
-        controls.input();
+        controls.input(mouseInput);
     }
 
     @Override
     public void update(float interval, MouseInput mouseInput) {
-        player.update();
+        physicsWorld.update();
+        currPlayer.updateCamera();
     }
 
     @Override
     public void render(Window window) {
-        renderer.render(window, player.getCamera(), currentScene);
-        hud.displayCrosshair(window, currCrosshair, window.getWidth()/2, window.getHeight()/2);
+        renderer.render(window, currPlayer.getCamera(), currScene);
+        hud.displayCrosshair(window, currPlayer.getCrosshair(), window.getWidth()/2, window.getHeight()/2);
     }
 
     @Override
     public void cleanup() {
         renderer.cleanup();
-        currentScene.cleanup();
+        currScene.cleanup();
     }
 }

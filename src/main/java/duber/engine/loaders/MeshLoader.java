@@ -14,7 +14,7 @@ import org.lwjgl.assimp.AIString;
 import org.lwjgl.assimp.AIVector3D;
 import org.lwjgl.assimp.Assimp;
 
-import duber.engine.Utils;
+import duber.engine.utilities.Utils;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.graphics.Material;
 import duber.engine.graphics.Mesh;

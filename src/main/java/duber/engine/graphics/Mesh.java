@@ -33,7 +33,8 @@ import java.util.function.Consumer;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
-import duber.engine.entities.ConcreteEntity;
+import duber.engine.Face;
+import duber.engine.entities.RenderableEntity;
 
 public class Mesh {    
     private static final int MAX_WEIGHTS = 4;
@@ -249,10 +250,10 @@ public class Mesh {
         endRender();
     }
 
-    public void render(List<? extends ConcreteEntity> concreteEntities, Consumer<ConcreteEntity> consumer) {
+    public void render(List<? extends RenderableEntity> renderableEntities, Consumer<RenderableEntity> consumer) {
         initRender();
-        for(ConcreteEntity concreteEntity: concreteEntities) {
-            consumer.accept(concreteEntity);
+        for(RenderableEntity renderableEntity: renderableEntities) {
+            consumer.accept(renderableEntity);
             glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
         }
         endRender();
