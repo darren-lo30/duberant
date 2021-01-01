@@ -5,7 +5,6 @@ import org.joml.Vector3f;
 
 import duber.engine.MouseInput;
 import duber.engine.Window;
-import duber.engine.physics.RigidBody;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -13,14 +12,12 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 
-import java.util.Optional;
-
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_X;
 
 
 public class Controls {
     private float mouseSensitivity;
-
+    
     private final Window window;
     private Player player;
 
@@ -31,8 +28,10 @@ public class Controls {
         mouseSensitivity = 0.02f;
     }
 
-    public void input() {
+    public void input(MouseInput mouseInput) {
         Vector3f playerVelocity = player.getPlayerBody().getVelocity();
+        Vector3f playerAngularVelocity = player.getPlayerBody().getAngularVelocity();
+
         playerVelocity.set(0, 0, 0);
         
         if(window.isKeyPressed(GLFW_KEY_W)) {
@@ -52,13 +51,8 @@ public class Controls {
         } else if(window.isKeyPressed(GLFW_KEY_X)) {
             playerVelocity.add(0, player.getSpeed(), 0);
         }
+
+        Vector2f playerRotation = mouseInput.getDisplacementVec();
+        playerAngularVelocity.add(playerRotation.y * mouseSensitivity, playerRotation.x * mouseSensitivity, 0.0f);
     }
-
-
-    public void updatePlayer(MouseInput mouseInput) {
-        //Rotate the way that is being viewed
-        Vector2f cameraRotation = mouseInput.getDisplacementVec();
-        player.rotate(cameraRotation.y * mouseSensitivity, cameraRotation.x * mouseSensitivity, 0.0f);
-    }
-
 }
