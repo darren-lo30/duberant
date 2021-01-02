@@ -182,7 +182,6 @@ public class Window {
         return options;
     }
 
-
     public void applyOptions() {
         if(options.isTurnedOn(Options.CULL_FACES)) {
             glEnable(GL_CULL_FACE);

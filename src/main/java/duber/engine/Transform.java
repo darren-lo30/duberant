@@ -35,19 +35,6 @@ public class Transform {
             (float) Math.toRadians(rotationZ));
     }
 
-    public void movePosition(float offsetX, float offsetY, float offsetZ) {
-        if(offsetZ != 0) {
-            position.x += (float)Math.sin(rotation.y()) * -1.0f * offsetZ;
-            position.z += (float)Math.cos(rotation.y()) * offsetZ;
-        }
-        
-        if(offsetX != 0) {
-            position.x += (float)Math.sin(rotation.y() - Math.toRadians(90)) * -1.0f * offsetX;
-            position.z += (float)Math.cos(rotation.y() - Math.toRadians(90)) * offsetX;
-        }
-        position.y += offsetY;
-    }
-
     public float getScale() {
         return scale;
     }

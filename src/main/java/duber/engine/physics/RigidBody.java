@@ -28,10 +28,16 @@ public class RigidBody {
     }
 
     public void update() {
-        transform.movePosition(velocity.x(), velocity.y(), velocity.z());
+        transform.getPosition().add(velocity);
         transform.rotateDegrees(angularVelocity.x(), angularVelocity.y(), angularVelocity.z());
-        
+        velocity.y -= 0.005;
+        velocity.set(0, velocity.y(), 0);
+        if(velocity.y > 1.0) {
+            velocity.y = 1.0f;
+        } else if (velocity.y < -1.0f) {
+            velocity.y = -1.0f;
+        }
         angularVelocity.set(0, 0, 0);
-        velocity.set(0, 0, 0);
+        
     }
 }

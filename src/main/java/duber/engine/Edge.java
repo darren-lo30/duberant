@@ -19,10 +19,10 @@ public class Edge {
     }
 
     private void updateLengthAndNormal() {
-        normal.set(point2);
-        normal.sub(point1);
+        normal.set(point2).sub(point1);
         length = normal.length();
         normal.cross(face.getNormal());
+        normal.mul(-1);
         normal.normalize();
     }
 
@@ -41,6 +41,12 @@ public class Edge {
 
     public float getLength() {
         return length;
+    }
+
+    public boolean isInside(Vector3f point) {
+        Vector3f vec = new Vector3f(point);
+        vec.sub(point1);
+        return vec.dot(normal) >= 0;
     }
     
 }

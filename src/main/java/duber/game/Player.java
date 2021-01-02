@@ -15,7 +15,7 @@ import duber.game.scenes.Crosshair;
  * Player
  */
 public class Player {
-    private float speed = 10.0f;
+    private float speed = 1.0f;
     private boolean jumping = false;
     private final Crosshair crosshair;
 
@@ -29,8 +29,10 @@ public class Player {
         model.setRigidBody(new RigidBody(model.getTransform()));
         SphereCollider sphereCollider = new SphereCollider(model);
         model.setCollider(sphereCollider);
+        sphereCollider.setUnscaledRadius(1.0f);
+        model.getTransform().setScale(5.0f);
 
-        model.getTransform().setScale(50.0f);
+        model.getTransform().getPosition().set(0, 0, 0);
 
         camera = new Camera();
         crosshair = new Crosshair();
@@ -60,7 +62,7 @@ public class Player {
         Vector3f playerPosition = getPlayerBody().getTransform().getPosition();
         Vector3f playerRotation = getPlayerBody().getTransform().getRotation();
         camera.getTransform().getPosition().set(playerPosition);
-        camera.getTransform().getPosition().add(0, 0, 500);
+        camera.getTransform().getPosition().add(0, 20, 50);
         camera.getTransform().getRotation().set(playerRotation);
     }
 

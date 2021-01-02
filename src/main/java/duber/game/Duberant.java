@@ -1,9 +1,12 @@
 package duber.game;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import org.joml.Vector3f;
 
+import duber.engine.Face;
 import duber.engine.IGameLogic;
 import duber.engine.MouseInput;
 import duber.engine.Scene;
@@ -36,6 +39,7 @@ public class Duberant implements IGameLogic {
 
     @Override
     public void init(Window window) throws LWJGLException {
+        window.getOptions().setOption(Window.Options.DISPLAY_TRIANGLES, true);
         window.applyOptions();
         try { 
             renderer.init();
@@ -50,17 +54,45 @@ public class Duberant implements IGameLogic {
         createSceneLighting();
 
 
-        Mesh[] playerMesh = MeshLoader.load("models/player/model.obj", "models/player");
+        Mesh[] playerMesh = MeshLoader.load("models/cube/cube.obj", "models/cube");
         currPlayer = new Player(playerMesh);
         addRenderableDynamicEntity(currPlayer.getModel());
         
         controls = new Controls(window, currPlayer);
 
-        Mesh[] csgoMapMesh = MeshLoader.load("models/map/de_dust2-cs-map/source/de_dust2/de_dust2.obj", "models/map/de_dust2-cs-map/source/de_dust2");
+        Mesh[] csgoMapMesh = MeshLoader.load("models/map/map.obj", "models/map");
         RenderableEntity map = new RenderableEntity(csgoMapMesh);
         map.getTransform().setScale(0.3f);
-        map.getTransform().rotateDegrees(90.0f, 0f, 0f);
         addRenderableConstantEntity(map);
+        
+        
+        Mesh[] terrainMesh = MeshLoader.load("models/castle/castle.obj", "models/castle");
+        RenderableEntity terrain = new RenderableEntity(terrainMesh);
+        terrain.getTransform().setScale(100.0f);
+        //addRenderableConstantEntity(terrain);
+
+        /*
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("test.txt"));
+            for(Face face: map.getFaces()) {
+                String s = "";
+                for(Vector3f v : face.getVertices()) {
+                    s += String.format("pnt(%.2f %.2f %.2f) ", v.x, v.y, v.z);
+                }
+                bw.write(s + "\n");
+            }
+            bw.close();
+        } catch (Exception e){
+            System.out.println("Rip");
+        }
+        */
+        
+        Mesh[] cubeMesh = MeshLoader.load("models/cube/cube.obj", "models/cube");
+        RenderableEntity cube = new RenderableEntity(cubeMesh);
+        cube.getTransform().setScale(5.0f);
+        cube.getTransform().getPosition().set(0, 0, 0);
+        //addRenderableConstantEntity(cube);
+
 
         Mesh[] skyBoxMesh = MeshLoader.load("models/skybox/skybox.obj", "models/skybox");
         SkyBox skyBox = new SkyBox(skyBoxMesh[0]);
@@ -104,6 +136,7 @@ public class Duberant implements IGameLogic {
 
     @Override
     public void update(float interval, MouseInput mouseInput) {
+        controls.update();
         physicsWorld.update();
         currPlayer.updateCamera();
     }
@@ -120,3 +153,4 @@ public class Duberant implements IGameLogic {
         currScene.cleanup();
     }
 }
+

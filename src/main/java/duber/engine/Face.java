@@ -39,12 +39,12 @@ public class Face {
     }
 
     private void calculateNormal() {
-        Vector3f v1 = new Vector3f(vertices[0]);
-        v1.sub(vertices[1]);
-        Vector3f v2 = new Vector3f(vertices[2]);
-        v2.sub(vertices[1]);
+        Vector3f va = new Vector3f(vertices[1]).sub(vertices[0]);
+        Vector3f vb = new Vector3f(vertices[2]).sub(vertices[0]);
 
-        normal.set(v1).cross(v2).normalize();
+        normal.set(va)
+              .cross(vb)
+              .normalize();
     }
 
     private void calculateEdges() {

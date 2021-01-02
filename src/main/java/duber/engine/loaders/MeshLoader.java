@@ -26,7 +26,7 @@ public class MeshLoader {
     private MeshLoader() {}
     public static Mesh[] load(String resourcePath, String textureDirectory) throws LWJGLException {
         return load(resourcePath, textureDirectory, 
-            aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_FixInfacingNormals);
+            aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
     }
 
     public static Mesh[] load(String resourcePath, String textureDirectory, int flags) throws LWJGLException {

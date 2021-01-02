@@ -48,10 +48,14 @@ public abstract class Entity {
         if(collider.isPresent()) {
             collider.get().update(physicsWorld.getIntersectingConstantFaces(collider.get().getBox()));
         }
-
+        
         if(rigidBody.isPresent()) {
             rigidBody.get().update();
         }
+
+        
+
+        
     }
 
 }
