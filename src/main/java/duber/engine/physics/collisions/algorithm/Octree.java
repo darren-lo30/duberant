@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
-import duber.engine.Transform;
+import duber.engine.entities.Transform;
 import duber.engine.Face;
 import duber.engine.physics.collisions.Box;
 

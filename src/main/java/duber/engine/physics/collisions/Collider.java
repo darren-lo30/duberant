@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.joml.Vector3f;
 
-import duber.engine.Transform;
+import duber.engine.entities.Transform;
 import duber.engine.entities.Entity;
 import duber.engine.Edge;
 import duber.engine.Face;

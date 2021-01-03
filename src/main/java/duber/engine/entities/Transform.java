@@ -1,4 +1,4 @@
-package duber.engine;
+package duber.engine.entities;
 
 import org.joml.Vector3f;
 

@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.joml.Vector3f;
 
-import duber.engine.Transform;
 import duber.engine.Face;
 import duber.engine.physics.IPhysicsWorld;
 import duber.engine.physics.RigidBody;

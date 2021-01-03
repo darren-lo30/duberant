@@ -2,6 +2,8 @@ package duber.engine;
 
 import org.joml.Vector3f;
 
+import duber.engine.entities.Transform;
+
 public class Face {
     private final Vector3f normal;
     private final Vector3f[] vertices;

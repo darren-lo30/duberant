@@ -2,7 +2,7 @@ package duber.engine.physics;
 
 import org.joml.Vector3f;
 
-import duber.engine.Transform;
+import duber.engine.entities.Transform;
 
 public class RigidBody {
     private final Transform transform;

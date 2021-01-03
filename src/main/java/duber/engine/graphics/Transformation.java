@@ -1,6 +1,6 @@
-package duber.engine;
+package duber.engine.graphics;
 
-import duber.engine.graphics.OrthoCoord;
+import duber.engine.entities.Transform;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
