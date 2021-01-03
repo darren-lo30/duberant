@@ -1,4 +1,4 @@
-package duber.game.scenes;
+package duber.game.client.scenes;
 
 import org.joml.Vector4f;
 

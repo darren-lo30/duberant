@@ -65,10 +65,10 @@ public class GameEngine implements Runnable {
             accumulator += elapsedTime;
 
             //Get any input
-            input();
-
+            
             //Calculate updates in the scene
             while(accumulator >= interval) {
+                input();
                 update(interval);
                 accumulator -= interval;
             }
@@ -97,7 +97,6 @@ public class GameEngine implements Runnable {
 
     protected void input() {
         mouseInput.updateDisplacementVec();
-        gameLogic.input(window, mouseInput);
     }
 
     protected void update(float interval) {

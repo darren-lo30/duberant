@@ -1,12 +1,8 @@
 package duber.game.client;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import org.joml.Vector3f;
-
-import duber.engine.Face;
 import duber.engine.IGameLogic;
 import duber.engine.MouseInput;
 import duber.engine.Scene;
@@ -129,15 +125,9 @@ public class Duberant implements IGameLogic {
     }
 
 
-
-    @Override
-    public void input(Window window, MouseInput mouseInput) {
-        controls.input(mouseInput);
-    }
-
     @Override
     public void update(float interval, MouseInput mouseInput) {
-        controls.update();
+        controls.update(mouseInput);
         currPlayer.updateCamera();
         physicsWorld.update();
     }

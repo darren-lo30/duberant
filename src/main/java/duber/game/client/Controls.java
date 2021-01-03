@@ -21,36 +21,32 @@ public class Controls {
     private final Window window;
     private Player player;
 
+
+
     public Controls(Window window, Player player) {
         this.window = window;
         this.player = player;
 
-        mouseSensitivity = 0.006f;
+        mouseSensitivity = 0.0003f;
     }
 
-    private void addControlVelocity(Vector3f playerVelocity, Vector3f playerRotation, Vector3f controlVelocity) {
+    private void addControlVelocity(Vector3f playerVelocity, Vector3f controlRotation, Vector3f controlVelocity) {
         if(controlVelocity.z() != 0) {
-            playerVelocity.x += (float)Math.sin(playerRotation.y()) * -1.0f * controlVelocity.z();
-            playerVelocity.z += (float)Math.cos(playerRotation.y()) * controlVelocity.z();
+            playerVelocity.x += (float)Math.sin(controlRotation.y()) * -1.0f * controlVelocity.z();
+            playerVelocity.z += (float)Math.cos(controlRotation.y()) * controlVelocity.z();
         }
         
         if(controlVelocity.x() != 0) {
-            playerVelocity.x += (float)Math.sin(playerRotation.y() - Math.toRadians(90)) * -1.0f * controlVelocity.x();
-            playerVelocity.z += (float)Math.cos(playerRotation.y() - Math.toRadians(90)) * controlVelocity.x();
+            playerVelocity.x += (float)Math.sin(controlRotation.y() - Math.toRadians(90)) * -1.0f * controlVelocity.x();
+            playerVelocity.z += (float)Math.cos(controlRotation.y() - Math.toRadians(90)) * controlVelocity.x();
         }
         playerVelocity.y += controlVelocity.y();
     }
 
-    public void input(MouseInput mouseInput) {
-        Vector2f playerRotation = mouseInput.getDisplacementVec();
-        player.getModel().getTransform().rotateDegrees(playerRotation.y * mouseSensitivity, playerRotation.x * mouseSensitivity, 0.0f);
-    }
+    public void update(MouseInput mouseInput) {
+        Vector2f controlRotation = mouseInput.getDisplacementVec();
+        Vector3f controlVelocity = new Vector3f();
 
-    public void update() {
-        Vector3f playerVelocity = player.getPlayerBody().getVelocity();
-
-        Vector3f controlVelocity = new Vector3f();      
-        
         if(window.isKeyPressed(GLFW_KEY_W)) {
             controlVelocity.add(0, 0, -player.getSpeed());
         } else if(window.isKeyPressed(GLFW_KEY_S)) {
@@ -68,7 +64,9 @@ public class Controls {
         } else if(window.isKeyPressed(GLFW_KEY_X)) {
             controlVelocity.add(0, player.getSpeed(), 0);
         }
-
+        Vector3f playerVelocity = player.getPlayerBody().getVelocity();
         addControlVelocity(playerVelocity, player.getModel().getTransform().getRotation(), controlVelocity);
+        player.getPlayerBody().getAngularVelocity().add(
+            controlRotation.y * mouseSensitivity, controlRotation.x * mouseSensitivity, 0.0f);
     }
 }
