@@ -1,6 +1,5 @@
 package duber.engine;
 
-import duber.engine.entities.Entity;
 import duber.engine.graphics.OrthoCoord;
 
 import org.joml.Matrix4f;
@@ -65,11 +64,10 @@ public class Transformation {
         return updateGeneralViewMatrix(lightPosition, lightRotation, lightViewMatrix);
     }
 
-    public final Matrix4f buildModelMatrix(Entity entity) {
-        Transform entityTransform = entity.getTransform();
-        Vector3f position = entityTransform.getPosition();
-        Vector3f rotation = entityTransform.getRotation();
-        float scale = entityTransform.getScale();
+    public final Matrix4f buildModelMatrix(Transform transform) {
+        Vector3f position = transform.getPosition();
+        Vector3f rotation = transform.getRotation();
+        float scale = transform.getScale();
 
         return modelMatrix
             .identity()
@@ -84,19 +82,19 @@ public class Transformation {
         return viewMatrix.mulAffine(modelMatrix, modelViewMatrix);
     }
 
-    public final Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix) {
-        return buildModelViewMatrix(buildModelMatrix(entity), viewMatrix);
+    public final Matrix4f buildModelViewMatrix(Transform transform, Matrix4f viewMatrix) {
+        return buildModelViewMatrix(buildModelMatrix(transform), viewMatrix);
     }
 
     public final Matrix4f buildModelLightViewMatrix(Matrix4f modelMatrix, Matrix4f lightViewMatrix) {
         return lightViewMatrix.mulAffine(modelMatrix, modelLightViewMatrix);
     }
 
-    public final Matrix4f buildModelLightViewMatrix(Entity entity, Matrix4f lightViewMatrix) {
-        return buildModelLightViewMatrix(buildModelMatrix(entity), lightViewMatrix);
+    public final Matrix4f buildModelLightViewMatrix(Transform transform, Matrix4f lightViewMatrix) {
+        return buildModelLightViewMatrix(buildModelMatrix(transform), lightViewMatrix);
     }
 
-    public Matrix4f buildOrthoProjectionModelMatrix(Entity entity, Matrix4f orthoMatrix) {
-        return orthoMatrix.mulOrthoAffine(buildModelMatrix(entity), orthoProjectionModelMatrix);
+    public Matrix4f buildOrthoProjectionModelMatrix(Transform transform, Matrix4f orthoMatrix) {
+        return orthoMatrix.mulOrthoAffine(buildModelMatrix(transform), orthoProjectionModelMatrix);
     }
 }

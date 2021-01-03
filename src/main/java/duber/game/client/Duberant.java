@@ -133,7 +133,7 @@ public class Duberant implements IGameLogic {
     }
 
     @Override
-    public void render(Window window) {
+    public void render(Window window, float alpha) {
         renderer.render(window, currPlayer.getCamera(), currScene);
         hud.displayCrosshair(window, currPlayer.getCrosshair(), window.getWidth()/2, window.getHeight()/2);
     }

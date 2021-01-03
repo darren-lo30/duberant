@@ -41,6 +41,7 @@ public abstract class Entity {
         return transform;
     }
 
+
     public abstract Vector3f[] getVertices();
     public abstract Face[] getFaces();
 
@@ -51,11 +52,7 @@ public abstract class Entity {
         
         if(rigidBody.isPresent()) {
             rigidBody.get().update();
-        }
-
-        
-
-        
+        }        
     }
 
 }

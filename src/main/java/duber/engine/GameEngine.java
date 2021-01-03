@@ -65,7 +65,7 @@ public class GameEngine implements Runnable {
             accumulator += elapsedTime;
 
             //Get any input
-            
+
             //Calculate updates in the scene
             while(accumulator >= interval) {
                 input();
@@ -73,8 +73,9 @@ public class GameEngine implements Runnable {
                 accumulator -= interval;
             }
 
+            float alpha = accumulator/interval;
             //Render the scene
-            render();
+            render(alpha);
 
             if(!window.isvSync()) {
                 sync();
@@ -112,9 +113,9 @@ public class GameEngine implements Runnable {
         fps++;
     }
 
-    protected void render() {
+    protected void render(float alpha) {
         calculateAndDisplayFps();        
-        gameLogic.render(window);
+        gameLogic.render(window, alpha);
         window.update();
     }
 

@@ -12,8 +12,7 @@ public class RenderableEntity extends Entity {
     private int textureIndex = 0;
 
     public RenderableEntity(Mesh mesh) {
-        this(new Mesh[] { mesh });
-        vertices = mesh.getVertices();
+        this(new Mesh[]{mesh});
     }
 
     public RenderableEntity(Mesh[] meshes) {

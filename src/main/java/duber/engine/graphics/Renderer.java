@@ -149,7 +149,7 @@ public class Renderer {
             }
 
             mesh.render(renderableEntities, (RenderableEntity renderableEntity) -> {
-                Matrix4f modelMatrix = transformation.buildModelMatrix(renderableEntity);
+                Matrix4f modelMatrix = transformation.buildModelMatrix(renderableEntity.getTransform());
                 
                 if(viewMatrix != null) {
                     Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
@@ -318,7 +318,7 @@ public class Renderer {
         Mesh mesh = skyBox.getMesh();
 
         //Set the model view matrix uniform
-        Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(skyBox, viewMatrix);
+        Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(skyBox.getTransform(), viewMatrix);
         
         //Set uniforms
         skyBoxShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
