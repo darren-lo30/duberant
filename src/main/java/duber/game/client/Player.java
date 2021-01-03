@@ -1,4 +1,4 @@
-package duber.game;
+package duber.game.client;
 
 import java.util.Optional;
 
@@ -9,7 +9,7 @@ import duber.engine.entities.RenderableEntity;
 import duber.engine.graphics.Mesh;
 import duber.engine.physics.RigidBody;
 import duber.engine.physics.collisions.SphereCollider;
-import duber.game.scenes.Crosshair;
+import duber.game.client.scenes.Crosshair;
 
 /**
  * Player

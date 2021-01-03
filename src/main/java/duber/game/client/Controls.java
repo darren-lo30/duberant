@@ -1,4 +1,4 @@
-package duber.game;
+package duber.game.client;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -25,7 +25,7 @@ public class Controls {
         this.window = window;
         this.player = player;
 
-        mouseSensitivity = 0.02f;
+        mouseSensitivity = 0.006f;
     }
 
     private void addControlVelocity(Vector3f playerVelocity, Vector3f playerRotation, Vector3f controlVelocity) {
@@ -42,10 +42,8 @@ public class Controls {
     }
 
     public void input(MouseInput mouseInput) {
-        Vector3f playerAngularVelocity = player.getPlayerBody().getAngularVelocity();
-
         Vector2f playerRotation = mouseInput.getDisplacementVec();
-        playerAngularVelocity.add(playerRotation.y * mouseSensitivity, playerRotation.x * mouseSensitivity, 0.0f);
+        player.getModel().getTransform().rotateDegrees(playerRotation.y * mouseSensitivity, playerRotation.x * mouseSensitivity, 0.0f);
     }
 
     public void update() {

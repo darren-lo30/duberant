@@ -1,8 +1,8 @@
-package duber.game;
+package duber.game.client;
 
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
-import duber.game.scenes.Crosshair;
+import duber.game.client.scenes.Crosshair;
 
 import org.lwjgl.nanovg.NVGColor;
 import static org.lwjgl.nanovg.NanoVG.*;

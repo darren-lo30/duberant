@@ -1,4 +1,4 @@
-package duber.game;
+package duber.game.client;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -19,6 +19,7 @@ import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.entities.RenderableEntity;
 import duber.engine.entities.SkyBox;
 import duber.engine.loaders.MeshLoader;
+import duber.game.DuberantPhysicsWorld;
 
 public class Duberant implements IGameLogic {
 
@@ -39,7 +40,7 @@ public class Duberant implements IGameLogic {
 
     @Override
     public void init(Window window) throws LWJGLException {
-        window.getOptions().setOption(Window.Options.DISPLAY_TRIANGLES, true);
+        //window.getOptions().setOption(Window.Options.DISPLAY_TRIANGLES, true);
         window.applyOptions();
         try { 
             renderer.init();
@@ -137,8 +138,8 @@ public class Duberant implements IGameLogic {
     @Override
     public void update(float interval, MouseInput mouseInput) {
         controls.update();
-        physicsWorld.update();
         currPlayer.updateCamera();
+        physicsWorld.update();
     }
 
     @Override

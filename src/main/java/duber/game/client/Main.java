@@ -1,4 +1,4 @@
-package duber.game;
+package duber.game.client;
 
 
 import duber.engine.GameEngine;

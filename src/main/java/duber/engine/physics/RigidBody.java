@@ -29,7 +29,7 @@ public class RigidBody {
 
     public void update() {
         transform.getPosition().add(velocity);
-        transform.rotateDegrees(angularVelocity.x(), angularVelocity.y(), angularVelocity.z());
+        transform.rotate(angularVelocity.x(), angularVelocity.y(), angularVelocity.z());
         velocity.y -= 0.005;
         velocity.set(0, velocity.y(), 0);
         if(velocity.y > 1.0) {
