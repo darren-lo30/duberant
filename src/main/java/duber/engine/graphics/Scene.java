@@ -1,12 +1,10 @@
-package duber.engine;
+package duber.engine.graphics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import duber.engine.graphics.InstancedMesh;
-import duber.engine.graphics.Mesh;
 import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.entities.RenderableEntity;
 import duber.engine.entities.SkyBox;

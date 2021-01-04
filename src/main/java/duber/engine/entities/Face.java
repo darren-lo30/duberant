@@ -1,8 +1,6 @@
-package duber.engine;
+package duber.engine.entities;
 
 import org.joml.Vector3f;
-
-import duber.engine.entities.Transform;
 
 public class Face {
     private final Vector3f normal;

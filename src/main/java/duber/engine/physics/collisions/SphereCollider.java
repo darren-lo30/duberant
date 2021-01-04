@@ -3,8 +3,8 @@ package duber.engine.physics.collisions;
 import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
-import duber.engine.Edge;
-import duber.engine.Face;
+import duber.engine.entities.Edge;
+import duber.engine.entities.Face;
 
 public class SphereCollider extends Collider {
     private float unscaledRadius;

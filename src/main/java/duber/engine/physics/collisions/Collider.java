@@ -8,8 +8,8 @@ import org.joml.Vector3f;
 
 import duber.engine.entities.Transform;
 import duber.engine.entities.Entity;
-import duber.engine.Edge;
-import duber.engine.Face;
+import duber.engine.entities.Edge;
+import duber.engine.entities.Face;
 import duber.engine.physics.RigidBody;
 
 public abstract class Collider {   

@@ -175,9 +175,14 @@ public class Window {
         return projectionMatrix.identity().setPerspective(fov, aspectRatio, zNear, zFar);
     }
 
-    public Options getOptions() {
-        return options;
+    public void setOption(int option, boolean turnedOn) {
+        options.setOption(option, turnedOn);
     }
+
+    public boolean optionIsTurnedOn(int option) {
+        return options.isTurnedOn(option);
+    }
+
 
     public void applyOptions() {
         if(options.isTurnedOn(Options.CULL_FACES)) {

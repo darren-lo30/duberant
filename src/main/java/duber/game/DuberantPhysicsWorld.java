@@ -7,7 +7,7 @@ import java.util.Set;
 import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
-import duber.engine.Face;
+import duber.engine.entities.Face;
 import duber.engine.physics.IPhysicsWorld;
 import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.algorithm.Octree;

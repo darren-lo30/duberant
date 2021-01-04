@@ -72,7 +72,7 @@ public class GameEngine implements Runnable {
             //Render the scene
             render(interpolationFactor);
 
-            if(!window.getOptions().isTurnedOn(Window.Options.ENABLE_VSYNC)) {
+            if(!window.optionIsTurnedOn(Window.Options.ENABLE_VSYNC)) {
                 sync();
             }
         }
@@ -102,7 +102,9 @@ public class GameEngine implements Runnable {
     private void calculateAndDisplayFps() {
         if (fpsTimer.secondHasPassed()) {
             fpsTimer.getElapsedTime();
-            window.setTitle(windowTitle + " - " + fps + " FPS");
+            if(window.optionIsTurnedOn(Window.Options.DISPLAY_FPS)) {
+                window.setTitle(windowTitle + " - " + fps + " FPS");
+            }
             fps = 0;
         }
         fps++;

@@ -4,8 +4,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import duber.engine.graphics.Transformation;
-import duber.engine.Face;
-
 public class Camera extends Entity {
     private final Matrix4f viewMatrix;
 

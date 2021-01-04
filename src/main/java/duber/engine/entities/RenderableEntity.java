@@ -1,8 +1,6 @@
 package duber.engine.entities;
 
 import org.joml.Vector3f;
-
-import duber.engine.Face;
 import duber.engine.graphics.Mesh;
 
 public class RenderableEntity extends Entity {

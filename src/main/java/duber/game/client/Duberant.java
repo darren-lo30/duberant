@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 import duber.engine.IGameLogic;
 import duber.engine.KeyboardInput;
 import duber.engine.MouseInput;
-import duber.engine.Scene;
+import duber.engine.graphics.Scene;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.graphics.Mesh;

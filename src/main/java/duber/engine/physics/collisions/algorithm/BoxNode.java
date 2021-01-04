@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
-import duber.engine.Face;
+import duber.engine.entities.Face;
 import duber.engine.physics.collisions.Box;
 
 public class BoxNode extends Box {

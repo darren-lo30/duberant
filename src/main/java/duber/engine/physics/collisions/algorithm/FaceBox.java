@@ -2,7 +2,7 @@ package duber.engine.physics.collisions.algorithm;
 
 import org.joml.Vector3f;
 
-import duber.engine.Face;
+import duber.engine.entities.Face;
 import duber.engine.physics.collisions.Box;
 
 public class FaceBox extends Box {
