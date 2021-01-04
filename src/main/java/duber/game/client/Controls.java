@@ -40,7 +40,7 @@ public class Controls {
     }
 
     public void update(MouseInput mouseInput, KeyboardInput keyboardInput) {
-        Vector2f controlRotation = mouseInput.getDisplacementVec();
+        Vector2f controlRotation = mouseInput.getCursorDisplacement();
         Vector3f controlVelocity = new Vector3f();
 
         if(keyboardInput.isKeyPressed(GLFW_KEY_W)) {

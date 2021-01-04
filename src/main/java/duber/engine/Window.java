@@ -51,6 +51,9 @@ public class Window {
 
     private Options options;
 
+    private final MouseInput mouseInput;
+    private final KeyboardInput keyboardInput;
+
     public Window(String title, int width, int height) {
         this.title = title;
         this.width = width;
@@ -60,6 +63,9 @@ public class Window {
         options = new Options();
 
         init();
+
+        mouseInput = new MouseInput(windowHandle);
+        keyboardInput = new KeyboardInput(windowHandle);
     }
 
     private void init() {
@@ -150,6 +156,14 @@ public class Window {
 
     public boolean shouldClose() {
         return glfwWindowShouldClose(windowHandle);
+    }
+
+    public MouseInput getMouseInput() {
+        return mouseInput;
+    }
+
+    public KeyboardInput getKeyboardInput() {
+        return keyboardInput;
     }
 
     public final Matrix4f getProjectionMatrix() {

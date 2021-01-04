@@ -15,12 +15,8 @@ public class GameEngine implements Runnable {
     
     private final Timer updateTimer;
     
-    private final IGameLogic gameLogic;
-    
-    private final MouseInput mouseInput;
+    private final IGameLogic gameLogic;    
 
-    private final KeyboardInput keyboardInput;
-    
     private final Timer fpsTimer;
     
     private int fps;
@@ -33,8 +29,6 @@ public class GameEngine implements Runnable {
         window = new Window(windowTitle, width, height);
         updateTimer = new Timer();
         
-        keyboardInput = new KeyboardInput(window.getWindowHandle());
-        mouseInput = new MouseInput(window.getWindowHandle());
         
         fps = 0;
         fpsTimer = new Timer();
@@ -98,11 +92,11 @@ public class GameEngine implements Runnable {
     }
 
     private void input() {
-        mouseInput.updateDisplacementVec();
+        window.getMouseInput().updateCursorDisplacement();
     }
 
     private void update(float interval) {
-        gameLogic.update(interval, mouseInput, keyboardInput);
+        gameLogic.update(interval, window.getMouseInput(), window.getKeyboardInput());
     }
 
     private void calculateAndDisplayFps() {

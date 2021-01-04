@@ -5,28 +5,30 @@ import org.joml.Vector2f;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class MouseInput {
-    
+
+    private final long windowHandle;
+
     private final Vector2d previousPos;
 
     private final Vector2d currentPos;
 
-    private final Vector2f displacementVec;
+    private final Vector2f cursorDisplacement;
 
     private boolean leftButtonIsPressed = false;
 
     private boolean rightButtonIsPressed = false;
 
-    private boolean firstUpdate = true;
-
     public MouseInput(long windowHandle) {
+        this.windowHandle = windowHandle;
+
         previousPos = new Vector2d(0, 0);
         currentPos = new Vector2d(0, 0);
-        displacementVec = new Vector2f();
+        cursorDisplacement = new Vector2f();
         
-        init(windowHandle);
+        init();
     }
     
-    private void init(long windowHandle) {
+    private void init() {
         glfwSetCursorPos(windowHandle, 0, 0);
         glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> {
             currentPos.x = xPos;
@@ -39,24 +41,18 @@ public class MouseInput {
         });
     }
 
-    public Vector2f getDisplacementVec() {
-        return displacementVec;
+    public Vector2f getCursorDisplacement() {
+        return cursorDisplacement;
     }
 
-    public void updateDisplacementVec() {
-
-        if(!firstUpdate) {
-            displacementVec.x = (float) (currentPos.x - previousPos.x);
-            displacementVec.y = (float) (currentPos.y - previousPos.y);
-        } else {
-            firstUpdate = false;
-        }
-
+    public void updateCursorDisplacement() {
+        cursorDisplacement.x = (float) (currentPos.x - previousPos.x);
+        cursorDisplacement.y = (float) (currentPos.y - previousPos.y);
         previousPos.x = currentPos.x;
         previousPos.y = currentPos.y;
     }
 
-    public void setMousePosition(long windowHandle, float xPos, float yPos) {
+    public void setCursorPosition(float xPos, float yPos) {
         glfwSetCursorPos(windowHandle, xPos, yPos);
     }
 
