@@ -18,20 +18,23 @@ public class GameEngine implements Runnable {
     private final IGameLogic gameLogic;
     
     private final MouseInput mouseInput;
+
+    private final KeyboardInput keyboardInput;
     
     private final Timer fpsTimer;
     
     private int fps;
 
     
-    public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic) {
+    public GameEngine(String windowTitle, int width, int height, IGameLogic gameLogic) {
         this.windowTitle = windowTitle;
         this.gameLogic = gameLogic;
 
-        window = new Window(windowTitle, width, height, vSync);
+        window = new Window(windowTitle, width, height);
         updateTimer = new Timer();
         
-        mouseInput = new MouseInput();
+        keyboardInput = new KeyboardInput(window.getWindowHandle());
+        mouseInput = new MouseInput(window.getWindowHandle());
         
         fps = 0;
         fpsTimer = new Timer();
@@ -49,13 +52,11 @@ public class GameEngine implements Runnable {
         }
     }
 
-    protected void init() throws LWJGLException {
-        window.init();
+    private void init() throws LWJGLException {
         gameLogic.init(window);
-        mouseInput.init(window);
     }
 
-    protected void gameLoop() {
+    private void gameLoop() {
         float elapsedTime;
         float accumulator = 0f;
         float interval = 1.0f/TARGET_UPS;
@@ -73,11 +74,11 @@ public class GameEngine implements Runnable {
                 accumulator -= interval;
             }
 
-            float alpha = accumulator/interval;
+            float interpolationFactor = accumulator/interval;
             //Render the scene
-            render(alpha);
+            render(interpolationFactor);
 
-            if(!window.isvSync()) {
+            if(!window.getOptions().isTurnedOn(Window.Options.ENABLE_VSYNC)) {
                 sync();
             }
         }
@@ -96,12 +97,12 @@ public class GameEngine implements Runnable {
         }
     }
 
-    protected void input() {
+    private void input() {
         mouseInput.updateDisplacementVec();
     }
 
-    protected void update(float interval) {
-        gameLogic.update(interval, mouseInput);
+    private void update(float interval) {
+        gameLogic.update(interval, mouseInput, keyboardInput);
     }
 
     private void calculateAndDisplayFps() {
@@ -113,13 +114,13 @@ public class GameEngine implements Runnable {
         fps++;
     }
 
-    protected void render(float alpha) {
+    private void render(float interpolationFactor) {
         calculateAndDisplayFps();        
-        gameLogic.render(window, alpha);
+        gameLogic.render(window, interpolationFactor);
         window.update();
     }
 
-    protected void cleanup() {
+    private void cleanup() {
         gameLogic.cleanup();
     }
 }

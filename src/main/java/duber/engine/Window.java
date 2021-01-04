@@ -47,23 +47,22 @@ public class Window {
 
     private boolean resized;
     
-    private boolean vSync;
-
     private Matrix4f projectionMatrix;
 
     private Options options;
 
-    public Window(String title, int width, int height, boolean vSync) {
+    public Window(String title, int width, int height) {
         this.title = title;
         this.width = width;
         this.height = height;
-        this.vSync = vSync;
 
         projectionMatrix = new Matrix4f();
         options = new Options();
+
+        init();
     }
 
-    public void init() {
+    private void init() {
         GLFWErrorCallback.createPrint(System.err).set();
 
         if(!glfwInit()) {
@@ -108,11 +107,6 @@ public class Window {
 
         glfwMakeContextCurrent(windowHandle);
 
-        //Enable vsync
-        if(isvSync()) {
-            glfwSwapInterval(1);
-        }
-
         //Display window
         glfwShowWindow(windowHandle);
         GL.createCapabilities();
@@ -149,20 +143,9 @@ public class Window {
         return title;
     }
 
-    public boolean isKeyPressed(int keyCode) {
-        return glfwGetKey(windowHandle, keyCode) == GLFW_PRESS;
-    }
-
-    public boolean isvSync() {
-        return vSync;
-    }
 
     public boolean isResized() {
         return resized;
-    }
-
-    public void setResized(boolean resized) {
-        this.resized = resized;
     }
 
     public boolean shouldClose() {
@@ -201,15 +184,17 @@ public class Window {
         } else {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
+
+        if(options.isTurnedOn(Options.ENABLE_VSYNC)) {
+            glfwSwapInterval(1);
+        } else {
+            glfwSwapInterval(0);
+        }
     }
 
     public void update() {
         glfwPollEvents();
         glfwSwapBuffers(windowHandle);
-    }
-
-    public void setClearColour(float r, float g, float b, float alpha) {
-        glClearColor(r, g, b, alpha);
     }
 
     private boolean isFullScreen() {
@@ -224,12 +209,14 @@ public class Window {
         public static final int DISPLAY_FPS = 3;
         public static final int SHOW_CURSOR = 4;
         public static final int ANTI_ALIASING = 5;
+        public static final int ENABLE_VSYNC = 6;
 
         private Options() {
             optionsMap = new HashMap<>();
             optionsMap.put(DISPLAY_FPS, true);
             optionsMap.put(SHOW_CURSOR, false);
             optionsMap.put(ANTI_ALIASING, true);
+            optionsMap.put(ENABLE_VSYNC, true);
         }
 
         public boolean isTurnedOn(int option) {

@@ -5,8 +5,7 @@ import duber.engine.exceptions.LWJGLException;
 public interface IGameLogic {
     void init(Window window) throws LWJGLException;
 
-
-    void update(float interval, MouseInput mouseInput);
+    void update(float interval, MouseInput mouseInput, KeyboardInput keyBoardInput);
 
     void render(Window window, float alpha);
     

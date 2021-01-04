@@ -3,8 +3,8 @@ package duber.game.client;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import duber.engine.KeyboardInput;
 import duber.engine.MouseInput;
-import duber.engine.Window;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -18,13 +18,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_X;
 public class Controls {
     private float mouseSensitivity;
     
-    private final Window window;
     private Player player;
 
-
-
-    public Controls(Window window, Player player) {
-        this.window = window;
+    public Controls(Player player) {
         this.player = player;
 
         mouseSensitivity = 0.0003f;
@@ -43,25 +39,25 @@ public class Controls {
         playerVelocity.y += controlVelocity.y();
     }
 
-    public void update(MouseInput mouseInput) {
+    public void update(MouseInput mouseInput, KeyboardInput keyboardInput) {
         Vector2f controlRotation = mouseInput.getDisplacementVec();
         Vector3f controlVelocity = new Vector3f();
 
-        if(window.isKeyPressed(GLFW_KEY_W)) {
+        if(keyboardInput.isKeyPressed(GLFW_KEY_W)) {
             controlVelocity.add(0, 0, -player.getSpeed());
-        } else if(window.isKeyPressed(GLFW_KEY_S)) {
+        } else if(keyboardInput.isKeyPressed(GLFW_KEY_S)) {
             controlVelocity.add(0, 0, player.getSpeed());
         }
 
-        if(window.isKeyPressed(GLFW_KEY_A)) {
+        if(keyboardInput.isKeyPressed(GLFW_KEY_A)) {
             controlVelocity.add(-player.getSpeed(), 0, 0);
-        } else if(window.isKeyPressed(GLFW_KEY_D)) {
+        } else if(keyboardInput.isKeyPressed(GLFW_KEY_D)) {
             controlVelocity.add(player.getSpeed(), 0, 0);
         }
 
-        if(window.isKeyPressed(GLFW_KEY_Z)) {
+        if(keyboardInput.isKeyPressed(GLFW_KEY_Z)) {
             controlVelocity.add(0, -player.getSpeed(), 0);
-        } else if(window.isKeyPressed(GLFW_KEY_X)) {
+        } else if(keyboardInput.isKeyPressed(GLFW_KEY_X)) {
             controlVelocity.add(0, player.getSpeed(), 0);
         }
         Vector3f playerVelocity = player.getPlayerBody().getVelocity();

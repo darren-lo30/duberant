@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             IGameLogic gameLogic = new Duberant();
-            GameEngine gameEngine = new GameEngine("Duberant", 1000, 1000, true, gameLogic);
+            GameEngine gameEngine = new GameEngine("Duberant", 1000, 1000, gameLogic);
             gameEngine.run();
         } catch (Exception e) {
             e.printStackTrace();

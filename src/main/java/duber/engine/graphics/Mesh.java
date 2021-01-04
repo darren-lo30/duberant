@@ -38,12 +38,11 @@ import duber.engine.entities.RenderableEntity;
 
 public class Mesh {    
     private static final int MAX_WEIGHTS = 4;
+    
     protected final int vaoId;
     protected final List<Integer> vboIdList;
     private final int vertexCount;
     
-    private boolean rigid;
-
     private Material material;
 
     private Vector3f[] vertices;
@@ -198,10 +197,6 @@ public class Mesh {
 
 	public int getVaoId() {
 		return vaoId;
-    }
-
-    public boolean isRigid() {
-        return rigid;
     }
 
     public int getVertexCount() {

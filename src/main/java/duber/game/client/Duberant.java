@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.joml.Vector3f;
 import duber.engine.IGameLogic;
+import duber.engine.KeyboardInput;
 import duber.engine.MouseInput;
 import duber.engine.Scene;
 import duber.engine.Window;
@@ -55,7 +56,7 @@ public class Duberant implements IGameLogic {
         currPlayer = new Player(playerMesh);
         addRenderableDynamicEntity(currPlayer.getModel());
         
-        controls = new Controls(window, currPlayer);
+        controls = new Controls(currPlayer);
 
         Mesh[] csgoMapMesh = MeshLoader.load("models/map/map.obj", "models/map");
         RenderableEntity map = new RenderableEntity(csgoMapMesh);
@@ -67,22 +68,6 @@ public class Duberant implements IGameLogic {
         RenderableEntity terrain = new RenderableEntity(terrainMesh);
         terrain.getTransform().setScale(100.0f);
         //addRenderableConstantEntity(terrain);
-
-        /*
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("test.txt"));
-            for(Face face: map.getFaces()) {
-                String s = "";
-                for(Vector3f v : face.getVertices()) {
-                    s += String.format("pnt(%.2f %.2f %.2f) ", v.x, v.y, v.z);
-                }
-                bw.write(s + "\n");
-            }
-            bw.close();
-        } catch (Exception e){
-            System.out.println("Rip");
-        }
-        */
         
         Mesh[] cubeMesh = MeshLoader.load("models/cube/cube.obj", "models/cube");
         RenderableEntity cube = new RenderableEntity(cubeMesh);
@@ -124,8 +109,8 @@ public class Duberant implements IGameLogic {
 
 
     @Override
-    public void update(float interval, MouseInput mouseInput) {
-        controls.update(mouseInput);
+    public void update(float interval, MouseInput mouseInput, KeyboardInput keyboardInput) {
+        controls.update(mouseInput, keyboardInput);
         currPlayer.updateCamera();
         physicsWorld.update();
     }
