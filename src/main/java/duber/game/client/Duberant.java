@@ -109,8 +109,6 @@ public class Duberant implements IGameLogic {
         float lightIntensity = 0.0f;
         Vector3f lightDirection = new Vector3f(0, 1, 1);
         DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
-        directionalLight.setShadowPositionMultipler(10);
-        directionalLight.setOrthoCoord(-10.0f, 10.0f, -10.0f, 10.0f, -1.0f, 20.0f);
         sceneLight.setDirectionalLight(directionalLight);
     }
 

@@ -18,9 +18,6 @@ public class Transformation {
 
     //Maps an object relative to a light in the world
     private final Matrix4f modelLightViewMatrix;
-
-    private final Matrix4f orthoProjectionMatrix;
-    private final Matrix4f orthoProjectionModelMatrix;
     
     public Transformation() {
         modelMatrix = new Matrix4f();
@@ -31,23 +28,7 @@ public class Transformation {
 
         modelLightViewMatrix = new Matrix4f();
         
-        orthoProjectionMatrix = new Matrix4f();
-        orthoProjectionModelMatrix = new Matrix4f();
     }
-    
-    public final Matrix4f getOrthoProjectionMatrix() {
-        return orthoProjectionMatrix;
-    }
-
-    public final Matrix4f updateOrthoProjectionMatrix(float left, float right, float bottom, float top, float zNear, float zFar) {
-        return orthoProjectionMatrix.identity().setOrtho(left, right, bottom, top, zNear, zFar);
-    }
-
-    public final Matrix4f updateOrthoProjectionMatrix(OrthoCoord orthoCoord) {
-        return updateOrthoProjectionMatrix(orthoCoord.getLeft(), orthoCoord.getRight(), orthoCoord.getBottom(),
-            orthoCoord.getTop(), orthoCoord.getNear(), orthoCoord.getFar());
-    }
-    
     public static final Matrix4f updateGeneralViewMatrix(Vector3f position, Vector3f rotation, Matrix4f viewMatrix) {
         //Rotate and translate the object relative to the camera
         return viewMatrix
@@ -92,9 +73,5 @@ public class Transformation {
 
     public final Matrix4f buildModelLightViewMatrix(Transform transform, Matrix4f lightViewMatrix) {
         return buildModelLightViewMatrix(buildModelMatrix(transform), lightViewMatrix);
-    }
-
-    public Matrix4f buildOrthoProjectionModelMatrix(Transform transform, Matrix4f orthoMatrix) {
-        return orthoMatrix.mulOrthoAffine(buildModelMatrix(transform), orthoProjectionModelMatrix);
     }
 }

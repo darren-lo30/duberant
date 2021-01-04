@@ -2,7 +2,10 @@ package duber.game.server;
 
 import java.util.List;
 
+import com.esotericsoftware.kryonet.Server;
+
 public class DuberantServer {
-    List<Integer> connectedUsers;
+    private Server server;
+    private List<Integer> connectedUserIds;
     
 }
