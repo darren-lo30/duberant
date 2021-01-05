@@ -14,16 +14,23 @@ public class Edge {
         this.face = face;
         this.point1 = point1;
         this.point2 = point2;
+        
         normal = new Vector3f();
-        updateLengthAndNormal();
+
+        updateLength();
+        updateNormal();
     }
 
-    private void updateLengthAndNormal() {
-        normal.set(point2).sub(point1);
-        length = normal.length();
-        normal.cross(face.getNormal());
-        normal.mul(-1);
-        normal.normalize();
+    private void updateLength() {
+        length = new Vector3f(point2).sub(point1).length();
+    }
+
+    private void updateNormal() {
+        normal.set(point2)
+              .sub(point1)
+              .cross(face.getNormal())
+              .mul(-1)
+              .normalize();
     }
 
 

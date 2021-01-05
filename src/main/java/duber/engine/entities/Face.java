@@ -5,11 +5,17 @@ import org.joml.Vector3f;
 import duber.engine.entities.components.Transform;
 
 public class Face {
+    private Entity entity;
     private final Vector3f normal;
     private final Vector3f[] vertices;
     private final Edge[] edges;
 
     public Face(Vector3f[] vertices) {
+        this(null, vertices);
+    }
+
+    public Face(Entity entity, Vector3f[] vertices) {
+        this.entity = entity;
         this.vertices = vertices;
         edges = new Edge[vertices.length];
         normal = new Vector3f();
@@ -37,7 +43,7 @@ public class Face {
         for(int i = 0; i<vertices.length; i++){
             transformedVertices[i] = createTransformedPoint(vertices[i], transform);
         }
-        return new Face(transformedVertices);
+        return new Face(entity, transformedVertices);
     }
 
     private void calculateNormal() {
@@ -54,6 +60,14 @@ public class Face {
             int nextPointIdx = (i + 1) % edges.length;
             edges[i] = new Edge(this, vertices[i], vertices[nextPointIdx]);
         }
+    }
+
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
     }
 
     public Edge[] getEdges() {

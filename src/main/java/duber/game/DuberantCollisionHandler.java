@@ -27,9 +27,14 @@ public class DuberantCollisionHandler implements ICollisionHandler {
 
     @Override
     public List<CollisionResponse> detectCollisions(Entity entity) {
-
-        Optional<Collider> collider = entity.getCollider();
         List<CollisionResponse> collisionResponses = new ArrayList<>();
+        constantEntityCollisionDetection(entity, collisionResponses); 
+        
+        return collisionResponses;
+    }
+
+    private List<CollisionResponse> constantEntityCollisionDetection(Entity entity, List<CollisionResponse> collisionResponses) {
+        Optional<Collider> collider = entity.getCollider();
         if(!collider.isPresent()) {
             return collisionResponses;
         }
@@ -59,11 +64,11 @@ public class DuberantCollisionHandler implements ICollisionHandler {
     private void applyPush(Transform transform, RigidBody rigidBody, Vector3f push) {
         transform.getPosition().add(push);
         
-        Vector3f normalizedPush = new Vector3f(push).normalize();
-        if(normalizedPush.isFinite()) {
-            float dot = normalizedPush.dot(rigidBody.getVelocity());
-            normalizedPush.mul(dot);
-            rigidBody.getVelocity().sub(normalizedPush);
+        push.normalize();
+        if(push.isFinite()) {
+            float dot = push.dot(rigidBody.getVelocity());
+            push.mul(dot);
+            rigidBody.getVelocity().sub(push);
         }
     }
     

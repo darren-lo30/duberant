@@ -51,7 +51,7 @@ public abstract class PhysicsWorld {
         transform.getPosition().add(velocity);
 
         transform.rotate(angularVelocity.x(), angularVelocity.y(), angularVelocity.z());
-        velocity.y -= 0.005;
+        velocity.y -= 0.02;
         velocity.set(0, velocity.y(), 0);
         if(velocity.y > 1.0) {
             velocity.y = 1.0f;

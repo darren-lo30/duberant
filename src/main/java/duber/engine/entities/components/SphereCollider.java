@@ -10,11 +10,9 @@ import duber.engine.physics.collisions.CollisionResponse;
 
 public class SphereCollider extends Collider {
     private float unscaledRadius;
-    private final Box box;
     
     public SphereCollider(Entity entity) {
         super(entity);
-        box = new Box();
         unscaledRadius = 0;
         initFromEntity(entity);
     }
@@ -38,6 +36,9 @@ public class SphereCollider extends Collider {
     public Box getBox() {
         Vector3f position = getTransform().getPosition();
         float radius = getRadius();
+        
+        Box box = new Box();
+
         box.getMinXYZ().set(
             position.x() - radius, 
             position.y() - radius,
@@ -90,7 +91,7 @@ public class SphereCollider extends Collider {
 
     @Override
     public CollisionResponse checkCollision(Face face) {
-        CollisionResponse response = new CollisionResponse();
+        CollisionResponse response = new CollisionResponse(face.getEntity());
         
         Vector3f vTmp = new Vector3f();
         vTmp.set(getTransform().getPosition()); // contact point in the triangle plane

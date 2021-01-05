@@ -5,10 +5,12 @@ import org.joml.Vector3f;
 public class RigidBody {
     private final Vector3f velocity;
     private final Vector3f angularVelocity;
+    private boolean dynamic;
 
     public RigidBody() {
         velocity = new Vector3f();
         angularVelocity = new Vector3f();
+        dynamic = true;
     }
 
     public Vector3f getVelocity() {
@@ -17,5 +19,13 @@ public class RigidBody {
 
     public Vector3f getAngularVelocity() {
         return angularVelocity;
+    }
+
+    public boolean isDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(boolean dynamic) {
+        this.dynamic = dynamic;
     }
 }

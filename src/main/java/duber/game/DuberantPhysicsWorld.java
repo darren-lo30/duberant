@@ -1,15 +1,12 @@
 package duber.game;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
-import duber.engine.entities.Face;
 import duber.engine.physics.PhysicsWorld;
-import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.algorithms.Octree;
 
 public class DuberantPhysicsWorld extends PhysicsWorld {
@@ -25,10 +22,6 @@ public class DuberantPhysicsWorld extends PhysicsWorld {
     public DuberantPhysicsWorld() {
         super();        
         setCollisionHandler(new DuberantCollisionHandler(constantEntities, dynamicEntities));
-    }
-
-    public List<Face> getIntersectingConstantFaces(Box box) {
-        return constantEntities.getIntersectingFaces(box);
     }
 
     public void addDynamicEntity(Entity entity) {
