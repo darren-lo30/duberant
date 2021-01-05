@@ -1,4 +1,4 @@
-package duber.engine.physics.collisions.algorithms;
+package duber.engine.physics.collisions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.List;
 import org.joml.Vector3f;
 
 import duber.engine.entities.Face;
-import duber.engine.physics.collisions.Box;
 
 public class BoxNode extends Box {
     private static final int NUM_CHILDREN = 8;

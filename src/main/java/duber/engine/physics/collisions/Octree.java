@@ -1,4 +1,4 @@
-package duber.engine.physics.collisions.algorithms;
+package duber.engine.physics.collisions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,6 @@ import org.joml.Vector3f;
 
 import duber.engine.entities.components.Transform;
 import duber.engine.entities.Face;
-import duber.engine.physics.collisions.Box;
 
 public class Octree {
     private BoxNode root;

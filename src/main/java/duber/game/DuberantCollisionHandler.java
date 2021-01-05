@@ -14,7 +14,7 @@ import duber.engine.entities.components.RigidBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.physics.collisions.CollisionResponse;
 import duber.engine.physics.collisions.ICollisionHandler;
-import duber.engine.physics.collisions.algorithms.Octree;
+import duber.engine.physics.collisions.Octree;
 
 public class DuberantCollisionHandler implements ICollisionHandler {
     private Octree constantEntities;

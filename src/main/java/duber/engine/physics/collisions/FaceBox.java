@@ -1,10 +1,8 @@
-package duber.engine.physics.collisions.algorithms;
+package duber.engine.physics.collisions;
 
 import org.joml.Vector3f;
 
 import duber.engine.entities.Face;
-import duber.engine.physics.collisions.Box;
-
 public class FaceBox extends Box {
     private Face face;
 

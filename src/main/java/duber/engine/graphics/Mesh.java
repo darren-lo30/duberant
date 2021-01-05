@@ -246,7 +246,9 @@ public class Mesh {
         initRender();
         for(RenderableEntity renderableEntity: renderableEntities) {
             consumer.accept(renderableEntity);
-            glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+            if(renderableEntity.isVisible()) {
+                glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+            }
         }
         endRender();
     }

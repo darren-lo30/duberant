@@ -7,7 +7,7 @@ import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
 import duber.engine.physics.PhysicsWorld;
-import duber.engine.physics.collisions.algorithms.Octree;
+import duber.engine.physics.collisions.Octree;
 
 public class DuberantPhysicsWorld extends PhysicsWorld {
     private static final float MIN_BOUNDS_VALUE = -10000.0f;
