@@ -18,13 +18,7 @@ public class Texture {
     private int width;
     private int height;
 
-    private int numRows;
-    private int numColumns;
-
     public Texture(String fileName) throws LWJGLException {
-        numRows = 1;
-        numColumns = 1;
-
         ByteBuffer textureBuffer;
         //Load the texture
         try(MemoryStack stack = MemoryStack.stackPush()) {
@@ -47,23 +41,11 @@ public class Texture {
         stbi_image_free(textureBuffer);
     }
 
-    public Texture(String fileName, int numRows, int numColumns) throws LWJGLException {
-        this(fileName);
-        this.numRows = numRows;
-        this.numColumns = numColumns;
-    }
 
     public int getId() {
         return id;
     }
 
-    public int getNumRows() {
-        return numRows;
-    }
-
-    public int getNumColumns() {
-        return numColumns;
-    }
 
     public void bind() {
         glBindTexture(GL_TEXTURE_2D, id);

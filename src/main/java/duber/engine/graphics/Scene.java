@@ -11,7 +11,6 @@ import duber.engine.entities.SkyBox;
 
 public class Scene {
     private final Map<Mesh, List<RenderableEntity>> meshMap;
-    private final Map<InstancedMesh, List<RenderableEntity>> instancedMeshMap;
 
     private SceneLighting sceneLighting;
     private SkyBox skyBox;
@@ -19,7 +18,6 @@ public class Scene {
     private boolean shaded;
 
     public Scene() {
-        instancedMeshMap = new HashMap<>();
         meshMap = new HashMap<>();
         shaded = true;
     }
@@ -52,10 +50,6 @@ public class Scene {
         return meshMap;
     }
 
-    public Map<InstancedMesh, List<RenderableEntity>> getInstancedMeshMap() {
-        return instancedMeshMap;
-    }
-
     public void addRenderableEntities(RenderableEntity[] renderableEntities) {
         if(renderableEntities == null) {
             return;
@@ -72,12 +66,7 @@ public class Scene {
 
         Mesh[] meshes = renderableEntity.getMeshes();
         for(Mesh mesh: meshes) {
-            List<RenderableEntity> associatedRenderableEntities;
-            if(mesh instanceof InstancedMesh) {
-                associatedRenderableEntities = instancedMeshMap.computeIfAbsent((InstancedMesh) mesh, list -> new ArrayList<>());
-            } else {
-                associatedRenderableEntities = meshMap.computeIfAbsent(mesh, list -> new ArrayList<>());
-            }
+            List<RenderableEntity> associatedRenderableEntities = meshMap.computeIfAbsent(mesh, list -> new ArrayList<>());
             associatedRenderableEntities.add(renderableEntity);
         }
     }
@@ -85,14 +74,8 @@ public class Scene {
     public void removeRenderableEntity(RenderableEntity renderableEntity) {
         Mesh[] meshes = renderableEntity.getMeshes();
         for(Mesh mesh: meshes) {
-            if(mesh instanceof InstancedMesh) {
-                if(instancedMeshMap.containsKey(mesh)) {
-                    instancedMeshMap.get(mesh).remove(renderableEntity);
-                }
-            } else {
-                if(instancedMeshMap.containsKey(mesh)) {
-                    instancedMeshMap.get(mesh).remove(renderableEntity);
-                }
+            if(meshMap.containsKey(mesh)) {
+                meshMap.get(mesh).remove(renderableEntity);
             }
         }
 

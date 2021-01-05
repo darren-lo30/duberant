@@ -24,6 +24,26 @@ public class Face {
         calculateEdges();
     }
 
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+    
+    public Vector3f getNormal() {
+        return normal;
+    }
+
+    public Edge[] getEdges() {
+        return edges;
+    }
+
+    public Vector3f[] getVertices() {
+        return vertices;
+    }
+
     private Vector3f createTransformedPoint(Vector3f point, Transform transform) {
         Vector3f position = transform.getPosition();
         Vector3f rotation = transform.getRotation();
@@ -60,25 +80,5 @@ public class Face {
             int nextPointIdx = (i + 1) % edges.length;
             edges[i] = new Edge(this, vertices[i], vertices[nextPointIdx]);
         }
-    }
-
-    public Entity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
-    public Edge[] getEdges() {
-        return edges;
-    }
-
-    public Vector3f[] getVertices() {
-        return vertices;
-    }
-
-    public Vector3f getNormal() {
-        return normal;
     }
 }

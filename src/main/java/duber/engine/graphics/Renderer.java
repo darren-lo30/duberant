@@ -56,7 +56,7 @@ public class Renderer {
 
         //Create uniforms for matrixTransformer matrices
         sceneShaderProgram.createUniform("projectionMatrix");
-        sceneShaderProgram.createUniform("nonInstancedModelViewMatrix");
+        sceneShaderProgram.createUniform("modelViewMatrix");
 
         //Create texture sampler uniform
         sceneShaderProgram.createUniform("texture_sampler");
@@ -71,13 +71,6 @@ public class Renderer {
         sceneShaderProgram.createPointLightListUniform("pointLights", MAX_POINT_LIGHTS); 
         sceneShaderProgram.createSpotLightListUniform("spotLights", MAX_SPOT_LIGHTS); 
         sceneShaderProgram.createDirectionalLightUniform("directionalLight");  
-        
-        //For instanced rendering
-        sceneShaderProgram.createUniform("isInstanced");
-
-        //Texture
-        sceneShaderProgram.createUniform("numRows");
-        sceneShaderProgram.createUniform("numColumns");
     }
 
     private void setUpSkyBoxShader() throws LWJGLException, IOException {
@@ -122,21 +115,12 @@ public class Renderer {
         renderSkyBox(window, camera, scene);
     }
 
-    private void renderNonInstancedMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix) {
-        sceneShaderProgram.setUniform("isInstanced", 0);
-
+    private void renderMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix) {
         Map<Mesh, List<RenderableEntity>> meshMap = scene.getMeshMap();
 
         for(Map.Entry<Mesh, List<RenderableEntity>> meshMapEntry: meshMap.entrySet()) {
             Mesh mesh = meshMapEntry.getKey();
             List<RenderableEntity> renderableEntities = meshMapEntry.getValue();
-            Texture texture = mesh.getMaterial().getTexture();
-
-            if(texture != null) {
-                sceneShaderProgram.setUniform("numColumns", texture.getNumColumns());
-                sceneShaderProgram.setUniform("numRows", texture.getNumRows());
-            }
-
             if(viewMatrix != null) {
                 shaderProgram.setUniform("material", mesh.getMaterial());
             }
@@ -146,31 +130,9 @@ public class Renderer {
                 
                 if(viewMatrix != null) {
                     Matrix4f modelViewMatrix = matrixTransformer.buildModelViewMatrix(modelMatrix, viewMatrix);
-                    sceneShaderProgram.setUniform("nonInstancedModelViewMatrix", modelViewMatrix);
+                    sceneShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
                 }
             });
-        }
-    }
-
-    private void renderInstancedMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
-        sceneShaderProgram.setUniform("isInstanced", 1);
-        Map<InstancedMesh, List<RenderableEntity>> meshMap = scene.getInstancedMeshMap();
-        
-        for(Map.Entry<InstancedMesh, List<RenderableEntity>> meshMapEntry: meshMap.entrySet()) {
-            InstancedMesh mesh = meshMapEntry.getKey();
-            Texture texture = mesh.getMaterial().getTexture();
-            List<RenderableEntity> renderableEntities = meshMapEntry.getValue();
-
-            if(texture != null) {
-                sceneShaderProgram.setUniform("numColumns", texture.getNumColumns());
-                sceneShaderProgram.setUniform("numRows", texture.getNumRows());
-            }
-            
-            if(viewMatrix != null) {
-                shaderProgram.setUniform("material", mesh.getMaterial());
-            }
-
-            mesh.render(renderableEntities, matrixTransformer, viewMatrix, lightViewMatrix);
         }
     }
 
@@ -183,7 +145,6 @@ public class Renderer {
 
         //Get view matrices
         Matrix4f viewMatrix = camera.getViewMatrix();
-        Matrix4f lightViewMatrix = matrixTransformer.getLightViewMatrix();
 
         //Render lighting
         renderLights(viewMatrix, scene.getSceneLighting());
@@ -193,8 +154,7 @@ public class Renderer {
         sceneShaderProgram.setUniform("normalMap", 1);
         
         //Draw the mesh
-        renderInstancedMeshes(scene, sceneShaderProgram, viewMatrix, lightViewMatrix);
-        renderNonInstancedMeshes(scene, sceneShaderProgram, viewMatrix);
+        renderMeshes(scene, sceneShaderProgram, viewMatrix);
 
         sceneShaderProgram.unbind();
     }

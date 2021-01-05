@@ -33,7 +33,6 @@ public class Edge {
               .normalize();
     }
 
-
     public Vector3f getPoint1() {
         return point1;
     }
