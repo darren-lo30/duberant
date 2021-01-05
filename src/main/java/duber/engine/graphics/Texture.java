@@ -12,7 +12,6 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 import static org.lwjgl.stb.STBImage.*;
 
-
 public class Texture {
     private int id;
     private int width;
@@ -45,7 +44,6 @@ public class Texture {
     public int getId() {
         return id;
     }
-
 
     public void bind() {
         glBindTexture(GL_TEXTURE_2D, id);

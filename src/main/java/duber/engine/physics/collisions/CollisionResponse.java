@@ -5,25 +5,28 @@ import org.joml.Vector3f;
 import duber.engine.entities.Entity;
 
 public class CollisionResponse {
-    private Entity collidedEntity;
+    private final Entity collidingEntity;
+    private final Entity collidedEntity;
 
     private boolean collides;
     private final Vector3f contactPoint;
     private final Vector3f contactNormal;
 
-    public CollisionResponse(Entity collidedEntity) {
+    public CollisionResponse(Entity collidingEntity, Entity collidedEntity) {
+        this.collidingEntity = collidingEntity;
         this.collidedEntity = collidedEntity;
+
         collides = false;
         contactPoint = new Vector3f();
         contactNormal = new Vector3f();
     }
 
-    public Entity getCollidedEntity() {
-        return collidedEntity;
+    public Entity getCollidingEntity() {
+        return collidingEntity;
     }
 
-    public void setCollidedEntity(Entity collidedEntity) {
-        this.collidedEntity = collidedEntity;
+    public Entity getCollidedEntity() {
+        return collidedEntity;
     }
 
     public boolean isCollides() {

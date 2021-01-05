@@ -16,14 +16,14 @@ public class Octree {
         root = new BoxNode(minXYZ, maxXYZ);
     }
 
-    public void addFaces(Face[] faces, Transform transform) {
+    public void addFaces(Face[] faces, Transform faceTransform) {
         for(Face face: faces) {
-            addFace(face, transform);
+            addFace(face, faceTransform);
         }
     }
 
-    public void addFace(Face face, Transform transform) {
-        Face transformedFace = face.createTransformed(transform);
+    public void addFace(Face face, Transform faceTransform) {
+        Face transformedFace = face.createTransformed(faceTransform);
         root.addFaceBox(new FaceBox(transformedFace));
     }
 

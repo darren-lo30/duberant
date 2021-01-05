@@ -112,17 +112,16 @@ public class Renderer {
         window.updateProjectionMatrix(FOV, Z_NEAR, Z_FAR);
         
         renderScene(window, camera, scene);
-        renderSkyBox(window, camera, scene);
     }
 
-    private void renderMeshes(Scene scene, ShaderProgram shaderProgram, Matrix4f viewMatrix) {
+    private void renderMeshes(Scene scene, Matrix4f viewMatrix) {
         Map<Mesh, List<RenderableEntity>> meshMap = scene.getMeshMap();
 
         for(Map.Entry<Mesh, List<RenderableEntity>> meshMapEntry: meshMap.entrySet()) {
             Mesh mesh = meshMapEntry.getKey();
             List<RenderableEntity> renderableEntities = meshMapEntry.getValue();
             if(viewMatrix != null) {
-                shaderProgram.setUniform("material", mesh.getMaterial());
+                sceneShaderProgram.setUniform("material", mesh.getMaterial());
             }
 
             mesh.render(renderableEntities, (RenderableEntity renderableEntity) -> {
@@ -154,9 +153,11 @@ public class Renderer {
         sceneShaderProgram.setUniform("normalMap", 1);
         
         //Draw the mesh
-        renderMeshes(scene, sceneShaderProgram, viewMatrix);
+        renderMeshes(scene, viewMatrix);
 
         sceneShaderProgram.unbind();
+
+        renderSkyBox(window, camera, scene);
     }
 
     private void renderLights(Matrix4f viewMatrix, SceneLighting sceneLighting) {
@@ -166,7 +167,7 @@ public class Renderer {
 
         renderPointLights(viewMatrix, sceneLighting.getPointLights());
         renderSpotLights(viewMatrix, sceneLighting.getSpotLights());
-        renderDirectionalLights(viewMatrix, sceneLighting.getDirectionalLight()); 
+        renderDirectionalLight(viewMatrix, sceneLighting.getDirectionalLight()); 
     }
 
     private void renderPointLights(Matrix4f viewMatrix, PointLight[] pointLights) {
@@ -224,7 +225,7 @@ public class Renderer {
         }
     }
 
-    private void renderDirectionalLights(Matrix4f viewMatrix, DirectionalLight directionalLight) {
+    private void renderDirectionalLight(Matrix4f viewMatrix, DirectionalLight directionalLight) {
         if(directionalLight == null) {
             return;
         }
@@ -241,7 +242,7 @@ public class Renderer {
         sceneShaderProgram.setUniform("directionalLight", viewDirectionalLight);
     }
 
-    private void renderSkyBox(Window window, Camera camera, Scene scene) {
+    private void renderSkyBox(Window window, Camera camera, Scene scene) {  
         SkyBox skyBox = scene.getSkyBox();
         
         if(skyBox == null) {

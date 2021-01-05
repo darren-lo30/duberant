@@ -47,8 +47,9 @@ public class RenderableEntity extends Entity {
         int currIdx = 0;
         for(Mesh mesh: meshes) {
             for(Face face: mesh.getFaces()) {
-                face.setEntity(this);
-                faces[currIdx++] = face;
+                Face entityFace = new Face(face);
+                entityFace.setEntity(this);
+                faces[currIdx++] = entityFace;
             }
         }
     }

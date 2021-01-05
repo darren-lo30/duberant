@@ -23,6 +23,14 @@ public class Box {
         calculateLength();
     }
 
+    public Vector3f getMinXYZ() {
+        return minXYZ;
+    }
+
+    public Vector3f getMaxXYZ() {
+        return maxXYZ;
+    }
+
     public void resetBox() {
         minXYZ.set(MAX_POS, MAX_POS, MAX_POS);
         maxXYZ.set(MIN_POS, MIN_POS, MIN_POS);
@@ -45,14 +53,6 @@ public class Box {
         calculateLength();
     }
 
-
-    public Vector3f getMinXYZ() {
-        return minXYZ;
-    }
-
-    public Vector3f getMaxXYZ() {
-        return maxXYZ;
-    }
 
     protected Vector3f calculateLength() {
         return length.set(maxXYZ).sub(minXYZ).absolute();

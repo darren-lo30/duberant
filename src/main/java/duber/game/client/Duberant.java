@@ -47,7 +47,6 @@ public class Duberant implements IGameLogic {
         }
         
         currScene = new Scene();
-        currScene.setShaded(false); 
         
         createSceneLighting();
 

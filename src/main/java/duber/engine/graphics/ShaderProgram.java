@@ -103,6 +103,22 @@ public class ShaderProgram {
         }
     }
 
+    public void setUniform(String uniformName, Vector3f value) {
+        glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
+    }
+
+    public void setUniform(String uniformName, Vector4f value) {
+        glUniform4f(uniforms.get(uniformName), value.x, value.y, value.z, value.w);
+    }
+
+    public void setUniform(String uniformName, float value) {
+        glUniform1f(uniforms.get(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, int value) {
+        glUniform1i(uniforms.get(uniformName), value);
+    }
+
     public void createPointLightListUniform(String uniformName, int size) throws LWJGLException {
         for(int i = 0; i<size; i++) {
             createPointLightUniform(String.format("%s[%d]", uniformName, i));
@@ -143,22 +159,6 @@ public class ShaderProgram {
         createUniform(uniformName + ".reflectance");
         createUniform(uniformName + ".hasTexture");
         createUniform(uniformName + ".hasNormalMap");
-    }
-
-    public void setUniform(String uniformName, Vector3f value) {
-        glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
-    }
-
-    public void setUniform(String uniformName, Vector4f value) {
-        glUniform4f(uniforms.get(uniformName), value.x, value.y, value.z, value.w);
-    }
-
-    public void setUniform(String uniformName, int value) {
-        glUniform1i(uniforms.get(uniformName), value);
-    }
-
-    public void setUniform(String uniformName, float value) {
-        glUniform1f(uniforms.get(uniformName), value);
     }
     
     public void setUniform(String uniformName, DirectionalLight directionalLight) {

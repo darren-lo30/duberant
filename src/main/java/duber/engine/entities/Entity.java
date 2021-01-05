@@ -41,7 +41,7 @@ public abstract class Entity {
     public void setCollider(Collider collider) {
         this.collider = Optional.ofNullable(collider);
     }
-    
+
     public abstract Vector3f[] getVertices();
     public abstract Face[] getFaces();
 }

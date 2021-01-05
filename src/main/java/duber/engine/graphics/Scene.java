@@ -15,19 +15,8 @@ public class Scene {
     private SceneLighting sceneLighting;
     private SkyBox skyBox;
 
-    private boolean shaded;
-
     public Scene() {
         meshMap = new HashMap<>();
-        shaded = true;
-    }
-
-    public boolean isShaded() {
-        return shaded;
-    }
-
-    public void setShaded(boolean shaded) {
-        this.shaded = shaded;
     }
 
     public SceneLighting getSceneLighting() {

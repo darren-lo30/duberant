@@ -9,23 +9,21 @@ import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.CollisionResponse;
 
 public abstract class Collider {   
-    private Transform transform;
-
-    protected Collider(Transform transform) {
-        this.transform = transform;
-    }
+    private final Transform transform;
+    private final Entity entity;
 
     protected Collider(Entity entity) {
+        this.entity = entity;
         this.transform = entity.getTransform();
     }
     
-    public void setTransform(Transform transform) {
-        this.transform = transform;
-    }
-
     public Transform getTransform() {
         return transform;
     }   
+
+    public Entity getEntity() {
+        return entity;
+    }
 
     protected abstract void initFromEntity(Entity entity);
     public abstract Box getBox();

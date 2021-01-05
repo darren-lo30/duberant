@@ -91,7 +91,7 @@ public class SphereCollider extends Collider {
 
     @Override
     public CollisionResponse checkCollision(Face face) {
-        CollisionResponse response = new CollisionResponse(face.getEntity());
+        CollisionResponse response = new CollisionResponse(getEntity(), face.getEntity());
         
         Vector3f vTmp = new Vector3f();
         vTmp.set(getTransform().getPosition()); // contact point in the triangle plane

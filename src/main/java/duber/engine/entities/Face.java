@@ -14,6 +14,13 @@ public class Face {
         this(null, vertices);
     }
 
+    public Face(Face face) {
+        this.entity = face.getEntity();
+        this.normal = face.getNormal();
+        this.vertices = face.getVertices();
+        this.edges = face.getEdges();
+    }
+
     public Face(Entity entity, Vector3f[] vertices) {
         this.entity = entity;
         this.vertices = vertices;
@@ -30,6 +37,10 @@ public class Face {
 
     public void setEntity(Entity entity) {
         this.entity = entity;
+    }
+
+    public boolean isAssociatedWithEntity() {
+        return entity != null;
     }
     
     public Vector3f getNormal() {
