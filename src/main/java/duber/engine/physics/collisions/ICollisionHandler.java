@@ -9,6 +9,6 @@ public interface ICollisionHandler {
         processCollisions(entity, collisions);
     }
 
-    public abstract List<CollisionResponse> detectCollisions(Entity entity);
-    public abstract void processCollisions(Entity entity, List<CollisionResponse> collisions);
+    public abstract List<CollisionResponse> detectCollisions(Entity collidingEntity);
+    public abstract void processCollisions(Entity collidingEntity, List<CollisionResponse> collisions);
 }

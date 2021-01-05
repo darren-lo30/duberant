@@ -26,15 +26,15 @@ public class DuberantCollisionHandler implements ICollisionHandler {
     }
 
     @Override
-    public List<CollisionResponse> detectCollisions(Entity entity) {
+    public List<CollisionResponse> detectCollisions(Entity collidingEntity) {
         List<CollisionResponse> collisionResponses = new ArrayList<>();
-        constantEntityCollisionDetection(entity, collisionResponses); 
+        constantEntityCollisionDetection(collidingEntity, collisionResponses); 
         
         return collisionResponses;
     }
 
-    private List<CollisionResponse> constantEntityCollisionDetection(Entity entity, List<CollisionResponse> collisionResponses) {
-        Optional<Collider> collider = entity.getCollider();
+    private List<CollisionResponse> constantEntityCollisionDetection(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
+        Optional<Collider> collider = collidingEntity.getCollider();
         if(!collider.isPresent()) {
             return collisionResponses;
         }
@@ -50,14 +50,14 @@ public class DuberantCollisionHandler implements ICollisionHandler {
     }
 
     @Override
-    public void processCollisions(Entity entity, List<CollisionResponse> collisionResponses) {
+    public void processCollisions(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
         Vector3f resultPush = new Vector3f();
 
         collisionResponses.forEach(response -> resultPush.add(response.getContactNormal()));
 
-        Optional<RigidBody> entityBody = entity.getRigidBody();
+        Optional<RigidBody> entityBody = collidingEntity.getRigidBody();
         if(entityBody.isPresent()) {
-            applyPush(entity.getTransform(), entityBody.get(), resultPush);
+            applyPush(collidingEntity.getTransform(), entityBody.get(), resultPush);
         }
     }
 
