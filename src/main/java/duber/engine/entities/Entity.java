@@ -3,10 +3,9 @@ package duber.engine.entities;
 import java.util.Optional;
 
 import org.joml.Vector3f;
-
-import duber.engine.physics.IPhysicsWorld;
-import duber.engine.physics.RigidBody;
-import duber.engine.physics.collisions.Collider;
+import duber.engine.entities.components.RigidBody;
+import duber.engine.entities.components.Transform;
+import duber.engine.entities.components.Collider;
 
 public abstract class Entity {
     private final Transform transform;
@@ -19,12 +18,20 @@ public abstract class Entity {
         collider = Optional.ofNullable(null);
     }
 
+    public Transform getTransform() {
+        return transform;
+    }
+
     public Optional<RigidBody> getRigidBody() {
         return rigidBody;
     }
 
     public void setRigidBody(RigidBody rigidBody) {
         this.rigidBody = Optional.ofNullable(rigidBody);
+    }
+
+    public void addRigidBody() {
+        rigidBody = Optional.ofNullable(new RigidBody());
     }
 
     public Optional<Collider> getCollider() {
@@ -34,23 +41,7 @@ public abstract class Entity {
     public void setCollider(Collider collider) {
         this.collider = Optional.ofNullable(collider);
     }
-
-    public Transform getTransform() {
-        return transform;
-    }
-
-
+    
     public abstract Vector3f[] getVertices();
     public abstract Face[] getFaces();
-
-    public void update(IPhysicsWorld physicsWorld) {
-        if(collider.isPresent()) {
-            collider.get().update(physicsWorld.getIntersectingConstantFaces(collider.get().getBox()));
-        }
-        
-        if(rigidBody.isPresent()) {
-            rigidBody.get().update();
-        }        
-    }
-
 }

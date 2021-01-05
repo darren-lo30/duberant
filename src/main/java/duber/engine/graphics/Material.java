@@ -8,7 +8,7 @@ public class Material {
     private Vector4f ambientColour;
     private Vector4f diffuseColour;
     private Vector4f specularColour;
-    
+     
     private Texture texture;
     private Texture normalMap;
     
@@ -18,7 +18,7 @@ public class Material {
         ambientColour = DEFAULT_COLOUR;
         diffuseColour = DEFAULT_COLOUR;
         specularColour = DEFAULT_COLOUR;
-        reflectance = 0.0f;
+        reflectance = 1.0f;
 
         texture = null;
         normalMap = null;
@@ -50,10 +50,6 @@ public class Material {
 
     public Material(Texture texture, Texture normalMap, float reflectance) {
         this(DEFAULT_COLOUR, DEFAULT_COLOUR, DEFAULT_COLOUR, texture, normalMap, reflectance);
-    }
-
-    public Material(Texture texture, Texture normalMap) {
-        this(texture, normalMap, 0.0f);
     }
 
     public Material(Texture texture) {
@@ -104,15 +100,15 @@ public class Material {
         return texture != null;
     }
 
-    public boolean hasNormalMap() {
-        return normalMap != null;
-    }
-
     public Texture getNormalMap() {
         return normalMap;
     }
 
     public void setNormalMap(Texture normalMap) {
         this.normalMap = normalMap;
+    }
+
+    public boolean hasNormalMap() {
+        return normalMap != null;
     }
 }

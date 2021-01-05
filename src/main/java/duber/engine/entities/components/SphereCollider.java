@@ -1,10 +1,12 @@
-package duber.engine.physics.collisions;
+package duber.engine.entities.components;
 
 import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
 import duber.engine.entities.Edge;
 import duber.engine.entities.Face;
+import duber.engine.physics.collisions.Box;
+import duber.engine.physics.collisions.CollisionResponse;
 
 public class SphereCollider extends Collider {
     private float unscaledRadius;

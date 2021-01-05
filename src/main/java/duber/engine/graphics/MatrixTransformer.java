@@ -1,12 +1,12 @@
 package duber.engine.graphics;
 
-import duber.engine.entities.Transform;
+import duber.engine.entities.components.Transform;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 
-public class Transformation {
+public class MatrixTransformer {
     //Maps an object to its coordinates in the world
     private final Matrix4f modelMatrix;
 
@@ -19,7 +19,7 @@ public class Transformation {
     //Maps an object relative to a light in the world
     private final Matrix4f modelLightViewMatrix;
     
-    public Transformation() {
+    public MatrixTransformer() {
         modelMatrix = new Matrix4f();
         
         lightViewMatrix = new Matrix4f();

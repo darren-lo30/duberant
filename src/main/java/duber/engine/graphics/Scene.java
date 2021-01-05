@@ -21,7 +21,6 @@ public class Scene {
     public Scene() {
         instancedMeshMap = new HashMap<>();
         meshMap = new HashMap<>();
-        
         shaded = true;
     }
 
@@ -81,6 +80,22 @@ public class Scene {
             }
             associatedRenderableEntities.add(renderableEntity);
         }
+    }
+
+    public void removeRenderableEntity(RenderableEntity renderableEntity) {
+        Mesh[] meshes = renderableEntity.getMeshes();
+        for(Mesh mesh: meshes) {
+            if(mesh instanceof InstancedMesh) {
+                if(instancedMeshMap.containsKey(mesh)) {
+                    instancedMeshMap.get(mesh).remove(renderableEntity);
+                }
+            } else {
+                if(instancedMeshMap.containsKey(mesh)) {
+                    instancedMeshMap.get(mesh).remove(renderableEntity);
+                }
+            }
+        }
+
     }
 
     public void cleanup() {

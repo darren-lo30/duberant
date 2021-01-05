@@ -3,7 +3,6 @@ package duber.engine;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
-
 /**
  * KeyboardInput
  */

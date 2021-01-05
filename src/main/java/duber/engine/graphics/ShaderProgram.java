@@ -80,21 +80,6 @@ public class ShaderProgram {
         }
     }
 
-    public void bind() {
-        glUseProgram(programId);
-    }
-
-    public void unbind() {
-        glUseProgram(0);
-    }
-
-    public void cleanup() {
-        unbind();
-        if(programId != 0) {
-            glDeleteProgram(programId);
-        }
-    }
-
     public void createUniform(String uniformName) throws LWJGLException {
         int uniformLocation = glGetUniformLocation(programId, uniformName);
         if(uniformLocation < 0) {
@@ -225,6 +210,21 @@ public class ShaderProgram {
     public void setUniform(String uniformName, SpotLight[] spotLights) {
         for(int i = 0; i<spotLights.length; i++) {
             setUniform(String.format("%s[%d]", uniformName, i), spotLights[i]);
+        }
+    }
+
+    public void bind() {
+        glUseProgram(programId);
+    }
+
+    public void unbind() {
+        glUseProgram(0);
+    }
+
+    public void cleanup() {
+        unbind();
+        if(programId != 0) {
+            glDeleteProgram(programId);
         }
     }
 }

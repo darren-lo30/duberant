@@ -52,9 +52,6 @@ public class MeshLoader {
             Mesh mesh = processMesh(aiMesh, materials);
             meshes[i] = mesh;
         }
-
-        
-
         return meshes;
     }
 

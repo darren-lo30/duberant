@@ -6,9 +6,9 @@ import org.joml.Vector3f;
 
 import duber.engine.entities.Camera;
 import duber.engine.entities.RenderableEntity;
+import duber.engine.entities.components.RigidBody;
+import duber.engine.entities.components.SphereCollider;
 import duber.engine.graphics.Mesh;
-import duber.engine.physics.RigidBody;
-import duber.engine.physics.collisions.SphereCollider;
 import duber.game.client.scenes.Crosshair;
 
 /**
@@ -24,9 +24,7 @@ public class Player {
 
     public Player(Mesh[] playerMeshes) {
         model = new RenderableEntity(playerMeshes);
-
-        
-        model.setRigidBody(new RigidBody(model.getTransform()));
+        model.addRigidBody();
         SphereCollider sphereCollider = new SphereCollider(model);
         model.setCollider(sphereCollider);
         sphereCollider.setUnscaledRadius(1.0f);
@@ -59,8 +57,8 @@ public class Player {
     }
 
     public void updateCamera() {
-        Vector3f playerPosition = getPlayerBody().getTransform().getPosition();
-        Vector3f playerRotation = getPlayerBody().getTransform().getRotation();
+        Vector3f playerPosition = model.getTransform().getPosition();
+        Vector3f playerRotation = model.getTransform().getRotation();
         camera.getTransform().getPosition().set(playerPosition);
         camera.getTransform().getPosition().add(0, 20, 50);
         camera.getTransform().getRotation().set(playerRotation);

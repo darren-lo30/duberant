@@ -8,23 +8,23 @@ import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
 import duber.engine.entities.Face;
-import duber.engine.physics.IPhysicsWorld;
+import duber.engine.physics.PhysicsWorld;
 import duber.engine.physics.collisions.Box;
-import duber.engine.physics.collisions.algorithm.Octree;
+import duber.engine.physics.collisions.algorithms.Octree;
 
-public class DuberantPhysicsWorld implements IPhysicsWorld {
+public class DuberantPhysicsWorld extends PhysicsWorld {
     private static final float MIN_BOUNDS_VALUE = -10000.0f;
     private static final float MAX_BOUNDS_VALUE = 10000.0f;
 
     private static final Vector3f minBounds = new Vector3f(MIN_BOUNDS_VALUE, MIN_BOUNDS_VALUE, MIN_BOUNDS_VALUE); 
     private static final Vector3f maxBounds = new Vector3f(MAX_BOUNDS_VALUE, MAX_BOUNDS_VALUE, MAX_BOUNDS_VALUE);
 
-    private final Set<Entity> dynamicEntites = new HashSet<>();
+    private final Set<Entity> dynamicEntities = new HashSet<>();
     private final Octree constantEntities = new Octree(minBounds, maxBounds);
 
-    @Override
-    public void update() {
-        dynamicEntites.forEach(dynamicEntity -> dynamicEntity.update(this));
+    public DuberantPhysicsWorld() {
+        super();        
+        setCollisionHandler(new DuberantCollisionHandler(constantEntities, dynamicEntities));
     }
 
     public List<Face> getIntersectingConstantFaces(Box box) {
@@ -32,10 +32,16 @@ public class DuberantPhysicsWorld implements IPhysicsWorld {
     }
 
     public void addDynamicEntity(Entity entity) {
-        dynamicEntites.add(entity);
+        dynamicEntities.add(entity);
     }
 
     public void addConstantEntity(Entity entity) {
         constantEntities.addFaces(entity.getFaces(), entity.getTransform());
+    }
+
+    @Override
+    public void update() {
+        dynamicEntities.forEach(entity -> updateEntityComponents(entity));
+
     }
 }

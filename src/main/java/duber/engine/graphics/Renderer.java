@@ -27,23 +27,18 @@ public class Renderer {
     private static final int MAX_POINT_LIGHTS = 100;
     private static final int MAX_SPOT_LIGHTS = 100;
     
+    private static final float FOV = (float) Math.toRadians(60.0f);
+    private static final float Z_NEAR = 0.01f;
+    private static final float Z_FAR = 6000.0f;
+
     private ShaderProgram sceneShaderProgram;
     private ShaderProgram skyBoxShaderProgram;
 
-    private static final float FOV = (float) Math.toRadians(60.0f);
-
-    private static final float Z_NEAR = 0.01f;
-
-    private static final float Z_FAR = 6000.0f;
-
-    private final Transformation transformation;
-    
-    private float specularPower;
+    private final MatrixTransformer matrixTransformer;
 
     public Renderer() {
         //Intiialize vertex transformer
-        transformation = new Transformation();
-        specularPower = 10.0f;
+        matrixTransformer = new MatrixTransformer();
     }
     
     public void init() throws LWJGLException, IOException {
@@ -59,7 +54,7 @@ public class Renderer {
         sceneShaderProgram.createFragmentShader(Utils.loadResource("/shaders/scene_fragment.fs"));
         sceneShaderProgram.link();    
 
-        //Create uniforms for transformation matrices
+        //Create uniforms for matrixTransformer matrices
         sceneShaderProgram.createUniform("projectionMatrix");
         sceneShaderProgram.createUniform("nonInstancedModelViewMatrix");
 
@@ -91,7 +86,7 @@ public class Renderer {
         skyBoxShaderProgram.createFragmentShader(Utils.loadResource("/shaders/sky_box_fragment.fs"));
         skyBoxShaderProgram.link();
 
-        //Create uniforms for transformation matrices
+        //Create uniforms for matrixTransformer matrices
         skyBoxShaderProgram.createUniform("projectionMatrix");
         skyBoxShaderProgram.createUniform("modelViewMatrix");
 
@@ -147,10 +142,10 @@ public class Renderer {
             }
 
             mesh.render(renderableEntities, (RenderableEntity renderableEntity) -> {
-                Matrix4f modelMatrix = transformation.buildModelMatrix(renderableEntity.getTransform());
+                Matrix4f modelMatrix = matrixTransformer.buildModelMatrix(renderableEntity.getTransform());
                 
                 if(viewMatrix != null) {
-                    Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
+                    Matrix4f modelViewMatrix = matrixTransformer.buildModelViewMatrix(modelMatrix, viewMatrix);
                     sceneShaderProgram.setUniform("nonInstancedModelViewMatrix", modelViewMatrix);
                 }
             });
@@ -175,7 +170,7 @@ public class Renderer {
                 shaderProgram.setUniform("material", mesh.getMaterial());
             }
 
-            mesh.render(renderableEntities, transformation, viewMatrix, lightViewMatrix);
+            mesh.render(renderableEntities, matrixTransformer, viewMatrix, lightViewMatrix);
         }
     }
 
@@ -188,7 +183,7 @@ public class Renderer {
 
         //Get view matrices
         Matrix4f viewMatrix = camera.getViewMatrix();
-        Matrix4f lightViewMatrix = transformation.getLightViewMatrix();
+        Matrix4f lightViewMatrix = matrixTransformer.getLightViewMatrix();
 
         //Render lighting
         renderLights(viewMatrix, scene.getSceneLighting());
@@ -205,10 +200,9 @@ public class Renderer {
     }
 
     private void renderLights(Matrix4f viewMatrix, SceneLighting sceneLighting) {
-
         //Update light uniforms for ambient lighting
         sceneShaderProgram.setUniform("ambientLight", sceneLighting.getAmbientLight());
-        sceneShaderProgram.setUniform("specularPower", specularPower);
+        sceneShaderProgram.setUniform("specularPower", sceneLighting.getSpecularPower());
 
         renderPointLights(viewMatrix, sceneLighting.getPointLights());
         renderSpotLights(viewMatrix, sceneLighting.getSpotLights());
@@ -316,7 +310,7 @@ public class Renderer {
         Mesh mesh = skyBox.getMesh();
 
         //Set the model view matrix uniform
-        Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(skyBox.getTransform(), viewMatrix);
+        Matrix4f modelViewMatrix = matrixTransformer.buildModelViewMatrix(skyBox.getTransform(), viewMatrix);
         
         //Set uniforms
         skyBoxShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);

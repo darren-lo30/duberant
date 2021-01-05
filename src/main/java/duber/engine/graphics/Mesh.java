@@ -236,12 +236,9 @@ public class Mesh {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-
     public void render() {
         initRender();
-
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
-
         endRender();
     }
 

@@ -1,4 +1,4 @@
-package duber.engine.physics.collisions.algorithm;
+package duber.engine.physics.collisions.algorithms;
 
 import org.joml.Vector3f;
 

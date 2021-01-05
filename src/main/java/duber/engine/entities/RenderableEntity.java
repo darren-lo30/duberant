@@ -9,6 +9,8 @@ public class RenderableEntity extends Entity {
     private Face[] faces;
     private int textureIndex = 0;
 
+    private boolean visible;
+
     public RenderableEntity(Mesh mesh) {
         this(new Mesh[]{mesh});
     }
@@ -17,6 +19,7 @@ public class RenderableEntity extends Entity {
         this.meshes = meshes;
         retrieveAllVertices();
         retrieveAllFaces();
+        visible = true;
     }
 
     private void retrieveAllVertices() {
@@ -65,12 +68,12 @@ public class RenderableEntity extends Entity {
         this.textureIndex = textureIndex;
     }
 
-    public void cleanup() {
-        if (meshes != null) {
-            for (Mesh mesh : meshes) {
-                mesh.cleanup();
-            }
-        }
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     @Override
@@ -81,5 +84,13 @@ public class RenderableEntity extends Entity {
     @Override
     public Face[] getFaces() {
         return faces;
+    }
+
+    public void cleanup() {
+        if (meshes != null) {
+            for (Mesh mesh : meshes) {
+                mesh.cleanup();
+            }
+        }
     }
 }

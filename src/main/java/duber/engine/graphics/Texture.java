@@ -8,8 +8,6 @@ import org.lwjgl.system.MemoryStack;
 import duber.engine.exceptions.LWJGLException;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_EDGE;
-
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 import static org.lwjgl.stb.STBImage.*;
@@ -20,12 +18,14 @@ public class Texture {
     private int width;
     private int height;
 
-    private int numRows = 1;
-    private int numColumns = 1;
+    private int numRows;
+    private int numColumns;
 
     public Texture(String fileName) throws LWJGLException {
-        ByteBuffer textureBuffer;
+        numRows = 1;
+        numColumns = 1;
 
+        ByteBuffer textureBuffer;
         //Load the texture
         try(MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer w = stack.mallocInt(1);
@@ -47,31 +47,26 @@ public class Texture {
         stbi_image_free(textureBuffer);
     }
 
-    public Texture(int width, int height, int pixelFormat) {
-        //Generates an empty texture
-        id = glGenTextures();
-        this.width = width;
-        this.height = height;
-        glBindTexture(GL_TEXTURE_2D, id);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, pixelFormat, GL_FLOAT, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    }
-
     public Texture(String fileName, int numRows, int numColumns) throws LWJGLException {
         this(fileName);
         this.numRows = numRows;
         this.numColumns = numColumns;
     }
 
-    public void bind() {
-        glBindTexture(GL_TEXTURE_2D, id);
-    }
-
     public int getId() {
         return id;
+    }
+
+    public int getNumRows() {
+        return numRows;
+    }
+
+    public int getNumColumns() {
+        return numColumns;
+    }
+
+    public void bind() {
+        glBindTexture(GL_TEXTURE_2D, id);
     }
     
     private int createTexture(ByteBuffer textureBuffer) {
@@ -86,14 +81,6 @@ public class Texture {
         glGenerateMipmap(GL_TEXTURE_2D);
 
         return textureId;
-    }
-
-    public int getNumRows() {
-        return numRows;
-    }
-
-    public int getNumColumns() {
-        return numColumns;
     }
 
     public void cleanup() {

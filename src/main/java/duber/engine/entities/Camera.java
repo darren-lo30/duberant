@@ -3,7 +3,8 @@ package duber.engine.entities;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import duber.engine.graphics.Transformation;
+import duber.engine.entities.components.Transform;
+import duber.engine.graphics.MatrixTransformer;
 public class Camera extends Entity {
     private final Matrix4f viewMatrix;
 
@@ -14,7 +15,7 @@ public class Camera extends Entity {
 
     public void updateViewMatrix() {
         Transform cameraTransform = getTransform();
-        Transformation.updateGeneralViewMatrix(cameraTransform.getPosition(), cameraTransform.getRotation(), viewMatrix);
+        MatrixTransformer.updateGeneralViewMatrix(cameraTransform.getPosition(), cameraTransform.getRotation(), viewMatrix);
     }
 
     public Matrix4f getViewMatrix() {

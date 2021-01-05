@@ -1,11 +1,11 @@
-package duber.engine.physics.collisions.algorithm;
+package duber.engine.physics.collisions.algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.joml.Vector3f;
 
-import duber.engine.entities.Transform;
+import duber.engine.entities.components.Transform;
 import duber.engine.entities.Face;
 import duber.engine.physics.collisions.Box;
 

@@ -9,6 +9,8 @@ public class SceneLighting {
     private SpotLight[] spotLights;
     private DirectionalLight directionalLight;
 
+    private float specularPower = 10.0f;
+
     public Vector3f getAmbientLight() {
         return ambientLight;
     }
@@ -47,6 +49,14 @@ public class SceneLighting {
 
     public void setDirectionalLight(DirectionalLight directionalLight) {
         this.directionalLight = directionalLight;
+    }
+
+    public float getSpecularPower() {
+        return specularPower;
+    }
+
+    public void setSpecularPower(float specularPower) {
+        this.specularPower = specularPower;
     }
 
 }

@@ -83,7 +83,7 @@ public class InstancedMesh extends Mesh {
         glBindVertexArray(0);     
     }
 
-    public void render(List<? extends RenderableEntity> renderableEntities, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
+    public void render(List<? extends RenderableEntity> renderableEntities, MatrixTransformer matrixTransformer, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         initRender();
 
         int chunkSize = numInstances;
@@ -91,12 +91,12 @@ public class InstancedMesh extends Mesh {
         for(int i = 0; i<length; i+=chunkSize) {
             int end = Math.min(length, i + chunkSize);
             List<? extends RenderableEntity> subList = renderableEntities.subList(i, end);
-            renderChunkInstanced(subList, transformation, viewMatrix, lightViewMatrix);
+            renderChunkInstanced(subList, matrixTransformer, viewMatrix, lightViewMatrix);
         }
         endRender();
     }
 
-    private void renderChunkInstanced(List<? extends RenderableEntity> renderableEntities, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
+    private void renderChunkInstanced(List<? extends RenderableEntity> renderableEntities, MatrixTransformer matrixTransformer, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         instanceDataBuffer.clear();
 
         Texture texture = getMaterial().getTexture();
@@ -104,14 +104,14 @@ public class InstancedMesh extends Mesh {
         for(int i = 0; i<renderableEntities.size(); i++) {
             RenderableEntity renderableEntity = renderableEntities.get(i);
             
-            Matrix4f modelMatrix = transformation.buildModelMatrix(renderableEntity.getTransform());
+            Matrix4f modelMatrix = matrixTransformer.buildModelMatrix(renderableEntity.getTransform());
             if(viewMatrix != null) {
-                Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
+                Matrix4f modelViewMatrix = matrixTransformer.buildModelViewMatrix(modelMatrix, viewMatrix);
                 modelViewMatrix.get(INSTANCE_DATA_SIZE_FLOATS * i, instanceDataBuffer);
             }
 
             if(lightViewMatrix != null) {
-                Matrix4f modelLightViewMatrix = transformation.buildModelLightViewMatrix(modelMatrix, lightViewMatrix);
+                Matrix4f modelLightViewMatrix = matrixTransformer.buildModelLightViewMatrix(modelMatrix, lightViewMatrix);
                 modelLightViewMatrix.get(INSTANCE_DATA_SIZE_FLOATS * i + MATRIX4_NUM_ELEMENTS, instanceDataBuffer);
             }
 
