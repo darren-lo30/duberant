@@ -1,4 +1,4 @@
-package duber.game.client;
+package duber.game;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -11,20 +11,14 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
+
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_X;
 
 
 public class Controls {
-    private float mouseSensitivity;
-    
-    private Player player;
-
-    public Controls(Player player) {
-        this.player = player;
-
-        mouseSensitivity = 0.0003f;
-    }
+    private float mouseSensitivity = 0.006f;
 
     private void addControlVelocity(Vector3f playerVelocity, Vector3f controlRotation, Vector3f controlVelocity) {
         if(controlVelocity.z() != 0) {
@@ -39,26 +33,31 @@ public class Controls {
         playerVelocity.y += controlVelocity.y();
     }
 
-    public void update(MouseInput mouseInput, KeyboardInput keyboardInput) {
+    public void update(Player player, MouseInput mouseInput, KeyboardInput keyboardInput) {
         Vector2f controlRotation = mouseInput.getCursorDisplacement();
         Vector3f controlVelocity = new Vector3f();
 
+
+        float moveSpeed = keyboardInput.isKeyPressed(GLFW_KEY_LEFT_SHIFT) ? 
+            player.getPlayerStats().getWalkingSpeed() : 
+            player.getPlayerStats().getRunningSpeed();
+
         if(keyboardInput.isKeyPressed(GLFW_KEY_W)) {
-            controlVelocity.add(0, 0, -player.getSpeed());
+            controlVelocity.add(0, 0, -moveSpeed);
         } else if(keyboardInput.isKeyPressed(GLFW_KEY_S)) {
-            controlVelocity.add(0, 0, player.getSpeed());
+            controlVelocity.add(0, 0, moveSpeed);
         }
 
         if(keyboardInput.isKeyPressed(GLFW_KEY_A)) {
-            controlVelocity.add(-player.getSpeed(), 0, 0);
+            controlVelocity.add(-moveSpeed, 0, 0);
         } else if(keyboardInput.isKeyPressed(GLFW_KEY_D)) {
-            controlVelocity.add(player.getSpeed(), 0, 0);
+            controlVelocity.add(moveSpeed, 0, 0);
         }
 
         if(keyboardInput.isKeyPressed(GLFW_KEY_Z)) {
-            controlVelocity.add(0, -player.getSpeed(), 0);
+            controlVelocity.add(0, -moveSpeed, 0);
         } else if(keyboardInput.isKeyPressed(GLFW_KEY_X)) {
-            controlVelocity.add(0, player.getSpeed(), 0);
+            controlVelocity.add(0, moveSpeed, 0);
         }
         Vector3f playerVelocity = player.getPlayerBody().getVelocity();
         addControlVelocity(playerVelocity, player.getModel().getTransform().getRotation(), controlVelocity);

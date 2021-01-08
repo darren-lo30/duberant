@@ -27,31 +27,38 @@ public class GameStateManager implements Cleansable {
     public GameStateManager(Duberant game) throws LWJGLException {
         gameStates = new Stack<>();
 
-        //Initialize all game states
+        //Initialize all states
         for(GameStateOption option: GameStateOption.values()) {
-            option.getGameState().init(game);
+            option.getGameState().init(game, this);
         }
     }
 
     public void pushState(GameStateOption gameStateOption) {
         gameStates.push(gameStateOption.getGameState());
+        gameStateStartup();
     }
 
     public GameState popState() {
-        return gameStates.pop();
+        GameState popped = gameStates.pop();
+        gameStateStartup();
+        return popped;
     }
 
-    public void changeGameStates(GameStateOption gameStateOption) {
-        popState();
+    public void changeState(GameStateOption gameStateOption) {
+        gameStates.pop();
         pushState(gameStateOption);
     }
 
-    public void update(Duberant game) {
-        gameStates.peek().update(game, this);
+    public void gameStateStartup() {
+        gameStates.peek().startup();
     }
 
-    public void render(Duberant game) {
-        gameStates.peek().render(game, this);
+    public void update() {
+        gameStates.peek().update();
+    }
+
+    public void render() {
+        gameStates.peek().render();
     }
 
     @Override

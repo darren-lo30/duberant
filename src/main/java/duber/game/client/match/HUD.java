@@ -1,8 +1,7 @@
-package duber.game.client;
+package duber.game.client.match;
 
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
-import duber.game.client.scenes.Crosshair;
 
 import org.lwjgl.nanovg.NVGColor;
 import static org.lwjgl.nanovg.NanoVG.*;
@@ -15,17 +14,18 @@ public class HUD {
     private long vgContext;
     private NVGColor colour;
 
-    public HUD() {
+    public HUD(Window window) throws LWJGLException {
         colour = NVGColor.create();
+        init(window);
     }
     
-    public void init(Window window) throws LWJGLException {
+    private void init(Window window) throws LWJGLException {
         vgContext = window.optionIsTurnedOn(Window.Options.ANTI_ALIASING) ? 
             nvgCreate(NVG_ANTIALIAS | NVG_STENCIL_STROKES) :
             nvgCreate(NVG_STENCIL_STROKES);
-            if(vgContext == NULL) {
-                throw new LWJGLException("Could not create a HUD with NanoVG");
-            }
+        if(vgContext == NULL) {
+            throw new LWJGLException("Could not create a HUD with NanoVG");
+        }
     }
 
     private void displayInit(Window window) {

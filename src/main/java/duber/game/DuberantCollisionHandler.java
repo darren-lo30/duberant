@@ -18,18 +18,18 @@ import duber.engine.physics.collisions.Octree;
 
 public class DuberantCollisionHandler implements ICollisionHandler {
     private Octree constantEntities;
-    private Set<Entity> dynamicEntites;
+    private Set<Entity> dynamicEntities;
 
     public DuberantCollisionHandler(Octree constantEntities, Set<Entity> dynamicEntities) {
         this.constantEntities = constantEntities;    
-        this.dynamicEntites = dynamicEntities;
+        this.dynamicEntities = dynamicEntities;
     }
 
     @Override
     public List<CollisionResponse> detectCollisions(Entity collidingEntity) {
         List<CollisionResponse> collisionResponses = new ArrayList<>();
         constantEntityCollisionDetection(collidingEntity, collisionResponses); 
-        
+        //dynamicEntityCollisionDetection(collidingEntity, collisionResponses);
         return collisionResponses;
     }
 
@@ -45,14 +45,20 @@ public class DuberantCollisionHandler implements ICollisionHandler {
                 collisionResponses.add(response);
             }
         }          
-        
+        return collisionResponses;
+    }
+
+    private List<CollisionResponse> dynamicEntityCollisionDetection(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
+        for(Entity entity: dynamicEntities) {
+            //TODO detect collisions between two colliders
+        }
+
         return collisionResponses;
     }
 
     @Override
     public void processCollisions(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
         Vector3f resultPush = new Vector3f();
-
         collisionResponses.forEach(response -> resultPush.add(response.getContactNormal()));
 
         Optional<RigidBody> entityBody = collidingEntity.getRigidBody();
