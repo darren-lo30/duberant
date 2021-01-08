@@ -1,24 +1,36 @@
 package duber.engine.entities;
 
 import org.joml.Vector3f;
+
+import duber.engine.Cleansable;
 import duber.engine.graphics.Mesh;
 
-public class RenderableEntity extends Entity {
-    private final Mesh[] meshes;
+public class RenderableEntity extends Entity implements Cleansable {
+    private Mesh[] meshes;
     private Vector3f[] vertices;
     private Face[] faces;
-    private int textureIndex = 0;
 
     private boolean visible;
+
+    public RenderableEntity() {
+        this(new Mesh[0]);
+    }
 
     public RenderableEntity(Mesh mesh) {
         this(new Mesh[]{mesh});
     }
 
     public RenderableEntity(Mesh[] meshes) {
-        this.meshes = meshes;
-        retrieveAllVertices();
-        retrieveAllFaces();
+        super();
+        setMeshes(meshes);
+        visible = true;
+    }
+
+    public RenderableEntity(RenderableEntity renderableEntity) {
+        super();
+        this.meshes = renderableEntity.getMeshes();
+        this.vertices = renderableEntity.getVertices();
+        this.faces = renderableEntity.getFaces();
         visible = true;
     }
 
@@ -62,12 +74,10 @@ public class RenderableEntity extends Entity {
         return meshes;
     }
 
-    public int getTextureIndex() {
-        return textureIndex;
-    }
-
-    public void setTextureIndex(int textureIndex) {
-        this.textureIndex = textureIndex;
+    public void setMeshes(Mesh[] meshes) {
+        this.meshes = meshes;
+        retrieveAllVertices();
+        retrieveAllFaces();
     }
 
     public boolean isVisible() {

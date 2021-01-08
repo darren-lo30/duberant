@@ -5,6 +5,7 @@ import duber.engine.entities.SkyBox;
 import duber.engine.entities.Camera;
 import duber.engine.graphics.lighting.*;
 import duber.engine.utilities.Utils;
+import duber.engine.Cleansable;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 
@@ -23,7 +24,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class Renderer {    
+public class Renderer implements Cleansable {    
     private static final int MAX_POINT_LIGHTS = 100;
     private static final int MAX_SPOT_LIGHTS = 100;
     
@@ -36,14 +37,11 @@ public class Renderer {
 
     private final MatrixTransformer matrixTransformer;
 
-    public Renderer() {
+    public Renderer() throws LWJGLException, IOException {
         //Intiialize vertex transformer
         matrixTransformer = new MatrixTransformer();
-    }
-    
-    public void init() throws LWJGLException, IOException {
         setUpSkyBoxShader();
-        setUpSceneShader();     
+        setUpSceneShader();    
     }
 
     private void setUpSceneShader() throws LWJGLException, IOException {

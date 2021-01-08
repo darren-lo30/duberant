@@ -5,6 +5,7 @@ import java.nio.IntBuffer;
 
 import org.lwjgl.system.MemoryStack;
 
+import duber.engine.Cleansable;
 import duber.engine.exceptions.LWJGLException;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -12,7 +13,7 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 import static org.lwjgl.stb.STBImage.*;
 
-public class Texture {
+public class Texture implements Cleansable {
     private int id;
     private int width;
     private int height;

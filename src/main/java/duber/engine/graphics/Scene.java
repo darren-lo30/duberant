@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import duber.engine.graphics.lighting.SceneLighting;
+import duber.engine.Cleansable;
 import duber.engine.entities.RenderableEntity;
 import duber.engine.entities.SkyBox;
 
-public class Scene {
+public class Scene implements Cleansable {
     private final Map<Mesh, List<RenderableEntity>> meshMap;
 
     private SceneLighting sceneLighting;
@@ -67,7 +68,12 @@ public class Scene {
                 meshMap.get(mesh).remove(renderableEntity);
             }
         }
+    }
 
+    public void clear() {
+        meshMap.clear();
+        sceneLighting = null;
+        skyBox = null;
     }
 
     public void cleanup() {

@@ -33,10 +33,11 @@ import java.util.function.Consumer;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
+import duber.engine.Cleansable;
 import duber.engine.entities.Face;
 import duber.engine.entities.RenderableEntity;
 
-public class Mesh {    
+public class Mesh implements Cleansable {    
     private static final int MAX_WEIGHTS = 4;
     
     protected final int vaoId;

@@ -2,12 +2,12 @@ package duber.engine;
 
 import duber.engine.exceptions.LWJGLException;
 
-public interface IGameLogic {
+public interface IGameLogic extends Cleansable {
     void init(Window window) throws LWJGLException;
 
-    void update(float interval, MouseInput mouseInput, KeyboardInput keyBoardInput);
+    void update();
 
-    void render(Window window, float alpha);
+    void render();
     
     void cleanup();
 }

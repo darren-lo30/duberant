@@ -3,7 +3,7 @@ package duber.engine;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.utilities.Timer;
 
-public class GameEngine implements Runnable {
+public final class GameEngine implements Runnable, Cleansable {
     //Targeted FPS
     private static final int TARGET_FPS = 60;
 
@@ -11,6 +11,7 @@ public class GameEngine implements Runnable {
     private static final int TARGET_UPS = 30;
 
     String windowTitle;
+    
     private final Window window;
     
     private final Timer updateTimer;
@@ -44,6 +45,8 @@ public class GameEngine implements Runnable {
         } finally {
             cleanup();
         }
+
+        System.exit(0);
     }
 
     private void init() throws LWJGLException {
@@ -57,6 +60,10 @@ public class GameEngine implements Runnable {
 
         while(!window.shouldClose()) {
             elapsedTime = updateTimer.getElapsedTime();
+            if(elapsedTime > 0.25f) {
+                elapsedTime = 0.25f;
+            }
+
             accumulator += elapsedTime;
 
             //Get any input
@@ -64,13 +71,11 @@ public class GameEngine implements Runnable {
             //Calculate updates in the scene
             while(accumulator >= interval) {
                 input();
-                update(interval);
+                update();
                 accumulator -= interval;
             }
 
-            float interpolationFactor = accumulator/interval;
-            //Render the scene
-            render(interpolationFactor);
+            render();
 
             if(!window.optionIsTurnedOn(Window.Options.ENABLE_VSYNC)) {
                 sync();
@@ -95,8 +100,8 @@ public class GameEngine implements Runnable {
         window.getMouseInput().updateCursorDisplacement();
     }
 
-    private void update(float interval) {
-        gameLogic.update(interval, window.getMouseInput(), window.getKeyboardInput());
+    public void update() {
+        gameLogic.update();
     }
 
     private void calculateAndDisplayFps() {
@@ -110,13 +115,13 @@ public class GameEngine implements Runnable {
         fps++;
     }
 
-    private void render(float interpolationFactor) {
+    public void render() {
         calculateAndDisplayFps();        
-        gameLogic.render(window, interpolationFactor);
+        gameLogic.render();
         window.update();
     }
 
-    private void cleanup() {
+    public void cleanup() {
         gameLogic.cleanup();
     }
 }

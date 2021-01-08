@@ -11,10 +11,11 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
+import duber.engine.Cleansable;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.graphics.lighting.*;
 
-public class ShaderProgram {
+public class ShaderProgram implements Cleansable {
     private final int programId;
 
     //Determines where to draw the vertices
