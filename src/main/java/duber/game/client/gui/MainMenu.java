@@ -7,8 +7,8 @@ import duber.engine.exceptions.LWJGLException;
 import duber.game.User;
 import duber.game.client.Duberant;
 import duber.game.client.GameStateManager.GameStateOption;
-import duber.game.networking.UserConnectPacket;
-import duber.game.networking.UserConnectedPacket;
+import duber.game.networking.LoginPacket;
+import duber.game.networking.LoginConfirmationPacket;
 
 public class MainMenu extends GUI {
     private volatile boolean loggingIn = false;
@@ -55,7 +55,7 @@ public class MainMenu extends GUI {
                 }
 
                 //Send user login packet with username
-                getGame().getClientNetwork().getClient().sendTCP(new UserConnectPacket(username));       
+                getGame().getClientNetwork().getClient().sendTCP(new LoginPacket(username));       
 
                 //Wait to receive response from server
                 waitForLoginResponse();
@@ -75,9 +75,9 @@ public class MainMenu extends GUI {
         private void waitForLoginResponse() throws InterruptedException {
             BlockingQueue<Object> receivedPackets = getGame().getClientNetwork().getPackets();
             Object packet = receivedPackets.take();
-            if(packet instanceof UserConnectedPacket) {
+            if(packet instanceof LoginConfirmationPacket) {
                 //Receive user connected packet from server
-                UserConnectedPacket userConnectedPacket = (UserConnectedPacket) packet;
+                LoginConfirmationPacket userConnectedPacket = (LoginConfirmationPacket) packet;
                 
                 //Initialize a user
                 User connectedUser = userConnectedPacket.user;

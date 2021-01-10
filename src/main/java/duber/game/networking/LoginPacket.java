@@ -1,12 +1,12 @@
 package duber.game.networking;
 
-public class UserConnectPacket extends Packet {
+public class LoginPacket extends Packet {
     public String username;
     
     @SuppressWarnings("unused")
-    private UserConnectPacket() {}
+    private LoginPacket() {}
 
-    public UserConnectPacket(String username) {
+    public LoginPacket(String username) {
         this.username = username;
     }
 }

@@ -2,13 +2,13 @@ package duber.game.networking;
 
 import duber.game.User;
 
-public class UserConnectedPacket extends Packet {
+public class LoginConfirmationPacket extends Packet {
     public User user;
 
     @SuppressWarnings("unused")
-    private UserConnectedPacket() {}
+    private LoginConfirmationPacket() {}
 
-    public UserConnectedPacket(User user) {
+    public LoginConfirmationPacket(User user) {
         this.user = user;
     }
     

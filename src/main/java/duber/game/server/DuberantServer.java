@@ -13,8 +13,8 @@ import java.util.Set;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.utilities.Timer;
 import duber.game.User;
-import duber.game.networking.UserConnectPacket;
-import duber.game.networking.UserConnectedPacket;
+import duber.game.networking.LoginPacket;
+import duber.game.networking.LoginConfirmationPacket;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -126,25 +126,24 @@ public class DuberantServer {
         //Only process certain requests, leave other requests up to the match manager
         while(!packets.isEmpty()) {
             Object packet = packets.poll();
-            if(packet instanceof UserConnectPacket) {
-                processPacket(connection, (UserConnectPacket) packet);
+            if(packet instanceof LoginPacket) {
+                processPacket(connection, (LoginPacket) packet);
             } 
         }
     }
 
-    private void processPacket(Connection connection, UserConnectPacket userConnectPacket) {
+    private void processPacket(Connection connection, LoginPacket userConnectPacket) {
         String username = userConnectPacket.username;
         System.out.println("Connected with username: " + username);
 
         //Send user account back to client
         User registeredUser = new User(connection.getID(), userConnectPacket.username);
-        connection.sendTCP(new UserConnectedPacket(registeredUser));
+        connection.sendTCP(new LoginConfirmationPacket(registeredUser));
 
         registeredUser.setConnection(connection);
         
         //Add user
         connectedUsers.put(connection, registeredUser);
-
         usersSearchingForMatch.add(registeredUser);
     }
 
