@@ -11,6 +11,8 @@ import duber.engine.entities.components.RigidBody;
 import duber.engine.physics.collisions.ICollisionHandler;
 
 public abstract class PhysicsWorld {
+    private static final float GRAVITY = 0.02f;
+    private static final float MAX_Y_SPEED = 3.0f;
     private ICollisionHandler collisionHandler;
 
     public abstract void update();
@@ -51,12 +53,12 @@ public abstract class PhysicsWorld {
         transform.getPosition().add(velocity);
 
         transform.rotate(angularVelocity.x(), angularVelocity.y(), angularVelocity.z());
-        velocity.y -= 0.02;
+        velocity.y -= GRAVITY;
         velocity.set(0, velocity.y(), 0);
-        if(velocity.y > 1.0) {
-            velocity.y = 1.0f;
-        } else if (velocity.y < -1.0f) {
-            velocity.y = -1.0f;
+        if(velocity.y > MAX_Y_SPEED) {
+            velocity.y = MAX_Y_SPEED;
+        } else if (velocity.y < -MAX_Y_SPEED) {
+            velocity.y = -MAX_Y_SPEED;
         }
         angularVelocity.set(0, 0, 0);
     }

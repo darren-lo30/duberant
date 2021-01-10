@@ -1,15 +1,12 @@
 package duber.game.networking;
 
-import duber.game.client.match.Crosshair;
-
-public class UserConnectPacket {
+public class UserConnectPacket extends Packet {
     public String username;
-    public Crosshair crosshair;
     
+    @SuppressWarnings("unused")
     private UserConnectPacket() {}
 
-    public UserConnectPacket(String username, Crosshair crosshair) {
+    public UserConnectPacket(String username) {
         this.username = username;
-        this.crosshair = crosshair;
     }
 }

@@ -24,6 +24,11 @@ import static org.lwjgl.assimp.Assimp.*;
 
 public class MeshLoader {
     private MeshLoader() {}
+
+    public static Mesh[] load(String resourcePath) throws LWJGLException {
+        return load(resourcePath, null);
+    }
+
     public static Mesh[] load(String resourcePath, String textureDirectory) throws LWJGLException {
         return load(resourcePath, textureDirectory, 
             aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
@@ -35,23 +40,31 @@ public class MeshLoader {
             throw new LWJGLException("Could not load model");
         }
 
-        int numMaterials = aiScene.mNumMaterials();
-        PointerBuffer aiMaterials = aiScene.mMaterials();
-        List<Material> materials = new ArrayList<>();
-
-        for(int i = 0; i<numMaterials; i++) {
-            AIMaterial aiMaterial = AIMaterial.create(aiMaterials.get(i));
-            processMaterial(aiMaterial, materials, textureDirectory);
-        }
-
         int numMeshes = aiScene.mNumMeshes();
         PointerBuffer aiMeshes = aiScene.mMeshes();
         Mesh[] meshes = new Mesh[numMeshes];
-        for(int i = 0; i<numMeshes; i++) {
-            AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
-            Mesh mesh = processMesh(aiMesh, materials);
-            meshes[i] = mesh;
-        }
+
+
+        if(textureDirectory == null) {
+            for(int i = 0; i<numMeshes; i++) {
+                AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
+                meshes[i] = processRenderableMesh(aiMesh, new ArrayList<>(0));
+            }
+        } else {
+            int numMaterials = aiScene.mNumMaterials();
+            PointerBuffer aiMaterials = aiScene.mMaterials();
+            List<Material> materials = new ArrayList<>();
+    
+            for(int i = 0; i<numMaterials; i++) {
+                AIMaterial aiMaterial = AIMaterial.create(aiMaterials.get(i));
+                processMaterial(aiMaterial, materials, textureDirectory);
+            }
+
+            for(int i = 0; i<numMeshes; i++) {
+                AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
+                meshes[i] = processRenderableMesh(aiMesh, materials);
+            }
+        }        
         return meshes;
     }
 
@@ -99,7 +112,7 @@ public class MeshLoader {
         materials.add(material);
     }
 
-    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
+    private static Mesh processRenderableMesh(AIMesh aiMesh, List<Material> materials) {
         List<Float> vertexPositions = new ArrayList<>();
         List<Float> textureCoords = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
@@ -110,7 +123,7 @@ public class MeshLoader {
         processNormals(aiMesh, normals);
         processVertexIndices(aiMesh, vertexIndices);
 
-        Mesh mesh = new Mesh(
+        Mesh renderableMesh = new Mesh(
             Utils.listToFloatArray(vertexPositions),
             Utils.listToFloatArray(textureCoords),
             Utils.listToFloatArray(normals),
@@ -125,9 +138,9 @@ public class MeshLoader {
             material = new Material();
         }
 
-        mesh.setMaterial(material);
+        renderableMesh.setMaterial(material);
 
-        return mesh;
+        return renderableMesh;
     }
 
     private static void processVertexPositions(AIMesh aiMesh, List<Float> vertexPositions) {

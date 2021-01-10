@@ -2,27 +2,27 @@ package duber.engine.physics.collisions;
 
 import org.joml.Vector3f;
 
-import duber.engine.entities.Face;
 public class FaceBox extends Box {
-    private Face face;
+    private EntityFace entityFace;
 
     public FaceBox() {
         super();
     }
 
-    public FaceBox(Face face) {
+    public FaceBox(EntityFace entityFace) {
         super();
-        fromFace(face);
+        fromEntityFace(entityFace);
     }
 
-    public Face getFace() {
-        return face;
+    public EntityFace getFace() {
+        return entityFace;
     }
 
-    public void fromFace(Face face) {
-        this.face = face;
+    public void fromEntityFace(EntityFace entityFace) {
+        this.entityFace = entityFace;
+
         resetBox();
-        Vector3f[] faceVertices = face.getVertices();
+        Vector3f[] faceVertices = entityFace.getFace().getVertices();
         fromVertices(faceVertices);
     }
 }

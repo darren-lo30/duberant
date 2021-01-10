@@ -5,42 +5,24 @@ import org.joml.Vector3f;
 import duber.engine.entities.components.Transform;
 
 public class Face {
-    private Entity entity;
     private final Vector3f normal;
     private final Vector3f[] vertices;
     private final Edge[] edges;
 
-    public Face(Vector3f[] vertices) {
-        this(null, vertices);
-    }
 
     public Face(Face face) {
-        this.entity = face.getEntity();
         this.normal = face.getNormal();
         this.vertices = face.getVertices();
         this.edges = face.getEdges();
     }
 
-    public Face(Entity entity, Vector3f[] vertices) {
-        this.entity = entity;
+    public Face(Vector3f[] vertices) {
         this.vertices = vertices;
         edges = new Edge[vertices.length];
         normal = new Vector3f();
 
         calculateNormal();
         calculateEdges();
-    }
-
-    public Entity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
-    public boolean isAssociatedWithEntity() {
-        return entity != null;
     }
     
     public Vector3f getNormal() {
@@ -74,7 +56,7 @@ public class Face {
         for(int i = 0; i<vertices.length; i++){
             transformedVertices[i] = createTransformedPoint(vertices[i], transform);
         }
-        return new Face(entity, transformedVertices);
+        return new Face(transformedVertices);
     }
 
     private void calculateNormal() {

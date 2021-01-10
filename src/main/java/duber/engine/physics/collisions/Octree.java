@@ -6,6 +6,7 @@ import java.util.List;
 import org.joml.Vector3f;
 
 import duber.engine.entities.components.Transform;
+import duber.engine.entities.Entity;
 import duber.engine.entities.Face;
 
 public class Octree {
@@ -15,19 +16,23 @@ public class Octree {
         root = new BoxNode(minXYZ, maxXYZ);
     }
 
-    public void addFaces(Face[] faces, Transform faceTransform) {
-        for(Face face: faces) {
-            addFace(face, faceTransform);
+    public void addEntity(Entity entity, Transform faceTransform) {
+        if(!entity.hasMeshBody()){
+            throw new IllegalArgumentException("To add an entity to the octree, it must have a mesh body");
+        }
+
+        for(Face face: entity.getMeshBody().get().getFaces()) {
+            addFace(entity, face, faceTransform);
         }
     }
 
-    public void addFace(Face face, Transform faceTransform) {
+    private void addFace(Entity entity, Face face, Transform faceTransform) {
         Face transformedFace = face.createTransformed(faceTransform);
-        root.addFaceBox(new FaceBox(transformedFace));
+        root.addFaceBox(new FaceBox(new EntityFace(entity, transformedFace)));
     }
 
-    public List<Face> getIntersectingFaces(Box box) {
-        List<Face> intersectingFaces = new ArrayList<>();
+    public List<EntityFace> getIntersectingFaces(Box box) {
+        List<EntityFace> intersectingFaces = new ArrayList<>();
         root.getIntersectingFaces(box, intersectingFaces);
         return intersectingFaces;
     }

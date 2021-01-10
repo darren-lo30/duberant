@@ -1,4 +1,4 @@
-package duber.game;
+package duber.game.server;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +29,7 @@ public class DuberantPhysicsWorld extends PhysicsWorld {
     }
 
     public void addConstantEntity(Entity entity) {
-        constantEntities.addFaces(entity.getFaces(), entity.getTransform());
+        constantEntities.addEntity(entity, entity.getTransform());
     }
 
     @Override

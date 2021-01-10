@@ -1,7 +1,6 @@
 package duber.engine.entities;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import duber.engine.entities.components.Transform;
 import duber.engine.graphics.MatrixTransformer;
@@ -20,15 +19,5 @@ public class Camera extends Entity {
 
     public Matrix4f getViewMatrix() {
         return viewMatrix;
-    }
-
-    @Override
-    public Vector3f[] getVertices() {
-        return new Vector3f[0];
-    }
-
-    @Override
-    public Face[] getFaces() {
-        return new Face[0];
     }
 }

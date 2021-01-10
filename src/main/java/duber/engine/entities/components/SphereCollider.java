@@ -1,12 +1,15 @@
 package duber.engine.entities.components;
 
+import java.util.Optional;
+
 import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
-import duber.engine.entities.Edge;
 import duber.engine.entities.Face;
+import duber.engine.entities.Edge;
 import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.CollisionResponse;
+import duber.engine.physics.collisions.EntityFace;
 
 public class SphereCollider extends Collider {
     private float unscaledRadius;
@@ -19,8 +22,12 @@ public class SphereCollider extends Collider {
 
     @Override
     protected void initFromEntity(Entity entity) {
-        for(Vector3f vertex: entity.getVertices()) {
-            unscaledRadius = Math.max(unscaledRadius, vertex.length());
+        Optional<MeshBody> entityMeshBody = entity.getMeshBody();
+        
+        if(entityMeshBody.isPresent()) {
+            for(Vector3f vertex: entityMeshBody.get().getVertices()) {
+                unscaledRadius = Math.max(unscaledRadius, vertex.length());
+            }
         }
     }
 
@@ -90,8 +97,10 @@ public class SphereCollider extends Collider {
     }
 
     @Override
-    public CollisionResponse checkCollision(Face face) {
-        CollisionResponse response = new CollisionResponse(getEntity(), face.getEntity());
+    public CollisionResponse checkCollision(EntityFace entityFace) {
+        CollisionResponse response = new CollisionResponse(getEntity(), entityFace.getEntity());
+        
+        Face face = entityFace.getFace();
         
         Vector3f vTmp = new Vector3f();
         vTmp.set(getTransform().getPosition()); // contact point in the triangle plane
@@ -116,4 +125,7 @@ public class SphereCollider extends Collider {
 
         return response;
     }
+
+    @SuppressWarnings("unused")
+    private SphereCollider(){}
 }

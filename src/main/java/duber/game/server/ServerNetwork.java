@@ -1,15 +1,16 @@
 package duber.game.server;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
-import duber.game.User;
 import duber.game.networking.KryoRegister;
 
 public class ServerNetwork extends Listener {
@@ -17,8 +18,7 @@ public class ServerNetwork extends Listener {
     private boolean running;
     private Server server;
     private Map<Connection, ConcurrentLinkedQueue<Object>> packets = new HashMap<>();
-    private Map<Connection, User> connectedUsers;
-
+    
     public ServerNetwork(int port) throws IOException {
         this.port = port;
         server = new Server();
@@ -71,5 +71,23 @@ public class ServerNetwork extends Listener {
         System.out.println("Disconnected with: " + connection);
         packets.remove(connection);
     }
+    
+    public Optional<Connection> getConnectionById(int id) {
+        return Arrays.stream(server.getConnections())
+                     .filter(connection -> connection.getID() == id)
+                     .findFirst();
+    }
+
+    public void addListener(Listener listener) {
+        server.addListener(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        server.removeListener(listener);
+    }
+    
 }
+
+
+
     

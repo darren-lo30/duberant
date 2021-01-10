@@ -5,42 +5,50 @@ import java.util.Optional;
 import org.joml.Vector3f;
 
 import duber.engine.entities.Camera;
-import duber.engine.entities.RenderableEntity;
+import duber.engine.entities.Entity;
 import duber.engine.entities.components.RigidBody;
-import duber.engine.entities.components.SphereCollider;
-import duber.engine.graphics.Mesh;
 
 /**
  * Player
  */
 public class Player {
-    private RenderableEntity model;
+    public static final int RED_TEAM = 0;
+    public static final int BLUE_TEAM = 1;
+    
+    private Entity model;
     private Camera camera;
     private PlayerStats playerStats;
+    private int team;
 
-    public Player(Mesh[] playerMeshes) {
-        model = new RenderableEntity(playerMeshes);
-        model.addRigidBody();
-        SphereCollider sphereCollider = new SphereCollider(model);
-        model.setCollider(sphereCollider);
-        sphereCollider.setUnscaledRadius(1.0f);
-        model.getTransform().setScale(5.0f);
-
-        model.getTransform().getPosition().set(0, 0, 0);
-
+    public Player(Entity model, int team) {
+        this.model = model;
         camera = new Camera();
         playerStats = new PlayerStats();
+        
+        if(team != 0 && team != 1) {
+            throw new IllegalArgumentException("The team must either be 0 or 1 for red or blue");
+        }
+
+        this.team = team;
     }
 
     public Camera getCamera() {
         return camera;
     }
 
+    public boolean isRedTeam() {
+        return team == RED_TEAM;
+    }
+
+    public boolean isBlueTeam() {
+        return team == BLUE_TEAM;
+    }
+
     public PlayerStats getPlayerStats() {
         return playerStats;
     }
 
-    public RenderableEntity getModel() {
+    public Entity getModel() {
         return model;
     }
 
@@ -61,8 +69,11 @@ public class Player {
             throw new IllegalStateException("Player lacks a rigid body");
         }
     }   
+
+    @SuppressWarnings("unused")
+    private Player(){}
     
-    public class PlayerStats {
+    public static class PlayerStats {
         private float runningSpeed = 1.3f;
         private float walkingSpeed = 1.0f;
         private int health = 100;

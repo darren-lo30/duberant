@@ -6,6 +6,11 @@ public abstract class Light {
     private Vector3f colour;
     private float intensity;
 
+    protected Light() {
+        colour = new Vector3f(1.0f, 1.0f, 1.0f);
+        intensity = 1.0f;
+    }
+
     protected Light(Vector3f colour, float intensity) {
         this.colour = colour;
         this.intensity = intensity;
@@ -26,4 +31,6 @@ public abstract class Light {
     public void setIntensity(float intensity) {
         this.intensity = intensity;
     }
+    
+
 }

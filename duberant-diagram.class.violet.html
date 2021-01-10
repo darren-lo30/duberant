@@ -138,7 +138,7 @@ public KillsDeath getKillsDeathScore()</text>
         <text>Renderable Entity</text>
       </name>
       <attributes id="40" justification="0" size="4" underlined="false">
-        <text>private Mesh[] meshes
+        <text>private RenderableMesh[] meshes
 private Face[] faces
 private Vector3f[] vertices
 private int textureIndex
@@ -146,12 +146,12 @@ private int textureIndex
 private boolean visible</text>
       </attributes>
       <methods id="41" justification="0" size="4" underlined="false">
-        <text>public RenderableEntity(Mesh[] meshes)
-public RenderableEntity(Mesh mesh)
+        <text>public RenderableEntity(RenderableMesh[] meshes)
+public RenderableEntity(RenderableMesh mesh)
 private void retrieveAllFaces()
 private void retrieveAllVertices()
-public Mesh[] getMeshes()
-public Mesh getMesh()
+public RenderableMesh[] getMeshes()
+public RenderableMesh getMesh()
 public int getTextureIndex()
 public void setTextureIndex(int textureIndex)
 public boolean isVisible()
@@ -268,7 +268,7 @@ public Transform getTransform()</text>
       <borderColor reference="17"/>
       <textColor reference="17"/>
       <name id="74" justification="1" size="3" underlined="false">
-        <text>Mesh</text>
+        <text>RenderableMesh</text>
       </name>
       <attributes id="75" justification="0" size="4" underlined="false">
         <text>private int vaoId
@@ -277,7 +277,7 @@ private final int vertexCount
 </text>
       </attributes>
       <methods id="76" justification="0" size="4" underlined="false">
-        <text>public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices)
+        <text>public RenderableMesh(float[] positions, float[] textureCoords, float[] normals, int[] indices)
 public Vector3f[] getVertices
 public Face[] getFaces
 </text>
@@ -506,7 +506,7 @@ public Matrix4f getViewMatrix()</text>
         <text>Skybox</text>
       </name>
       <attributes id="146" justification="0" size="4" underlined="false">
-        <text>public SkyBox(Mesh[] meshes)</text>
+        <text>public SkyBox(RenderableMesh[] meshes)</text>
       </attributes>
       <methods id="147" justification="0" size="4" underlined="false">
         <text></text>
@@ -527,10 +527,10 @@ public Matrix4f getViewMatrix()</text>
         <text></text>
       </attributes>
       <methods id="154" justification="0" size="4" underlined="false">
-        <text>public static Mesh[] load(String resourcePath, String textureDirectory)
-public static Mesh[] load(String resourcePath, String textureDirectory, int flags)
+        <text>public static RenderableMesh[] load(String resourcePath, String textureDirectory)
+public static RenderableMesh[] load(String resourcePath, String textureDirectory, int flags)
 private static void processMaterial(AIMaterial aiMaterial, List&lt;Material&gt; materials, String textureDirectory)
-private static Mesh processMesh(AIMesh aiMesh, LIst&lt;Material&gt; materials)
+private static RenderableMesh processMesh(AIMesh aiMesh, LIst&lt;Material&gt; materials)
 private static void processVertexPositions(AIMesh aiMesh, List&lt;Float&gt; vertexPositions)
 private static void processTextureCoords(AIMesh aiMesh, List&lt;Float&gt; textureCoords)
 private static void processNormals(AIMesh aiMesh, List&lt;Float&gt; normals)
@@ -989,7 +989,7 @@ private int unscaledRadius</text>
 </text>
       </name>
       <attributes id="274" justification="0" size="4" underlined="false">
-        <text>private Map&lt;Mesh, List&lt;RenderableEntitiy&gt;&gt; meshMap
+        <text>private Map&lt;RenderableMesh, List&lt;RenderableEntitiy&gt;&gt; meshMap
 private SceneLighting sceneLighting
 private SkyBox skyBox</text>
       </attributes>
@@ -999,7 +999,7 @@ public SceneLighting getSceneLighting()
 public void setSceneLight(SceneLighting sceneLighting)
 public SkyBox getSkyBox()
 public SkyBox setSkyBox(SkyBox skyBox)
-public Map&lt;Mesh, List&lt;RenderableEntity&gt;&gt; getMeshMap()
+public Map&lt;RenderableMesh, List&lt;RenderableEntity&gt;&gt; getMeshMap()
 public void addRenderableEntities(RenderableEntity[] renderableEntities)
 public void addRenderableEntity(RenderableEntity renderableEntity)
 public void removeRenderableEntity(RenderableEntity renderableEntity)

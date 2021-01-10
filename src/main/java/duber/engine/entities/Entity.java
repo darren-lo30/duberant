@@ -2,20 +2,22 @@ package duber.engine.entities;
 
 import java.util.Optional;
 
-import org.joml.Vector3f;
 import duber.engine.entities.components.RigidBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.entities.components.Collider;
+import duber.engine.entities.components.MeshBody;
 
-public abstract class Entity {
+public class Entity {
     private final Transform transform;
     private Optional<RigidBody> rigidBody;
     private Optional<Collider> collider;
-
-    protected Entity() {
+    private transient Optional<MeshBody> meshBody;
+    
+    public Entity() {
         transform = new Transform();
         rigidBody = Optional.ofNullable(null);
         collider = Optional.ofNullable(null);
+        meshBody = Optional.ofNullable(null);
     }
 
     public Transform getTransform() {
@@ -30,6 +32,10 @@ public abstract class Entity {
         this.rigidBody = Optional.ofNullable(rigidBody);
     }
 
+    public boolean hasRigidBody() {
+        return rigidBody.isPresent();
+    }
+
     public void addRigidBody() {
         rigidBody = Optional.ofNullable(new RigidBody());
     }
@@ -42,6 +48,20 @@ public abstract class Entity {
         this.collider = Optional.ofNullable(collider);
     }
 
-    public abstract Vector3f[] getVertices();
-    public abstract Face[] getFaces();
+    public boolean hasCollider() {
+        return collider.isPresent();
+    }
+
+    public Optional<MeshBody> getMeshBody() {
+        return meshBody;
+    }
+    
+
+    public void setMeshBody(MeshBody meshBody) {
+        this.meshBody = Optional.ofNullable(meshBody);
+    }
+
+    public boolean hasMeshBody() {
+        return meshBody.isPresent();
+    }
 }

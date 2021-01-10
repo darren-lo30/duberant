@@ -1,4 +1,4 @@
-package duber.game;
+package duber.game.server;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +8,11 @@ import java.util.Set;
 import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
-import duber.engine.entities.Face;
 import duber.engine.entities.components.Collider;
 import duber.engine.entities.components.RigidBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.physics.collisions.CollisionResponse;
+import duber.engine.physics.collisions.EntityFace;
 import duber.engine.physics.collisions.ICollisionHandler;
 import duber.engine.physics.collisions.Octree;
 
@@ -39,8 +39,8 @@ public class DuberantCollisionHandler implements ICollisionHandler {
             return collisionResponses;
         }
 
-        for(Face face: constantEntities.getIntersectingFaces(collider.get().getBox())) {
-            CollisionResponse response = collider.get().checkCollision(face);
+        for(EntityFace entityFace: constantEntities.getIntersectingFaces(collider.get().getBox())) {
+            CollisionResponse response = collider.get().checkCollision(entityFace);
             if(response.isCollides()) {
                 collisionResponses.add(response);
             }

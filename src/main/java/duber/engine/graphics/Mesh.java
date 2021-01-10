@@ -34,20 +34,27 @@ import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
 import duber.engine.Cleansable;
+import duber.engine.entities.Entity;
 import duber.engine.entities.Face;
-import duber.engine.entities.RenderableEntity;
 
 public class Mesh implements Cleansable {    
     private static final int MAX_WEIGHTS = 4;
     
-    protected final int vaoId;
-    protected final List<Integer> vboIdList;
-    private final int vertexCount;
-    
-    private Material material;
+    private final float[] positions;
+    private final float[] textureCoords;
+    private final float[] normals;
+    private final int[] indices;
+    private final int[] jointIndices;
+    private final float[] weights;
 
-    private Vector3f[] vertices;
-    private Face[] faces;
+    private final int vertexCount;
+
+    private final Face[] faces;
+    private final Vector3f[] vertices;
+    
+    private int vaoId;
+    private List<Integer> vboIdList;    
+    private Material material;
 
     public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
         this(positions, textureCoords, normals, indices, 
@@ -56,7 +63,63 @@ public class Mesh implements Cleansable {
     }
 
     public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices, int[] jointIndices, float[] weights) {
+        vertexCount = indices.length;
+
+        this.positions = positions;
+        this.textureCoords = textureCoords;
+        this.normals = normals;
+        this.indices = indices;
+        this.jointIndices = jointIndices;
+        this.weights = weights;
+
         material = new Material();
+
+        //Set vertices
+        vertices = new Vector3f[positions.length/3];
+        for(int i = 0; i<positions.length; i+=3) {
+            vertices[i/3] = new Vector3f(positions[i], positions[i+1], positions[i+2]);
+        }
+
+        //Set faces
+        faces = new Face[indices.length/3];
+        for(int i = 0; i<indices.length; i+=3) {
+            Vector3f[] faceVertices = new Vector3f[3];
+            for(int j = 0; j<3; j++) {
+                faceVertices[j] = vertices[indices[i+j]];
+            }
+            faces[i/3] = new Face(faceVertices);
+        }
+    }
+    
+    public boolean isRenderable() {
+        return vboIdList != null;
+    }
+
+    public int getVertexCount() {
+        return vertexCount;
+    }
+    
+    public Vector3f[] getVertices() {
+        return vertices;
+    }
+
+    public Face[] getFaces() {
+        return faces;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    public final boolean makeRenderable() {
+        if(isRenderable()) {
+            return false;
+        }
+
         vboIdList = new ArrayList<>();
         
         FloatBuffer positionBuffer = null;
@@ -65,8 +128,6 @@ public class Mesh implements Cleansable {
         IntBuffer indicesBuffer = null;
         FloatBuffer weightsBuffer = null;
         IntBuffer jointIndicesBuffer = null;
-
-        vertexCount = indices.length;
 
         try {
             //Create VAO
@@ -151,60 +212,15 @@ public class Mesh implements Cleansable {
             freeBuffer(jointIndicesBuffer);
         }
 
-        //Update faces
-        updateVertices(positions);
-        updateFaces(indices);
+        return true;
     }
 
-    private void updateVertices(float[] positions){
-        vertices = new Vector3f[positions.length/3];
-        for(int i = 0; i<positions.length; i+=3) {
-            vertices[i/3] = new Vector3f(positions[i], positions[i+1], positions[i+2]);
+
+    private void initRender() {
+        if(!isRenderable()) {
+            throw new IllegalStateException("Make the mesh renderable before rendering!");
         }
-    }
-    
-    private void updateFaces(int[] indices) {
-        faces = new Face[indices.length/3];
-        for(int i = 0; i<indices.length; i+=3) {
-            Vector3f[] faceVertices = new Vector3f[3];
-            for(int j = 0; j<3; j++) {
-                faceVertices[j] = vertices[indices[i+j]];
-            }
-            faces[i/3] = new Face(faceVertices);
-        }
-    }
-
-    public Vector3f[] getVertices() {
-        return vertices;
-    }
-
-    public Face[] getFaces() {
-        return faces;
-    }
-
-    protected void freeBuffer(Buffer buffer) {
-        if(buffer != null) {
-            MemoryUtil.memFree(buffer);
-        }
-    }
-
-    public void setMaterial(Material material) {
-        this.material = material;
-    }
-
-    public Material getMaterial() {
-        return material;
-    }
-
-	public int getVaoId() {
-		return vaoId;
-    }
-
-    public int getVertexCount() {
-        return vertexCount;
-    }
-
-    protected void initRender() {
+        
         //Set active texture if it exists
         if(material.hasTexture()) {
             glActiveTexture(GL_TEXTURE0);
@@ -217,7 +233,7 @@ public class Mesh implements Cleansable {
         }
 
         //Draw mesh
-        glBindVertexArray(getVaoId());
+        glBindVertexArray(vaoId);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
@@ -225,7 +241,7 @@ public class Mesh implements Cleansable {
         glEnableVertexAttribArray(4);
     }
 
-    protected void endRender() {
+    private void endRender() {
         //Restore state by unbinding everything
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
@@ -243,18 +259,29 @@ public class Mesh implements Cleansable {
         endRender();
     }
 
-    public void render(List<? extends RenderableEntity> renderableEntities, Consumer<RenderableEntity> consumer) {
+    public void render(List<Entity> entities, Consumer<Entity> consumer) {
         initRender();
-        for(RenderableEntity renderableEntity: renderableEntities) {
-            consumer.accept(renderableEntity);
-            if(renderableEntity.isVisible()) {
+        for(Entity entity: entities) {
+            consumer.accept(entity);
+            if(entity.getMeshBody().isPresent() && entity.getMeshBody().get().isVisible()) {
                 glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
             }
         }
         endRender();
     }
+
+    private void freeBuffer(Buffer buffer) {
+        if(buffer != null) {
+            MemoryUtil.memFree(buffer);
+        }
+    }
     
     public void cleanup() {
+        if(!isRenderable()) {
+            return;
+        }
+
+        
         //Disable vertex array indices
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);

@@ -46,13 +46,13 @@ public class Duberant implements IGameLogic {
         this.user = user;
     }
 
-    public boolean connected() {
-        return clientNetwork.isRunning();
+    public boolean isConnected() {
+        return clientNetwork.isConnected();
     }
 
-    public boolean loggedIn() {
-        return user != null && connected();
-    }    
+    public boolean isLoggedIn() {
+        return user != null && user.isLoggedIn();
+    }
 
     @Override
     public void update() {

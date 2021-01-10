@@ -1,12 +1,14 @@
 package duber.game.client.gui;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
 
 import duber.engine.exceptions.LWJGLException;
+import duber.game.User;
 import duber.game.client.Duberant;
 import duber.game.client.GameStateManager.GameStateOption;
-import duber.game.client.match.Crosshair;
 import duber.game.networking.UserConnectPacket;
+import duber.game.networking.UserConnectedPacket;
 
 public class MainMenu extends GUI {
     private volatile boolean loggingIn = false;
@@ -19,16 +21,13 @@ public class MainMenu extends GUI {
     @Override
     public void update() {
         Duberant game = getGame();
-        if (!loggingIn && !game.loggedIn()) {
+        if (!loggingIn && !game.isLoggedIn()) {
             // User has not been logged in yet and is not currently attempting to login
             loggingIn = true;
             new Thread(new LoginRequest("Darren")).start();
-
-        } else if (loggingIn) {
-
-            // Currently trying to login to the server
-            // Look out for a user connected packet
-        } else if (game.loggedIn()) {
+        }
+        
+        if (game.isLoggedIn()) {
             // If the user is already signed in, then proceed to a match
             getManager().changeState(GameStateOption.MATCH);
         }
@@ -48,25 +47,46 @@ public class MainMenu extends GUI {
 
         @Override
         public void run() {
-
             // If the game is not already connected to the server, attempt to connect
             // Send in login request to server
-            // getGame().getClientNetwork().getClient().sendTCP(new
-            // UserConnectPacket(username));
-
             try {
-                if (!getGame().connected()) {
+                if (!getGame().isConnected()) {
                     getGame().getClientNetwork().connect(100000);
                 }
 
-                getGame().getClientNetwork().getClient().sendTCP(new UserConnectPacket(username, new Crosshair()));
-                
+                //Send user login packet with username
+                getGame().getClientNetwork().getClient().sendTCP(new UserConnectPacket(username));       
+
+                //Wait to receive response from server
+                waitForLoginResponse();
+
                 System.out.println("Send user connect packet");
             } catch (IOException ioe) {
                 //Failed to connect
                 System.out.println("Failed to connect to server!");
+            } catch (InterruptedException ie) {
+                System.out.println("Failed logging in to server!");
+                Thread.currentThread().interrupt();
+            } finally {
                 loggingIn = false;
             }
+        }
+
+        private void waitForLoginResponse() throws InterruptedException {
+            BlockingQueue<Object> receivedPackets = getGame().getClientNetwork().getPackets();
+            Object packet = receivedPackets.take();
+            if(packet instanceof UserConnectedPacket) {
+                //Receive user connected packet from server
+                UserConnectedPacket userConnectedPacket = (UserConnectedPacket) packet;
+                
+                //Initialize a user
+                User connectedUser = userConnectedPacket.user;
+                connectedUser.setConnection(getGame().getClientNetwork().getConnection());
+                getGame().setUser(connectedUser);
+            } else {
+                System.out.println("Received faulty packet");
+            }
+            
         }
 
     }

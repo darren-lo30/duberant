@@ -38,6 +38,9 @@ public class PointLight extends Light {
     public void setAttenuation(Attenuation attenuation) {
         this.attenuation = attenuation;
     }
+
+    @SuppressWarnings("unused")
+    private PointLight(){}
     
     public static class Attenuation {
         private static final float DEFAULT_CONSTANT = 0.0f;

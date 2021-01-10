@@ -2,29 +2,51 @@ package duber.game.client.match;
 
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
+import duber.engine.utilities.Utils;
 
 import org.lwjgl.nanovg.NVGColor;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
 import org.joml.Vector4f;
 
 public class HUD {
+    private static final String MAIN_FONT = "OpenSans";
+    
+    private Window window;
+    
+
     private long vgContext;
     private NVGColor colour;
 
-    public HUD(Window window) throws LWJGLException {
+    public HUD(Window window) throws LWJGLException, IOException {
         colour = NVGColor.create();
-        init(window);
+        this.window = window;
+
+        init();
     }
     
-    private void init(Window window) throws LWJGLException {
+    private void init() throws LWJGLException, IOException {
         vgContext = window.optionIsTurnedOn(Window.Options.ANTI_ALIASING) ? 
             nvgCreate(NVG_ANTIALIAS | NVG_STENCIL_STROKES) :
             nvgCreate(NVG_STENCIL_STROKES);
+            
         if(vgContext == NULL) {
             throw new LWJGLException("Could not create a HUD with NanoVG");
+        }
+
+        createFont(MAIN_FONT, "/fonts/OpenSans-Regular.ttf", 150*1024);
+    }
+
+    private void createFont(String fontName, String fontFile, int bufferSize) throws IOException, LWJGLException {
+        ByteBuffer fontBuffer = Utils.ioResourceToByteBuffer(fontFile, bufferSize);
+        int font = nvgCreateFontMem(vgContext, fontName, fontBuffer, 0);
+        if(font == -1) {
+            throw new LWJGLException("Unable to create font");
         }
     }
 
@@ -37,7 +59,7 @@ public class HUD {
         window.restoreState();
     }
 
-    public void displayCrosshair(Window window, Crosshair crosshair, int posX, int posY) {
+    public void displayCrosshair(Crosshair crosshair, int posX, int posY) {
         displayInit(window);
 
         float crosshairHorizontalStart = posX - (float) crosshair.getWidth()/2;
@@ -68,5 +90,18 @@ public class HUD {
 
     private NVGColor setColour(Vector4f colour) {
         return setColour(colour.x() * 255.0f, colour.y() * 255.0f, colour.z() * 255.0f, colour.w() * 255.0f);
+    }
+
+    public void displayText(String text) {
+        displayInit(window);
+        //Set font
+        
+        nvgFontSize(vgContext, 25.0f);
+        nvgFontFace(vgContext, MAIN_FONT);
+        nvgTextAlign(vgContext, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
+        nvgFillColor(vgContext, setColour(255.0f, 255.0f, 255.0f, 255.0f));
+        nvgText(vgContext, window.getWidth()/2.0f, window.getHeight()/2.0f, text);
+
+        displayEnd(window);
     }
 }

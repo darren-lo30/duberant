@@ -1,6 +1,6 @@
 package duber.engine.graphics;
 
-import duber.engine.entities.RenderableEntity;
+import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
 import duber.engine.entities.Camera;
 import duber.engine.graphics.lighting.*;
@@ -113,17 +113,17 @@ public class Renderer implements Cleansable {
     }
 
     private void renderMeshes(Scene scene, Matrix4f viewMatrix) {
-        Map<Mesh, List<RenderableEntity>> meshMap = scene.getMeshMap();
+        Map<Mesh, List<Entity>> meshMap = scene.getMeshMap();
 
-        for(Map.Entry<Mesh, List<RenderableEntity>> meshMapEntry: meshMap.entrySet()) {
-            Mesh mesh = meshMapEntry.getKey();
-            List<RenderableEntity> renderableEntities = meshMapEntry.getValue();
+        for(Map.Entry<Mesh, List<Entity>> meshMapEntry: meshMap.entrySet()) {
+            Mesh renderableMesh = meshMapEntry.getKey();
+            List<Entity> entities = meshMapEntry.getValue();
             if(viewMatrix != null) {
-                sceneShaderProgram.setUniform("material", mesh.getMaterial());
+                sceneShaderProgram.setUniform("material", renderableMesh.getMaterial());
             }
 
-            mesh.render(renderableEntities, (RenderableEntity renderableEntity) -> {
-                Matrix4f modelMatrix = matrixTransformer.buildModelMatrix(renderableEntity.getTransform());
+            renderableMesh.render(entities, (Entity entity) -> {
+                Matrix4f modelMatrix = matrixTransformer.buildModelMatrix(entity.getTransform());
                 
                 if(viewMatrix != null) {
                     Matrix4f modelViewMatrix = matrixTransformer.buildModelViewMatrix(modelMatrix, viewMatrix);
@@ -150,7 +150,7 @@ public class Renderer implements Cleansable {
         sceneShaderProgram.setUniform("texture_sampler", 0);
         sceneShaderProgram.setUniform("normalMap", 1);
         
-        //Draw the mesh
+        //Draw the renderableMesh
         renderMeshes(scene, viewMatrix);
 
         sceneShaderProgram.unbind();
@@ -243,10 +243,15 @@ public class Renderer implements Cleansable {
     private void renderSkyBox(Window window, Camera camera, Scene scene) {  
         SkyBox skyBox = scene.getSkyBox();
         
+
         if(skyBox == null) {
             return;
         }
-        
+
+        if(!skyBox.hasMeshBody()) {
+            throw new IllegalArgumentException("Skybox must have mesh body");
+        }
+        Mesh renderableMesh = skyBox.getMeshBody().get().getMesh();
         
         skyBoxShaderProgram.bind();
         skyBoxShaderProgram.setUniform("texture_sampler", 0);
@@ -266,18 +271,16 @@ public class Renderer implements Cleansable {
         viewMatrix.m31(0);
         viewMatrix.m32(0);
 
-        Mesh mesh = skyBox.getMesh();
-
         //Set the model view matrix uniform
         Matrix4f modelViewMatrix = matrixTransformer.buildModelViewMatrix(skyBox.getTransform(), viewMatrix);
         
         //Set uniforms
         skyBoxShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
         skyBoxShaderProgram.setUniform("ambientLight", scene.getSceneLighting().getSkyBoxLight());
-        skyBoxShaderProgram.setUniform("hasTexture", mesh.getMaterial().hasTexture() ? 1 : 0);
-        skyBoxShaderProgram.setUniform("colour", mesh.getMaterial().getAmbientColour());
+        skyBoxShaderProgram.setUniform("hasTexture", renderableMesh.getMaterial().hasTexture() ? 1 : 0);
+        skyBoxShaderProgram.setUniform("colour", renderableMesh.getMaterial().getAmbientColour());
 
-        mesh.render();
+        renderableMesh.render();
 
         //Restore view matrix
         viewMatrix.m30(m30);

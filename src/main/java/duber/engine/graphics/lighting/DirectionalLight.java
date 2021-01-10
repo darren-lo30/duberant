@@ -23,4 +23,8 @@ public class DirectionalLight extends Light {
     public void setDirection(Vector3f direction) {
         this.direction = direction;
     }
+
+    @SuppressWarnings("unused")
+    private DirectionalLight(){}
+
 }

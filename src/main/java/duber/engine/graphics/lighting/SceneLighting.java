@@ -8,7 +8,7 @@ public class SceneLighting {
     private PointLight[] pointLights;
     private SpotLight[] spotLights;
     private DirectionalLight directionalLight;
-
+    
     private float specularPower = 10.0f;
 
     public Vector3f getAmbientLight() {

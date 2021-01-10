@@ -1,8 +1,8 @@
 package duber.game.client;
 
 import java.io.IOException;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -15,13 +15,12 @@ import duber.game.networking.KryoRegister;
  * A class that encapsulates a client connection to a DuberantServer
  */
 public class ClientNetwork extends Listener {
-    private boolean running;
     private Client client;
     private Connection connection;
     private String ipAddress;
     private int port;
     
-    private final ConcurrentLinkedQueue<Object> packets = new ConcurrentLinkedQueue<>();
+    private final BlockingQueue<Object> packets = new LinkedBlockingQueue<>();
     
     public ClientNetwork() {
         this("localhost", 5000);
@@ -31,8 +30,6 @@ public class ClientNetwork extends Listener {
         this.ipAddress = ipAddress;
         this.port = port;
         
-        running = false;
-
         client = new Client();
         
         //Register packets
@@ -40,7 +37,6 @@ public class ClientNetwork extends Listener {
 
         client.start();
         client.addListener(this);        
-
     }
 
     public String getIpAddres() {
@@ -53,23 +49,16 @@ public class ClientNetwork extends Listener {
 
     public void connect(int timeout) throws IOException {
         client.connect(timeout, ipAddress, port, port);
-
     }
 
     @Override
     public void connected(Connection connection) {
         System.out.println("Connected!");
         this.connection = connection;
-        running = true;
     }
 
-    @Override
-    public void disconnected(Connection connection) {
-        running = false;
-    }
-
-    public boolean isRunning() {
-        return running;
+    public boolean isConnected() {
+        return connection != null && connection.isConnected();
     }
 
     public Client getClient() {
@@ -80,7 +69,7 @@ public class ClientNetwork extends Listener {
         return connection;
     }
 
-    public Queue<Object> getPackets() {
+    public BlockingQueue<Object> getPackets() {
         return packets;
     }
     

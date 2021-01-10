@@ -18,7 +18,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_X;
 
 
 public class Controls {
-    private float mouseSensitivity = 0.006f;
+    private float mouseSensitivity = 0.0006f;
 
     private void addControlVelocity(Vector3f playerVelocity, Vector3f controlRotation, Vector3f controlVelocity) {
         if(controlVelocity.z() != 0) {
@@ -59,6 +59,7 @@ public class Controls {
         } else if(keyboardInput.isKeyPressed(GLFW_KEY_X)) {
             controlVelocity.add(0, moveSpeed, 0);
         }
+        
         Vector3f playerVelocity = player.getPlayerBody().getVelocity();
         addControlVelocity(playerVelocity, player.getModel().getTransform().getRotation(), controlVelocity);
         player.getPlayerBody().getAngularVelocity().add(

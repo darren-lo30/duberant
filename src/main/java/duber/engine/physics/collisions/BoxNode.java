@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
-import duber.engine.entities.Face;
-
 public class BoxNode extends Box {
     private static final int NUM_CHILDREN = 8;
 
@@ -102,7 +100,7 @@ public class BoxNode extends Box {
         faceBoxes.add(faceBox);
     }
 
-    public void getIntersectingFaces(Box box, List<Face> faces) {
+    public void getIntersectingFaces(Box box, List<EntityFace> faces) {
         if(partitioned) {
             for(BoxNode childNode: children) {
                 if(childNode.intersects(box)){

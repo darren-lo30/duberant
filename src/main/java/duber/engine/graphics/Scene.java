@@ -7,11 +7,11 @@ import java.util.Map;
 
 import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.Cleansable;
-import duber.engine.entities.RenderableEntity;
+import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
 
 public class Scene implements Cleansable {
-    private final Map<Mesh, List<RenderableEntity>> meshMap;
+    private final Map<Mesh, List<Entity>> meshMap;
 
     private SceneLighting sceneLighting;
     private SkyBox skyBox;
@@ -36,36 +36,44 @@ public class Scene implements Cleansable {
         this.skyBox = skyBox;
     }
 
-    public Map<Mesh, List<RenderableEntity>> getMeshMap() {
+    public Map<Mesh, List<Entity>> getMeshMap() {
         return meshMap;
     }
 
-    public void addRenderableEntities(RenderableEntity[] renderableEntities) {
+    public void addRenderableEntities(Entity[] renderableEntities) {
         if(renderableEntities == null) {
             return;
         }
-        for(RenderableEntity renderableEntity: renderableEntities) {
+        
+        for(Entity renderableEntity: renderableEntities) {
             addRenderableEntity(renderableEntity);
         }
     }
 
-    public void addRenderableEntity(RenderableEntity renderableEntity) {
-        if(renderableEntity == null) {
+    public void addRenderableEntity(Entity renderableEntity) {
+        if(renderableEntity == null || !renderableEntity.hasMeshBody()) {
             return;
         }
-
-        Mesh[] meshes = renderableEntity.getMeshes();
-        for(Mesh mesh: meshes) {
-            List<RenderableEntity> associatedRenderableEntities = meshMap.computeIfAbsent(mesh, list -> new ArrayList<>());
+        
+        Mesh[] renderableMeshes = renderableEntity.getMeshBody().get().getMeshes();
+        for(Mesh renderableMesh: renderableMeshes) {
+            //Make the mesh renderable
+            renderableMesh.makeRenderable();
+            
+            List<Entity> associatedRenderableEntities = meshMap.computeIfAbsent(renderableMesh, list -> new ArrayList<>());
             associatedRenderableEntities.add(renderableEntity);
         }
     }
 
-    public void removeRenderableEntity(RenderableEntity renderableEntity) {
-        Mesh[] meshes = renderableEntity.getMeshes();
-        for(Mesh mesh: meshes) {
-            if(meshMap.containsKey(mesh)) {
-                meshMap.get(mesh).remove(renderableEntity);
+    public void removeRenderableEntity(Entity renderableEntity) {
+        if(!renderableEntity.hasMeshBody()) {
+            return;
+        }
+
+        Mesh[] renderableMeshes = renderableEntity.getMeshBody().get().getMeshes();
+        for(Mesh renderableMesh: renderableMeshes) {
+            if(meshMap.containsKey(renderableMesh)) {
+                meshMap.get(renderableMesh).remove(renderableEntity);
             }
         }
     }
@@ -77,8 +85,8 @@ public class Scene implements Cleansable {
     }
 
     public void cleanup() {
-        for(Mesh mesh: meshMap.keySet()) {
-            mesh.cleanup();
+        for(Mesh renderableMesh: meshMap.keySet()) {
+            renderableMesh.cleanup();
         }
     }
     
