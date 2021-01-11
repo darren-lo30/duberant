@@ -14,7 +14,7 @@ import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Renderer;
 import duber.engine.graphics.Scene;
 import duber.engine.loaders.MeshLoader;
-import duber.game.Player;
+import duber.game.gameitems.Player;
 import duber.game.client.Duberant;
 import duber.game.client.GameState;
 import duber.game.networking.MatchInitializePacket;

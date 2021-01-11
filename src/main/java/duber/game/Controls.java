@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 
 import duber.engine.KeyboardInput;
 import duber.engine.MouseInput;
+import duber.game.gameitems.Player;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;

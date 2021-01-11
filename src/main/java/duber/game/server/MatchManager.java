@@ -21,7 +21,7 @@ import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.loaders.MeshLoader;
 import duber.engine.utilities.Timer;
 import duber.game.Controls;
-import duber.game.Player;
+import duber.game.gameitems.Player;
 import duber.game.User;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.Packet;
@@ -139,14 +139,10 @@ public class MatchManager implements Runnable {
 
     @Override
     public void run() {
-        try {
-            serverLoop();
-        } catch (LWJGLException le) {
-            System.out.println("Error occured while running match loop");
-        }
+        serverLoop();
     }
 
-    private void serverLoop() throws LWJGLException {
+    private void serverLoop() {
         Timer updateTimer = new Timer();
         float elapsedTime;
         float accumulator = 0f;
@@ -171,12 +167,15 @@ public class MatchManager implements Runnable {
     }
 
     private void update() {
-        updatePlayers();
+        receiveInput();
         physicsWorld.update();
-        sendPlayerPositionUpdates();
+        sendUpdates();
     }
 
-    private void updatePlayers() {
+    /**
+     * Receive an inputs from the client and apply them
+     */
+    private void receiveInput() {
         for(Entry<User, Player> userPlayerEntry : players.entrySet()) {
             User user = userPlayerEntry.getKey();
             Player player = userPlayerEntry.getValue();
@@ -195,7 +194,10 @@ public class MatchManager implements Runnable {
         }
     }
     
-    private void sendPlayerPositionUpdates() {
+    /**
+     * Send out any updates to the users
+     */
+    private void sendUpdates() {
         for(Entry<User, Player> userPlayerEntry : players.entrySet()) {
             User user = userPlayerEntry.getKey();
             Player player = userPlayerEntry.getValue();

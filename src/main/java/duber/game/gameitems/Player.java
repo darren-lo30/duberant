@@ -1,4 +1,4 @@
-package duber.game;
+package duber.game.gameitems;
 
 import java.util.Optional;
 
@@ -11,7 +11,7 @@ import duber.engine.entities.components.RigidBody;
 /**
  * Player
  */
-public class Player {
+public class Player extends GameItem {
     public static final int RED_TEAM = 0;
     public static final int BLUE_TEAM = 1;
     
@@ -21,7 +21,7 @@ public class Player {
     private int team;
 
     public Player(Entity model, int team) {
-        this.model = model;
+        super(model);
         camera = new Camera();
         playerStats = new PlayerStats();
         
@@ -46,10 +46,6 @@ public class Player {
 
     public PlayerStats getPlayerStats() {
         return playerStats;
-    }
-
-    public Entity getModel() {
-        return model;
     }
 
     public void updateCamera() {
