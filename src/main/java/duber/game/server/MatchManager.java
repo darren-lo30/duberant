@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.joml.Vector3f;
 
@@ -28,7 +29,7 @@ import duber.game.networking.PlayerPositionPacket;
 import duber.game.networking.UserInputPacket;
 
 public class MatchManager implements Runnable {
-    public static final int NUM_PLAYERS_IN_MATCH = 1;
+    public static final int NUM_PLAYERS_IN_MATCH = 2;
     public static final int TARGET_UPS = 30;
 
     private volatile boolean running = true;
@@ -52,8 +53,8 @@ public class MatchManager implements Runnable {
         this.serverNetwork = serverNetwork;
         physicsWorld = new DuberantPhysicsWorld();
         
-        redTeam = new HashSet<>(users);
-        blueTeam = new HashSet<>();
+        redTeam = new HashSet<>(users.subList(0, NUM_PLAYERS_IN_MATCH/2));
+        blueTeam = new HashSet<>(users.subList(NUM_PLAYERS_IN_MATCH/2, NUM_PLAYERS_IN_MATCH));
         
         loadPlayers();
         loadMatch();
@@ -61,13 +62,13 @@ public class MatchManager implements Runnable {
     }
 
     public <E extends Packet> void sendAllUDP(E packet) {
-        for(User user : players.keySet()) {
+        for(User user : usersInMatch()) {
             user.getConnection().sendUDP(packet);
         }
     }
 
     public <E extends Packet> void sendAllTCP(E packet) {
-        for(User user : players.keySet()) {
+        for(User user : usersInMatch()) {
             user.getConnection().sendTCP(packet);
         }
     }
@@ -85,6 +86,10 @@ public class MatchManager implements Runnable {
             players.put(user, bluePlayer);
             physicsWorld.addDynamicEntity(bluePlayer.getModel());
         }
+    }
+    
+    public Set<User> usersInMatch() {
+        return players.keySet();
     }
 
     private Player createPlayer(Mesh[] playerMeshes, Vector3f position, int team) {
@@ -172,24 +177,30 @@ public class MatchManager implements Runnable {
     }
 
     private void updatePlayers() {
-        for(User matchUser : players.keySet()) {
+        for(Entry<User, Player> userPlayerEntry : players.entrySet()) {
+            User user = userPlayerEntry.getKey();
+            Player player = userPlayerEntry.getValue();
+            
             //Get any packets from the users connection
-            Queue<Object> receivedPackets = serverNetwork.getPackets(matchUser.getConnection());
+            Queue<Object> receivedPackets = serverNetwork.getPackets(user.getConnection());
                 
             //Process all the packets
             while(!receivedPackets.isEmpty()) {
                 Object packet = receivedPackets.poll();
                 if(packet instanceof UserInputPacket) {
                     UserInputPacket userInput = (UserInputPacket) packet;
-                    playerControls.update(players.get(matchUser), userInput.mouseInput, userInput.keyboardInput);
+                    playerControls.update(player, userInput.mouseInput, userInput.keyboardInput);
                 }
             }
         }
     }
     
     private void sendPlayerPositionUpdates() {
-        for(User user : players.keySet()) {
-            sendAllUDP(new PlayerPositionPacket(user.getId(), players.get(user).getModel().getTransform()));
+        for(Entry<User, Player> userPlayerEntry : players.entrySet()) {
+            User user = userPlayerEntry.getKey();
+            Player player = userPlayerEntry.getValue();
+
+            sendAllUDP(new PlayerPositionPacket(user.getId(), player.getModel().getTransform()));
         }
     }
 
