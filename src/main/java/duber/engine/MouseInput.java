@@ -6,25 +6,20 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class MouseInput {
 
-    private final long windowHandle;
+    private long windowHandle;
 
-    private final Vector2d previousPos;
+    private final Vector2d previousPos = new Vector2d(0, 0);
 
-    private final Vector2d currentPos;
+    private final Vector2d currentPos = new Vector2d(0, 0);
 
-    private final Vector2f cursorDisplacement;
+    private final Vector2f cursorDisplacement = new Vector2f();
 
     private boolean leftButtonIsPressed = false;
 
     private boolean rightButtonIsPressed = false;
 
     public MouseInput(long windowHandle) {
-        this.windowHandle = windowHandle;
-
-        previousPos = new Vector2d(0, 0);
-        currentPos = new Vector2d(0, 0);
-        cursorDisplacement = new Vector2f();
-        
+        this.windowHandle = windowHandle;        
         init();
     }
     
@@ -63,4 +58,7 @@ public class MouseInput {
     public boolean rightButtonIsPressed() {
         return rightButtonIsPressed;
     }
+
+    @SuppressWarnings("unused")
+    private MouseInput() {}
 }

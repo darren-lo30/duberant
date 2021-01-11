@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import duber.engine.exceptions.LWJGLException;
@@ -15,8 +16,6 @@ import duber.engine.utilities.Timer;
 import duber.game.User;
 import duber.game.networking.LoginPacket;
 import duber.game.networking.LoginConfirmationPacket;
-
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -76,13 +75,10 @@ public class DuberantServer {
             initializeMatches();
 
             //Handle connections
-            for(Map.Entry<Connection, ConcurrentLinkedQueue<Object>> connectionPackets : serverNetwork.getPackets().entrySet()) {
-                Connection connection = connectionPackets.getKey();
-                ConcurrentLinkedQueue<Object> packets = connectionPackets.getValue();              
-
-                //If the user isnt in a match handle the requests
-                //Otherwise they will be handled within the match manager
-                if(!usersInMatch.contains(connectedUsers.get(connection))) {
+            for(Connection connection : serverNetwork.getConnections()) {                
+                Queue<Object> packets = serverNetwork.getPackets(connection);
+                
+                if(packets != null && !usersInMatch.contains(connectedUsers.get(connection))) {
                     processAllPackets(connection, packets);
                 }
             }
@@ -102,15 +98,15 @@ public class DuberantServer {
             System.out.println("Initializing a match");
 
             List<User> newMatchUsers = new ArrayList<>(MatchManager.NUM_PLAYERS_IN_MATCH);
-
             for(int i = 0; i<MatchManager.NUM_PLAYERS_IN_MATCH; i++) {
                 User nextUser = userIterator.next();
+                usersInMatch.add(nextUser);
                 userIterator.remove();
                 newMatchUsers.add(nextUser);
             }
 
             try {
-                MatchManager matchManager = new MatchManager(newMatchUsers);
+                MatchManager matchManager = new MatchManager(serverNetwork, newMatchUsers);
                 ongoingMatches.add(matchManager);
     
                 //Start a new thread with the match manager
@@ -122,7 +118,7 @@ public class DuberantServer {
         }
     }
 
-    private void processAllPackets(Connection connection, ConcurrentLinkedQueue<Object> packets) {
+    private void processAllPackets(Connection connection, Queue<Object> packets) {
         //Only process certain requests, leave other requests up to the match manager
         while(!packets.isEmpty()) {
             Object packet = packets.poll();

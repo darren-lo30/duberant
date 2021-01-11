@@ -44,6 +44,11 @@ public class GameStateManager implements Cleansable {
         return popped;
     }
 
+    public void clearState(GameState firstState) {
+        gameStates.clear();
+        gameStates.push(firstState);
+    }
+
     public void changeState(GameStateOption gameStateOption) {
         gameStates.pop();
         pushState(gameStateOption);

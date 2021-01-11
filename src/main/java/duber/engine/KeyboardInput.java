@@ -7,7 +7,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * KeyboardInput
  */
 public class KeyboardInput {
-    private final long windowHandle;
+    private long windowHandle;
     private boolean[] keyPressed;
 
     public KeyboardInput(long windowHandle) {
@@ -31,4 +31,7 @@ public class KeyboardInput {
     public boolean isKeyPressed(int keyCode) {
         return keyPressed[keyCode];
     }
+
+    @SuppressWarnings("unused")
+    private KeyboardInput() {}
 }

@@ -56,7 +56,7 @@ public class Player {
         Vector3f playerPosition = model.getTransform().getPosition();
         Vector3f playerRotation = model.getTransform().getRotation();
         camera.getTransform().getPosition().set(playerPosition);
-        camera.getTransform().getPosition().add(0, 20, 50);
+        camera.getTransform().getPosition().add(0, 30, 0);
         camera.getTransform().getRotation().set(playerRotation);
     }
 
