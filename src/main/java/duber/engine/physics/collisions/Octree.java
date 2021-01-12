@@ -1,10 +1,13 @@
 package duber.engine.physics.collisions;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.joml.Vector3f;
 
+import duber.engine.entities.components.ColliderPart;
 import duber.engine.entities.components.Transform;
 import duber.engine.entities.Entity;
 import duber.engine.entities.Face;
@@ -20,8 +23,8 @@ public class Octree {
         if(!entity.hasMeshBody()){
             throw new IllegalArgumentException("To add an entity to the octree, it must have a mesh body");
         }
-
-        for(Face face: entity.getMeshBody().get().getFaces()) {
+        
+        for(Face face: entity.getMeshBody().getFaces()) {
             addFace(entity, face, faceTransform);
         }
     }
@@ -35,5 +38,16 @@ public class Octree {
         List<EntityFace> intersectingFaces = new ArrayList<>();
         root.getIntersectingFaces(box, intersectingFaces);
         return intersectingFaces;
+    }
+
+    public List<EntityFace> getIntersectingFaces(Entity entity) {
+        Set<EntityFace> intersectingFaces = new HashSet<>();
+
+        List<ColliderPart> entityColliderParts = entity.getCollider().getColliderParts();
+        for(ColliderPart colliderPart : entityColliderParts) {
+            root.getIntersectingFaces(colliderPart.getBox(), intersectingFaces);
+        }
+
+        return new ArrayList<>(intersectingFaces);
     }
 }

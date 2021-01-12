@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 import duber.engine.graphics.Mesh;
 import duber.engine.entities.Face;
 
-public class MeshBody {
+public class MeshBody extends Component {
     private final Face[] faces;
     private final Vector3f[] vertices;
     private final Mesh[] meshes;

@@ -13,6 +13,7 @@ import java.util.Set;
 
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.utilities.Timer;
+import duber.game.MatchData;
 import duber.game.User;
 import duber.game.networking.LoginPacket;
 import duber.game.networking.LoginConfirmationPacket;
@@ -94,11 +95,11 @@ public class DuberantServer {
 
     private void initializeMatches() {
         Iterator<User> userIterator = usersSearchingForMatch.iterator();
-        while(usersSearchingForMatch.size() >= MatchManager.NUM_PLAYERS_IN_MATCH) {
+        while(usersSearchingForMatch.size() >= MatchData.NUM_PLAYERS_IN_MATCH) {
             System.out.println("Initializing a match");
 
-            List<User> newMatchUsers = new ArrayList<>(MatchManager.NUM_PLAYERS_IN_MATCH);
-            for(int i = 0; i<MatchManager.NUM_PLAYERS_IN_MATCH; i++) {
+            List<User> newMatchUsers = new ArrayList<>(MatchData.NUM_PLAYERS_IN_MATCH);
+            for(int i = 0; i<MatchData.NUM_PLAYERS_IN_MATCH; i++) {
                 User nextUser = userIterator.next();
                 usersInMatch.add(nextUser);
                 userIterator.remove();

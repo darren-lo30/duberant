@@ -263,7 +263,7 @@ public class Mesh implements Cleansable {
         initRender();
         for(Entity entity: entities) {
             consumer.accept(entity);
-            if(entity.getMeshBody().isPresent() && entity.getMeshBody().get().isVisible()) {
+            if(entity.hasMeshBody() && entity.getMeshBody().isVisible()) {
                 glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
             }
         }

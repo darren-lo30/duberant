@@ -14,7 +14,7 @@ import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Renderer;
 import duber.engine.graphics.Scene;
 import duber.engine.loaders.MeshLoader;
-import duber.game.gameitems.Player;
+import duber.game.gameobjects.Player;
 import duber.game.client.Duberant;
 import duber.game.client.GameState;
 import duber.game.networking.MatchInitializePacket;
@@ -86,7 +86,7 @@ public class Match extends GameState implements Cleansable {
                     Player modifiedPlayer = getPlayer(playerPositionData.userId);
 
                     if(modifiedPlayer != null) {
-                        modifiedPlayer.getModel().getTransform().set(playerPositionData.playerTransform);
+                        modifiedPlayer.getTransform().set(playerPositionData.playerTransform);
                         modifiedPlayer.updateCamera();
                     }
                 }
@@ -138,10 +138,10 @@ public class Match extends GameState implements Cleansable {
             MeshBody playerMeshBody = new MeshBody(playerMeshes, true);
             
             if(player == mainPlayer) {
-                playerMeshBody.setVisible(false);
+                playerMeshBody.setVisible(true);
             }
 
-            player.getModel().setMeshBody(playerMeshBody);
+            player.setMeshBody(playerMeshBody);
         }
 
         //Set map meshes
@@ -154,11 +154,11 @@ public class Match extends GameState implements Cleansable {
         SkyBox skyBox = matchData.skyBox;
         skyBox.setMeshBody(new MeshBody(skyBoxMeshes, true));
 
-
         //Add all enitties to the scene
         for(Player player: players.values()) {
-            gameScene.addRenderableEntity(player.getModel());
+            gameScene.addRenderableEntity(player);
         }
+
         gameScene.addRenderableEntity(map);
         gameScene.setSkyBox(skyBox);
 

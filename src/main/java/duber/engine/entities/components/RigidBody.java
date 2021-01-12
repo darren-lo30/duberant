@@ -2,7 +2,7 @@ package duber.engine.entities.components;
 
 import org.joml.Vector3f;
 
-public class RigidBody {
+public class RigidBody extends Component {
     private final Vector3f velocity;
     private final Vector3f angularVelocity;
     private boolean dynamic;

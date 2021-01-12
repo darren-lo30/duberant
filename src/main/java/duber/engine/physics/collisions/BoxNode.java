@@ -1,6 +1,7 @@
 package duber.engine.physics.collisions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.joml.Vector3f;
@@ -100,7 +101,7 @@ public class BoxNode extends Box {
         faceBoxes.add(faceBox);
     }
 
-    public void getIntersectingFaces(Box box, List<EntityFace> faces) {
+    public void getIntersectingFaces(Box box, Collection<EntityFace> faces) {
         if(partitioned) {
             for(BoxNode childNode: children) {
                 if(childNode.intersects(box)){
@@ -116,5 +117,5 @@ public class BoxNode extends Box {
                 }
             }
         }
-    }       
+    }  
 }

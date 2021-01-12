@@ -2,7 +2,7 @@ package duber.engine.entities.components;
 
 import org.joml.Vector3f;
 
-public class Transform {
+public class Transform extends Component {
     private final Vector3f position;
     private final Vector3f rotation;  
     private float scale;

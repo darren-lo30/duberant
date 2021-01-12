@@ -1,7 +1,6 @@
 package duber.engine.graphics;
 
 import duber.engine.entities.Entity;
-import duber.engine.entities.SkyBox;
 import duber.engine.entities.Camera;
 import duber.engine.graphics.lighting.*;
 import duber.engine.utilities.Utils;
@@ -241,8 +240,7 @@ public class Renderer implements Cleansable {
     }
 
     private void renderSkyBox(Window window, Camera camera, Scene scene) {  
-        SkyBox skyBox = scene.getSkyBox();
-        
+        Entity skyBox = scene.getSkyBox();
 
         if(skyBox == null) {
             return;
@@ -251,7 +249,7 @@ public class Renderer implements Cleansable {
         if(!skyBox.hasMeshBody()) {
             throw new IllegalArgumentException("Skybox must have mesh body");
         }
-        Mesh renderableMesh = skyBox.getMeshBody().get().getMesh();
+        Mesh renderableMesh = skyBox.getMeshBody().getMesh();
         
         skyBoxShaderProgram.bind();
         skyBoxShaderProgram.setUniform("texture_sampler", 0);

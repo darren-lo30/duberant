@@ -6,14 +6,12 @@ public class OptionsMenu extends GUI {
 
     @Override
     protected void init() throws LWJGLException {
-        // TODO Auto-generated method stub
-
+        //Nothing to init
     }
 
     @Override
     public void update() {
         // TODO Auto-generated method stub
-
     }
 
     @Override

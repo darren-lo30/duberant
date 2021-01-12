@@ -1,9 +1,6 @@
 package duber.engine.entities.components;
 
-import java.util.Optional;
-
 import org.joml.Vector3f;
-
 import duber.engine.entities.Entity;
 import duber.engine.entities.Face;
 import duber.engine.entities.Edge;
@@ -11,24 +8,14 @@ import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.CollisionResponse;
 import duber.engine.physics.collisions.EntityFace;
 
-public class SphereCollider extends Collider {
+public class SphereCollider extends ColliderPart {
     private float unscaledRadius;
+    private Vector3f colliderOffset;
     
-    public SphereCollider(Entity entity) {
+    public SphereCollider(Entity entity, float unscaledRadius, Vector3f colliderOffset) {
         super(entity);
-        unscaledRadius = 0;
-        initFromEntity(entity);
-    }
-
-    @Override
-    protected void initFromEntity(Entity entity) {
-        Optional<MeshBody> entityMeshBody = entity.getMeshBody();
-        
-        if(entityMeshBody.isPresent()) {
-            for(Vector3f vertex: entityMeshBody.get().getVertices()) {
-                unscaledRadius = Math.max(unscaledRadius, vertex.length());
-            }
-        }
+        this.unscaledRadius = unscaledRadius;
+        this.colliderOffset = colliderOffset;
     }
 
     public float getRadius() {
@@ -39,22 +26,25 @@ public class SphereCollider extends Collider {
         this.unscaledRadius = unscaledRadius;
     }
 
+    public Vector3f getColliderPosition() {
+       return new Vector3f(colliderOffset)
+            .mul(getTransform().getScale())
+            .add(getTransform().getPosition());
+    }
+
     @Override
     public Box getBox() {
-        Vector3f position = getTransform().getPosition();
+        Vector3f position = getColliderPosition();
         float radius = getRadius();
         
         Box box = new Box();
 
-        box.getMinXYZ().set(
-            position.x() - radius, 
-            position.y() - radius,
-            position.z() - radius);
+        box.getMinXYZ().set(position)
+            .add(-radius, -radius, -radius);
             
-        box.getMaxXYZ().set(
-            position.x() + radius, 
-            position.y() + radius,
-            position.z() + radius);
+        box.getMaxXYZ().set(position)
+            .add(radius, radius, radius);
+
         return box;
     }
 
@@ -67,6 +57,7 @@ public class SphereCollider extends Collider {
         vTmp1.set(contactPoint);
         vTmp1.sub(edge.getPoint1());
         float dot = vTmp1.dot(edge.getNormal());
+        
         vTmp1.set(edge.getNormal());
         vTmp1.mul(-dot);
         vTmp1.add(contactPoint);
@@ -76,6 +67,7 @@ public class SphereCollider extends Collider {
         vTmp3.sub(edge.getPoint1());
         vTmp2.set(vTmp1);
         vTmp2.sub(edge.getPoint1());
+
         double dot1 = vTmp3.dot(vTmp3);
         double dot2 = vTmp3.dot(vTmp2);
         if (dot2 < 0) {
@@ -85,7 +77,7 @@ public class SphereCollider extends Collider {
             vTmp1.set(edge.getPoint2());
         }
         
-        vTmp2.set(getTransform().getPosition());
+        vTmp2.set(getColliderPosition());
         vTmp2.sub(vTmp1);
         
         response.setCollides(vTmp2.length() <= getRadius());
@@ -99,17 +91,19 @@ public class SphereCollider extends Collider {
     @Override
     public CollisionResponse checkCollision(EntityFace entityFace) {
         CollisionResponse response = new CollisionResponse(getEntity(), entityFace.getEntity());
-        
+        Vector3f colliderPosition = getColliderPosition();
+
         Face face = entityFace.getFace();
         
         Vector3f vTmp = new Vector3f();
-        vTmp.set(getTransform().getPosition()); // contact point in the triangle plane
+        vTmp.set(colliderPosition); // contact point in the triangle plane
         vTmp.sub(face.getVertices()[0]);
 
-        float dot = vTmp.dot(face.getNormal());
+        float dist = vTmp.dot(face.getNormal()); //Distance between sphere and plane
+
         vTmp.set(face.getNormal());
-        vTmp.mul(-dot);
-        vTmp.add(getTransform().getPosition());
+        vTmp.mul(-dist);
+        vTmp.add(colliderPosition); //Projected spheres center onto the triangles plane
 
                 
         for (Edge edge : face.getEdges()) {
@@ -118,10 +112,10 @@ public class SphereCollider extends Collider {
             }
         }
         
-        response.setCollides(Math.abs(dot) <= getRadius());
+        response.setCollides(Math.abs(dist) <= getRadius());
         response.getContactPoint().set(vTmp);
         response.getContactNormal().set(face.getNormal());
-        response.getContactNormal().mul(getRadius() - dot);
+        response.getContactNormal().mul(getRadius() - dist);
 
         return response;
     }

@@ -55,7 +55,7 @@ public class Scene implements Cleansable {
             return;
         }
         
-        Mesh[] renderableMeshes = renderableEntity.getMeshBody().get().getMeshes();
+        Mesh[] renderableMeshes = renderableEntity.getMeshBody().getMeshes();
         for(Mesh renderableMesh: renderableMeshes) {
             //Make the mesh renderable
             renderableMesh.makeRenderable();
@@ -70,7 +70,7 @@ public class Scene implements Cleansable {
             return;
         }
 
-        Mesh[] renderableMeshes = renderableEntity.getMeshBody().get().getMeshes();
+        Mesh[] renderableMeshes = renderableEntity.getMeshBody().getMeshes();
         for(Mesh renderableMesh: renderableMeshes) {
             if(meshMap.containsKey(renderableMesh)) {
                 meshMap.get(renderableMesh).remove(renderableEntity);

@@ -5,7 +5,8 @@ import org.joml.Vector3f;
 
 import duber.engine.KeyboardInput;
 import duber.engine.MouseInput;
-import duber.game.gameitems.Player;
+import duber.game.gameobjects.Player;
+import duber.game.server.DuberantPhysicsWorld;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -13,6 +14,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+
 
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_X;
@@ -34,14 +37,13 @@ public class Controls {
         playerVelocity.y += controlVelocity.y();
     }
 
-    public void update(Player player, MouseInput mouseInput, KeyboardInput keyboardInput) {
+    public void update(Player player, DuberantPhysicsWorld physicsWorld, MouseInput mouseInput, KeyboardInput keyboardInput) {
         Vector2f controlRotation = mouseInput.getCursorDisplacement();
         Vector3f controlVelocity = new Vector3f();
 
-
         float moveSpeed = keyboardInput.isKeyPressed(GLFW_KEY_LEFT_SHIFT) ? 
-            player.getPlayerStats().getWalkingSpeed() : 
-            player.getPlayerStats().getRunningSpeed();
+            player.getPlayerData().getWalkingSpeed() : 
+            player.getPlayerData().getRunningSpeed();
 
         if(keyboardInput.isKeyPressed(GLFW_KEY_W)) {
             controlVelocity.add(0, 0, -moveSpeed);
@@ -60,10 +62,14 @@ public class Controls {
         } else if(keyboardInput.isKeyPressed(GLFW_KEY_X)) {
             controlVelocity.add(0, moveSpeed, 0);
         }
+
+        if(keyboardInput.isKeyPressed(GLFW_KEY_SPACE) && !player.getPlayerData().isJumping()) {
+            
+        }
         
-        Vector3f playerVelocity = player.getPlayerBody().getVelocity();
-        addControlVelocity(playerVelocity, player.getModel().getTransform().getRotation(), controlVelocity);
-        player.getPlayerBody().getAngularVelocity().add(
+        Vector3f playerVelocity = player.getRigidBody().getVelocity();
+        addControlVelocity(playerVelocity, player.getTransform().getRotation(), controlVelocity);
+        player.getRigidBody().getAngularVelocity().add(
             controlRotation.y * mouseSensitivity, controlRotation.x * mouseSensitivity, 0.0f);
     }
 }

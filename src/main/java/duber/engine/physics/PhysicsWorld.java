@@ -1,12 +1,9 @@
 package duber.engine.physics;
 
-import java.util.Optional;
-
 import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
 import duber.engine.entities.components.Transform;
-import duber.engine.entities.components.Collider;
 import duber.engine.entities.components.RigidBody;
 import duber.engine.physics.collisions.ICollisionHandler;
 
@@ -22,33 +19,30 @@ public abstract class PhysicsWorld {
     }
     
     public void updateEntityComponents(Entity entity) {
-        if(entity.getCollider().isPresent()) {
+        if(entity.hasCollider()) {
             updateCollider(entity);            
         }
         
-        if(entity.getRigidBody().isPresent()) {
+        if(entity.hasRigidBody()) {
             updateRigidBody(entity);
         }        
     }
 
     private void updateCollider(Entity entity) {
-        Optional<Collider> collider = entity.getCollider();
-        if(!collider.isPresent()) {
-            throw new IllegalArgumentException("Tried updating collider of entity without one");
-        }
         collisionHandler.handleCollisions(entity);
     }
 
     private void updateRigidBody(Entity entity) {
         Transform transform = entity.getTransform();
 
-        Optional<RigidBody> rigidBody = entity.getRigidBody();
-        if(!rigidBody.isPresent()) {
+        if(!entity.hasRigidBody()) {
             throw new IllegalArgumentException("Tried updating rigid body of entity without one");
         }
+
+        RigidBody rigidBody = entity.getRigidBody();
         
-        Vector3f velocity = rigidBody.get().getVelocity();
-        Vector3f angularVelocity = rigidBody.get().getAngularVelocity();
+        Vector3f velocity = rigidBody.getVelocity();
+        Vector3f angularVelocity = rigidBody.getAngularVelocity();
         
         transform.getPosition().add(velocity);
 

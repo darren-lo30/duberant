@@ -1,67 +1,80 @@
 package duber.engine.entities;
 
-import java.util.Optional;
-
 import duber.engine.entities.components.RigidBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.entities.components.Collider;
+import duber.engine.entities.components.Component;
 import duber.engine.entities.components.MeshBody;
 
 public class Entity {
     private final Transform transform;
-    private Optional<RigidBody> rigidBody;
-    private Optional<Collider> collider;
-    private transient Optional<MeshBody> meshBody;
+    private RigidBody rigidBody;
+    private Collider collider;
+    private transient MeshBody meshBody;
     
     public Entity() {
         transform = new Transform();
-        rigidBody = Optional.ofNullable(null);
-        collider = Optional.ofNullable(null);
-        meshBody = Optional.ofNullable(null);
+        rigidBody = null;
+        collider = new Collider();
+        meshBody = null;
     }
 
     public Transform getTransform() {
         return transform;
     }
 
-    public Optional<RigidBody> getRigidBody() {
+    public RigidBody getRigidBody() {
         return rigidBody;
     }
 
     public void setRigidBody(RigidBody rigidBody) {
-        this.rigidBody = Optional.ofNullable(rigidBody);
+        removeComponent(rigidBody);
+
+        rigidBody.setEntity(this);
+        this.rigidBody = rigidBody;
     }
 
     public boolean hasRigidBody() {
-        return rigidBody.isPresent();
+        return rigidBody != null;
     }
 
     public void addRigidBody() {
-        rigidBody = Optional.ofNullable(new RigidBody());
+        rigidBody = new RigidBody();
     }
 
-    public Optional<Collider> getCollider() {
+    public Collider getCollider() {
         return collider;
     }
 
     public void setCollider(Collider collider) {
-        this.collider = Optional.ofNullable(collider);
+        removeComponent(this.collider);
+
+        collider.setEntity(this);
+        this.collider = collider;
     }
 
     public boolean hasCollider() {
-        return collider.isPresent();
+        return collider.hasColliderParts();
     }
 
-    public Optional<MeshBody> getMeshBody() {
+    public MeshBody getMeshBody() {
         return meshBody;
     }
-    
 
     public void setMeshBody(MeshBody meshBody) {
-        this.meshBody = Optional.ofNullable(meshBody);
+        removeComponent(meshBody);
+
+        meshBody.setEntity(this);
+        this.meshBody = meshBody;
     }
 
     public boolean hasMeshBody() {
-        return meshBody.isPresent();
+        return meshBody != null;
+    }
+
+    public void removeComponent(Component component) {
+        if(component != null) {
+            component.setEntity(null);
+        }
     }
 }

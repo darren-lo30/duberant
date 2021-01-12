@@ -1,80 +1,69 @@
-package duber.game.gameitems;
-
-import java.util.Optional;
+package duber.game.gameobjects;
 
 import org.joml.Vector3f;
 
 import duber.engine.entities.Camera;
 import duber.engine.entities.Entity;
-import duber.engine.entities.components.RigidBody;
+import duber.engine.entities.components.Component;
+import duber.engine.entities.components.Transform;
 
 /**
  * Player
  */
-public class Player extends GameItem {
-    public static final int RED_TEAM = 0;
-    public static final int BLUE_TEAM = 1;
-    
-    private Entity model;
+public class Player extends Entity {    
     private Camera camera;
-    private PlayerStats playerStats;
-    private int team;
+    private PlayerData playerData;
 
-    public Player(Entity model, int team) {
-        super(model);
+    public Player(int team) {
+        addRigidBody();
+
         camera = new Camera();
-        playerStats = new PlayerStats();
+        playerData = new PlayerData();
         
         if(team != 0 && team != 1) {
             throw new IllegalArgumentException("The team must either be 0 or 1 for red or blue");
         }
 
-        this.team = team;
+        playerData.setTeam(team);
     }
 
     public Camera getCamera() {
         return camera;
     }
 
-    public boolean isRedTeam() {
-        return team == RED_TEAM;
-    }
-
-    public boolean isBlueTeam() {
-        return team == BLUE_TEAM;
-    }
-
-    public PlayerStats getPlayerStats() {
-        return playerStats;
+    public PlayerData getPlayerData() {
+        return playerData;
     }
 
     public void updateCamera() {
-        Vector3f playerPosition = model.getTransform().getPosition();
-        Vector3f playerRotation = model.getTransform().getRotation();
-        camera.getTransform().getPosition().set(playerPosition);
-        camera.getTransform().getPosition().add(0, 30, 0);
-        camera.getTransform().getRotation().set(playerRotation);
+        Vector3f playerPosition = getTransform().getPosition();
+        Vector3f playerRotation = getTransform().getRotation();
+
+        
+        Transform cameraTransform = getCamera().getTransform();
+        cameraTransform.getPosition().set(playerPosition);
+        cameraTransform.getPosition().add(0, 30, 50);
+        cameraTransform.getRotation().set(playerRotation);
     }
-
-    public RigidBody getPlayerBody() {
-        Optional<RigidBody> playerBody = model.getRigidBody();
-
-        if(playerBody.isPresent()) {
-            return playerBody.get();
-        } else {
-            throw new IllegalStateException("Player lacks a rigid body");
-        }
-    }   
 
     @SuppressWarnings("unused")
     private Player(){}
     
-    public static class PlayerStats {
+    public static class PlayerData extends Component {
+        private int team = 0;
         private float runningSpeed = 1.3f;
         private float walkingSpeed = 1.0f;
         private int health = 100;
         private int money = 1000;
         private boolean jumping = false;
+
+        public void setTeam(int team) {
+            this.team = team;
+        }
+        
+        public int getTeam() {
+            return team;
+        }
     
         public float getWalkingSpeed() {
             return walkingSpeed;

@@ -21,7 +21,8 @@ import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.loaders.MeshLoader;
 import duber.engine.utilities.Timer;
 import duber.game.Controls;
-import duber.game.gameitems.Player;
+import duber.game.MatchData;
+import duber.game.gameobjects.Player;
 import duber.game.User;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.Packet;
@@ -29,7 +30,6 @@ import duber.game.networking.PlayerPositionPacket;
 import duber.game.networking.UserInputPacket;
 
 public class MatchManager implements Runnable {
-    public static final int NUM_PLAYERS_IN_MATCH = 2;
     public static final int TARGET_UPS = 30;
 
     private volatile boolean running = true;
@@ -53,21 +53,21 @@ public class MatchManager implements Runnable {
         this.serverNetwork = serverNetwork;
         physicsWorld = new DuberantPhysicsWorld();
         
-        redTeam = new HashSet<>(users.subList(0, NUM_PLAYERS_IN_MATCH/2));
-        blueTeam = new HashSet<>(users.subList(NUM_PLAYERS_IN_MATCH/2, NUM_PLAYERS_IN_MATCH));
+        redTeam = new HashSet<>(users.subList(0, MatchData.NUM_PLAYERS_IN_MATCH/2));
+        blueTeam = new HashSet<>(users.subList(MatchData.NUM_PLAYERS_IN_MATCH/2, MatchData.NUM_PLAYERS_IN_MATCH));
         
         loadPlayers();
         loadMatch();
         sendMatchData();
     }
 
-    public <E extends Packet> void sendAllUDP(E packet) {
+    private <E extends Packet> void sendAllUDP(E packet) {
         for(User user : usersInMatch()) {
             user.getConnection().sendUDP(packet);
         }
     }
 
-    public <E extends Packet> void sendAllTCP(E packet) {
+    private <E extends Packet> void sendAllTCP(E packet) {
         for(User user : usersInMatch()) {
             user.getConnection().sendTCP(packet);
         }
@@ -76,15 +76,15 @@ public class MatchManager implements Runnable {
     private void loadPlayers() throws LWJGLException {
         Mesh[] playerMeshes = MeshLoader.load("models/cube/cube.obj");
         for(User user: redTeam) {
-            Player redPlayer = createPlayer(playerMeshes, new Vector3f(0, 0, 0), Player.RED_TEAM);
+            Player redPlayer = createPlayer(playerMeshes, new Vector3f(0, 0, 0), MatchData.RED_TEAM);
             players.put(user, redPlayer);
-            physicsWorld.addDynamicEntity(redPlayer.getModel());
+            physicsWorld.addDynamicEntity(redPlayer);
         }
 
         for(User user: blueTeam) {
-            Player bluePlayer = createPlayer(playerMeshes, new Vector3f(0, 0, 0), Player.BLUE_TEAM);
+            Player bluePlayer = createPlayer(playerMeshes, new Vector3f(0, 0, 0), MatchData.BLUE_TEAM);
             players.put(user, bluePlayer);
-            physicsWorld.addDynamicEntity(bluePlayer.getModel());
+            physicsWorld.addDynamicEntity(bluePlayer);
         }
     }
     
@@ -93,18 +93,23 @@ public class MatchManager implements Runnable {
     }
 
     private Player createPlayer(Mesh[] playerMeshes, Vector3f position, int team) {
-        Entity playerModel = new Entity();
-        playerModel.setMeshBody(new MeshBody(playerMeshes, false));
+        Player player = new Player(team);
+        player.setMeshBody(new MeshBody(playerMeshes, false));
         
-        playerModel.addRigidBody();
-        SphereCollider sphereCollider = new SphereCollider(playerModel);
-        playerModel.setCollider(sphereCollider);
-        sphereCollider.setUnscaledRadius(1.0f);
-        playerModel.getTransform().setScale(5.0f);
+        player.addRigidBody();
+        SphereCollider sphereCollider1 = new SphereCollider(player, 1.0f, new Vector3f(0, 0, 0));
+        SphereCollider sphereCollider2 = new SphereCollider(player, 1.0f, new Vector3f(0, 1.5f, 0));
+        SphereCollider sphereCollider3 = new SphereCollider(player, 1.0f, new Vector3f(0, 3.0f, 0));
 
-        playerModel.getTransform().getPosition().set(position);
+        player.getCollider().addColliderPart(sphereCollider1);
+        player.getCollider().addColliderPart(sphereCollider2);
+        player.getCollider().addColliderPart(sphereCollider3);
 
-        return new Player(playerModel, team);
+        player.getTransform().setScale(5.0f);
+
+        player.getTransform().getPosition().set(position);
+
+        return player;
     }
     
     private void loadMatch() throws LWJGLException {        
@@ -188,7 +193,7 @@ public class MatchManager implements Runnable {
                 Object packet = receivedPackets.poll();
                 if(packet instanceof UserInputPacket) {
                     UserInputPacket userInput = (UserInputPacket) packet;
-                    playerControls.update(player, userInput.mouseInput, userInput.keyboardInput);
+                    playerControls.update(player, physicsWorld, userInput.mouseInput, userInput.keyboardInput);
                 }
             }
         }
@@ -202,7 +207,7 @@ public class MatchManager implements Runnable {
             User user = userPlayerEntry.getKey();
             Player player = userPlayerEntry.getValue();
 
-            sendAllUDP(new PlayerPositionPacket(user.getId(), player.getModel().getTransform()));
+            sendAllUDP(new PlayerPositionPacket(user.getId(), player.getTransform()));
         }
     }
 

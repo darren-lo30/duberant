@@ -4,7 +4,7 @@ import java.util.Map;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
 import duber.engine.graphics.lighting.SceneLighting;
-import duber.game.gameitems.Player;
+import duber.game.gameobjects.Player;
 import duber.game.User;
 
 /**
