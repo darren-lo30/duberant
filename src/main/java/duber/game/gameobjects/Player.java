@@ -52,7 +52,8 @@ public class Player extends Entity {
     public static class PlayerData extends Component {
         private int team = 0;
         private float runningSpeed = 1.3f;
-        private float walkingSpeed = 1.0f;
+        private float walkingSpeed = 0.7f;
+        private float jumpingSpeed = 3.0f;
         private int health = 100;
         private int money = 1000;
         private boolean jumping = false;
@@ -71,6 +72,10 @@ public class Player extends Entity {
     
         public float getRunningSpeed() {
             return runningSpeed;
+        }
+
+        public float getJumpingSpeed() {
+            return jumpingSpeed;
         }
     
         public boolean isJumping() {

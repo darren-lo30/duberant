@@ -3,10 +3,14 @@ package duber.engine.physics.collisions;
 import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
+import duber.engine.entities.components.ColliderPart;
 
 public class CollisionResponse {
     private final Entity collidingEntity;
     private final Entity collidedEntity;
+
+    private ColliderPart collidingEntityColliderPart;
+    private ColliderPart collidedEntityColliderPart;
 
     private boolean collides;
     private final Vector3f contactPoint;
@@ -29,6 +33,22 @@ public class CollisionResponse {
 
     public Entity getCollidedEntity() {
         return collidedEntity;
+    }
+
+    public ColliderPart getCollidingEntityColliderPart() {
+        return collidingEntityColliderPart;
+    }
+
+    public void setCollidingEntityColliderPart(ColliderPart colliderPart) {
+        collidingEntityColliderPart = colliderPart;
+    }
+    
+    public ColliderPart getCollidedEntityColliderPart() {
+        return collidedEntityColliderPart;
+    }
+
+    public void setCollidedEntityColliderPart(ColliderPart colliderPart) {
+        collidedEntityColliderPart = colliderPart;
     }
 
     public boolean isCollides() {

@@ -68,12 +68,9 @@ public class Controls {
         
         if (!player.getPlayerData().isJumping() && keyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
             player.getPlayerData().setJumping(true);
-            controlVelocity.add(0, 3.0f, 0);
+            controlVelocity.add(0, player.getPlayerData().getJumpingSpeed(), 0);
         }
         
-    
-
-
         addControlVelocity(playerVelocity, player.getTransform().getRotation(), controlVelocity);
         player.getRigidBody().getAngularVelocity().add(
             controlRotation.y * mouseSensitivity, controlRotation.x * mouseSensitivity, 0.0f);

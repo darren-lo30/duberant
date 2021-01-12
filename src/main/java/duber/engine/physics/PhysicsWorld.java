@@ -9,7 +9,7 @@ import duber.engine.physics.collisions.ICollisionHandler;
 
 public abstract class PhysicsWorld {
     private static final float GRAVITY = 0.25f;
-    private static final float MAX_Y_SPEED = 10.0f;
+    private static final float MAX_Y_SPEED = 3.0f;
     private ICollisionHandler collisionHandler;
 
     public abstract void update();
@@ -21,8 +21,8 @@ public abstract class PhysicsWorld {
     public void updateEntityComponents(Entity entity) {
         if(entity.hasRigidBody()) {
             updateRigidBody(entity);
-        }      
-
+        }
+        
         if(entity.hasCollider()) {
             updateCollider(entity);            
         }  

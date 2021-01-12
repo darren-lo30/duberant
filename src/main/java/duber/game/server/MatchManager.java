@@ -101,7 +101,7 @@ public class MatchManager implements Runnable {
         SphereCollider sphereCollider2 = new SphereCollider(player, 0.8f, new Vector3f(0, 1.5f, 0));
         SphereCollider sphereCollider3 = new SphereCollider(player, 0.8f, new Vector3f(0, 3.0f, 0));
 
-        player.getCollider().addColliderPart(sphereCollider1);
+        player.getCollider().setBaseCollider(sphereCollider1);
         player.getCollider().addColliderPart(sphereCollider2);
         player.getCollider().addColliderPart(sphereCollider3);
 
@@ -130,7 +130,7 @@ public class MatchManager implements Runnable {
         gameLighting.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
-        float lightIntensity = 0.0f;
+        float lightIntensity = 0.3f;
         Vector3f lightDirection = new Vector3f(0, 1, 1);
         DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
         gameLighting.setDirectionalLight(directionalLight);        

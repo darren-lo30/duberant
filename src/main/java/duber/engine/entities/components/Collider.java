@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Collider extends Component {
     private List<ColliderPart> colliderParts;
+    private ColliderPart baseCollider;
 
     public Collider() {
         colliderParts = new ArrayList<>();
@@ -16,6 +17,15 @@ public class Collider extends Component {
 
     public boolean hasColliderParts() {
         return !colliderParts.isEmpty();
+    }
+
+    public void setBaseCollider(ColliderPart baseCollider) {
+        colliderParts.add(baseCollider);
+        this.baseCollider = baseCollider;
+    }
+
+    public ColliderPart getBaseCollider() {
+        return baseCollider;
     }
 
     public void addColliderPart(ColliderPart colliderPart) {

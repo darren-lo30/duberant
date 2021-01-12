@@ -40,6 +40,8 @@ public class DuberantCollisionHandler implements ICollisionHandler {
         for(ColliderPart colliderPart : colliderParts) {
             for(EntityFace entityFace: constantEntities.getIntersectingFaces(colliderPart.getBox())) {
                 CollisionResponse response = colliderPart.checkCollision(entityFace);
+                response.setCollidedEntityColliderPart(colliderPart);
+                
                 if(response.isCollides()) {
                     collisionResponses.add(response);
                 }
@@ -72,31 +74,29 @@ public class DuberantCollisionHandler implements ICollisionHandler {
             collisionResponses.forEach(response -> resultPush.add(response.getContactNormal()));   
 
             RigidBody playerBody = player.getRigidBody();
-            if(playerBody != null) {
-                Utils.clamp(resultPush, new Vector3f(0.5f, 1.00f, 0.5f));
-        
-        
-                //Apply resultPush to the object
-                Vector3f snapBack = new Vector3f(resultPush);
-                snapBack.y *= 0.5f;
-                player.getTransform().getPosition().add(snapBack);
-                
-                //Resolve the resultPush
-                resultPush.normalize();
-                if(resultPush.isFinite()) {
-                    float dot = resultPush.dot(playerBody.getVelocity());
-                    resultPush.mul(dot);
-                    playerBody.getVelocity().sub(resultPush);
-                }
-
+            Utils.clamp(resultPush, new Vector3f(1.00f, 1.00f, 1.00f));
+    
+            //Apply resultPush to the object
+            Vector3f snapBack = new Vector3f(resultPush);
+            snapBack.y *= 0.5f;
+            player.getTransform().getPosition().add(snapBack);
+            
+            //Resolve the resultPush
+            resultPush.normalize();
+            if(resultPush.isFinite()) {
+                float dot = resultPush.dot(playerBody.getVelocity());
+                resultPush.mul(dot);
+                playerBody.getVelocity().sub(resultPush);
             }
 
-            if(collisionResponse.isCollides() && player.getPlayerData().isJumping()) {
+            //Resolve jumpng
+            if(resultPush.isFinite() && collisionResponse.isCollides() && player.getPlayerData().isJumping() &&
+                collisionResponse.getCollidedEntityColliderPart() == player.getCollider().getBaseCollider()) {
                 Vector3f groundNormal = new Vector3f(0, 1, 0);
                 Vector3f faceNormal = collisionResponse.getFaceNormal();
 
                 float cosAngleBetween = faceNormal.dot(groundNormal);
-                if(cosAngleBetween > 0.85) {
+                if(cosAngleBetween > 0.9) {
                     player.getPlayerData().setJumping(false);
                 }
             }
