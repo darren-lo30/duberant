@@ -9,13 +9,15 @@ import org.joml.Vector3f;
 import duber.engine.entities.Entity;
 import duber.engine.entities.components.ColliderPart;
 import duber.engine.entities.components.RigidBody;
-import duber.engine.entities.components.Transform;
 import duber.engine.physics.collisions.CollisionResponse;
 import duber.engine.physics.collisions.EntityFace;
 import duber.engine.physics.collisions.ICollisionHandler;
 import duber.engine.physics.collisions.Octree;
+import duber.engine.utilities.Utils;
+import duber.game.gameobjects.Player;
 
-public class DuberantCollisionHandler implements ICollisionHandler {
+public class DuberantCollisionHandler implements ICollisionHandler {    
+
     private Octree constantEntities;
     private Set<Entity> dynamicEntities;
     
@@ -49,7 +51,9 @@ public class DuberantCollisionHandler implements ICollisionHandler {
     
     private List<CollisionResponse> dynamicEntityCollisionDetection(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
         for(Entity entity : dynamicEntities) {
-            
+            if(entity != collidingEntity) {
+
+            }
         }
 
         return collisionResponses;
@@ -57,26 +61,50 @@ public class DuberantCollisionHandler implements ICollisionHandler {
 
     @Override
     public void processCollisions(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
-        Vector3f resultPush = new Vector3f();
-        collisionResponses.forEach(response -> resultPush.add(response.getContactNormal()));
-
-        RigidBody entityBody = collidingEntity.getRigidBody();
-        if(entityBody != null) {
-            applyPush(collidingEntity.getTransform(), entityBody, resultPush);
+        if(collidingEntity instanceof Player) {
+            resolvePlayerCollisions((Player) collidingEntity, collisionResponses);
         }
     }
 
-    private void applyPush(Transform transform, RigidBody rigidBody, Vector3f push) {
-        //Apply push to the object
-        transform.getPosition().add(push);
+    private void resolvePlayerCollisions(Player player, List<CollisionResponse> collisionResponses) {
+        for(CollisionResponse collisionResponse : collisionResponses) {
+            Vector3f resultPush = new Vector3f();
+            collisionResponses.forEach(response -> resultPush.add(response.getContactNormal()));   
+
+            RigidBody playerBody = player.getRigidBody();
+            if(playerBody != null) {
+
+                //Flooor collision
+
+
+                //Wall collision
+                Utils.clamp(resultPush, new Vector3f(0.5f, 1.00f, 0.5f));
         
-        //Resolve the push
-        push.normalize();
-        if(push.isFinite()) {
-            float dot = push.dot(rigidBody.getVelocity());
-            push.mul(dot);
-            rigidBody.getVelocity().sub(push);
+        
+                //Apply resultPush to the object
+                player.getTransform().getPosition().add(resultPush);
+                
+                //Resolve the resultPush
+                resultPush.normalize();
+                if(resultPush.isFinite()) {
+                    float dot = resultPush.dot(playerBody.getVelocity());
+                    resultPush.mul(dot);
+                    playerBody.getVelocity().sub(resultPush);
+                }
+
+            }
+
+            if(collisionResponse.isCollides()) {
+                Vector3f groundNormal = new Vector3f(0, 1, 0);
+                Vector3f collisionNormal = new Vector3f(collisionResponse.getContactNormal());
+                collisionNormal.normalize();
+
+                if(collisionNormal.isFinite()) {
+                        
+                }
+            }
         }
     }
+
     
 }

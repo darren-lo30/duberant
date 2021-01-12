@@ -98,8 +98,8 @@ public class MatchManager implements Runnable {
         
         player.addRigidBody();
         SphereCollider sphereCollider1 = new SphereCollider(player, 1.0f, new Vector3f(0, 0, 0));
-        SphereCollider sphereCollider2 = new SphereCollider(player, 1.0f, new Vector3f(0, 1.5f, 0));
-        SphereCollider sphereCollider3 = new SphereCollider(player, 1.0f, new Vector3f(0, 3.0f, 0));
+        SphereCollider sphereCollider2 = new SphereCollider(player, 0.8f, new Vector3f(0, 1.5f, 0));
+        SphereCollider sphereCollider3 = new SphereCollider(player, 0.8f, new Vector3f(0, 3.0f, 0));
 
         player.getCollider().addColliderPart(sphereCollider1);
         player.getCollider().addColliderPart(sphereCollider2);

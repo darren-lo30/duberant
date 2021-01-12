@@ -64,7 +64,8 @@ public class Controls {
         }
 
         if(keyboardInput.isKeyPressed(GLFW_KEY_SPACE) && !player.getPlayerData().isJumping()) {
-            
+            player.getPlayerData().setJumping(true);
+            controlVelocity.add(0, -moveSpeed, 0);
         }
         
         Vector3f playerVelocity = player.getRigidBody().getVelocity();
