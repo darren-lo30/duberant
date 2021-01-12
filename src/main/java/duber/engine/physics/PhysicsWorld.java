@@ -19,13 +19,13 @@ public abstract class PhysicsWorld {
     }
     
     public void updateEntityComponents(Entity entity) {
-        if(entity.hasCollider()) {
-            updateCollider(entity);            
-        }
-        
         if(entity.hasRigidBody()) {
             updateRigidBody(entity);
-        }        
+        }      
+
+        if(entity.hasCollider()) {
+            updateCollider(entity);            
+        }  
     }
 
     private void updateCollider(Entity entity) {

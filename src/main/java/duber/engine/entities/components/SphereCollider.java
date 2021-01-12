@@ -105,7 +105,9 @@ public class SphereCollider extends ColliderPart {
         vTmp.mul(-dist);
         vTmp.add(colliderPosition); //Projected spheres center onto the triangles plane
 
-                
+        
+        response.getFaceNormal().set(face.getNormal());
+        
         for (Edge edge : face.getEdges()) {
             if (!edge.isInside(vTmp)) {
                 return checkCollision(edge, vTmp, response);

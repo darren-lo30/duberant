@@ -73,16 +73,13 @@ public class DuberantCollisionHandler implements ICollisionHandler {
 
             RigidBody playerBody = player.getRigidBody();
             if(playerBody != null) {
-
-                //Flooor collision
-
-
-                //Wall collision
                 Utils.clamp(resultPush, new Vector3f(0.5f, 1.00f, 0.5f));
         
         
                 //Apply resultPush to the object
-                player.getTransform().getPosition().add(resultPush);
+                Vector3f snapBack = new Vector3f(resultPush);
+                snapBack.y *= 0.5f;
+                player.getTransform().getPosition().add(snapBack);
                 
                 //Resolve the resultPush
                 resultPush.normalize();
@@ -94,13 +91,13 @@ public class DuberantCollisionHandler implements ICollisionHandler {
 
             }
 
-            if(collisionResponse.isCollides()) {
+            if(collisionResponse.isCollides() && player.getPlayerData().isJumping()) {
                 Vector3f groundNormal = new Vector3f(0, 1, 0);
-                Vector3f collisionNormal = new Vector3f(collisionResponse.getContactNormal());
-                collisionNormal.normalize();
+                Vector3f faceNormal = collisionResponse.getFaceNormal();
 
-                if(collisionNormal.isFinite()) {
-                        
+                float cosAngleBetween = faceNormal.dot(groundNormal);
+                if(cosAngleBetween > 0.85) {
+                    player.getPlayerData().setJumping(false);
                 }
             }
         }

@@ -63,12 +63,17 @@ public class Controls {
             controlVelocity.add(0, moveSpeed, 0);
         }
 
-        if(keyboardInput.isKeyPressed(GLFW_KEY_SPACE) && !player.getPlayerData().isJumping()) {
-            player.getPlayerData().setJumping(true);
-            controlVelocity.add(0, -moveSpeed, 0);
-        }
         
         Vector3f playerVelocity = player.getRigidBody().getVelocity();
+        
+        if (!player.getPlayerData().isJumping() && keyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
+            player.getPlayerData().setJumping(true);
+            controlVelocity.add(0, 3.0f, 0);
+        }
+        
+    
+
+
         addControlVelocity(playerVelocity, player.getTransform().getRotation(), controlVelocity);
         player.getRigidBody().getAngularVelocity().add(
             controlRotation.y * mouseSensitivity, controlRotation.x * mouseSensitivity, 0.0f);
