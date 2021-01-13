@@ -35,14 +35,12 @@ import duber.game.networking.UserInputPacket;
 
 public class MatchManager implements Runnable {
     public static final int TARGET_UPS = 30;
-
+    
     private volatile boolean running = true;
-
     private ServerNetwork serverNetwork;
 
     private Set<User> redTeam = new HashSet<>();
     private Set<User> blueTeam = new HashSet<>();
-
     private Map<User, Player> players = new HashMap<>();
 
     private DuberantPhysicsWorld physicsWorld;
@@ -62,7 +60,7 @@ public class MatchManager implements Runnable {
         
         loadPlayers();
         loadMatch();
-        sendMatchData();
+        sendMatchInitializationData();
     }
 
     private <E extends Packet> void sendAllUDP(E packet) {
@@ -80,19 +78,19 @@ public class MatchManager implements Runnable {
     private void loadPlayers() throws LWJGLException {
         Mesh[] playerMeshes = MeshLoader.load("models/cube/cube.obj");
         for(User user: redTeam) {
-            Player redPlayer = createPlayer(playerMeshes, new Vector3f(0, 0, 0), MatchData.RED_TEAM);
+            Player redPlayer = createPlayer(playerMeshes, new Vector3f(50, 0, 0), MatchData.RED_TEAM);
             players.put(user, redPlayer);
             physicsWorld.addDynamicEntity(redPlayer);
         }
 
         for(User user: blueTeam) {
-            Player bluePlayer = createPlayer(playerMeshes, new Vector3f(0, 0, 0), MatchData.BLUE_TEAM);
+            Player bluePlayer = createPlayer(playerMeshes, new Vector3f(50, 0, 0), MatchData.BLUE_TEAM);
             players.put(user, bluePlayer);
             physicsWorld.addDynamicEntity(bluePlayer);
         }
     }
     
-    public Set<User> usersInMatch() {
+    private Set<User> usersInMatch() {
         return players.keySet();
     }
 
@@ -152,7 +150,7 @@ public class MatchManager implements Runnable {
         gameLighting.setDirectionalLight(directionalLight);        
     }
 
-    private void sendMatchData() {
+    private void sendMatchInitializationData() {
         MatchInitializePacket matchInitializePacket = new MatchInitializePacket(players, skyBox, map, gameLighting);
         sendAllTCP(matchInitializePacket);
     }
@@ -188,15 +186,15 @@ public class MatchManager implements Runnable {
     }
 
     private void update() {
-        receiveInput();
+        receivePlayerInputs();
         physicsWorld.update();
-        sendUpdates();
+        sendGameUpdates();
     }
 
     /**
      * Receive an inputs from the client and apply them
      */
-    private void receiveInput() {
+    private void receivePlayerInputs() {
         for(Entry<User, Player> userPlayerEntry : players.entrySet()) {
             User user = userPlayerEntry.getKey();
             Player player = userPlayerEntry.getValue();
@@ -218,7 +216,7 @@ public class MatchManager implements Runnable {
     /**
      * Send out any updates to the users
      */
-    private void sendUpdates() {
+    private void sendGameUpdates() {
         for(Entry<User, Player> userPlayerEntry : players.entrySet()) {
             User user = userPlayerEntry.getKey();
             Player player = userPlayerEntry.getValue();

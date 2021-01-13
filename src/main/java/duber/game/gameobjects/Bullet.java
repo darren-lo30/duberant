@@ -1,16 +1,13 @@
 package duber.game.gameobjects;
 
-import duber.engine.entities.components.Component;
-
 public class Bullet {
-    
-    private BulletData bulletData;
+    private int damage;
 
-    public Bullet(int damage, float speed) {
-
+    public Bullet(int damage) {
+        this.damage = damage;
     }
 
-    private static class BulletData extends Component {
-        
-    }   
+    public int getDamage() {
+        return damage;
+    }
 }

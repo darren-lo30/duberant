@@ -8,7 +8,7 @@ import duber.engine.Cleansable;
 import duber.engine.Window;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
-import duber.engine.entities.components.Follow;
+import duber.engine.entities.components.Vision;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.exceptions.LWJGLException;
@@ -90,7 +90,7 @@ public class Match extends GameState implements Cleansable {
                     if(modifiedPlayer != null) {
                         //Update the player position and camera
                         modifiedPlayer.getComponent(Transform.class).set(playerPositionData.playerTransform);
-                        modifiedPlayer.getView().getComponent(Transform.class).set(playerPositionData.cameTransform);
+                        modifiedPlayer.getView().getComponent(Transform.class).set(playerPositionData.cameraTransform);
                     }
                 }
             }
@@ -105,7 +105,7 @@ public class Match extends GameState implements Cleansable {
             Duberant game = getGame();
             Window window = game.getWindow();
 
-            renderer.render(window, mainPlayer.getComponent(Follow.class).getCamera(), gameScene);
+            renderer.render(window, mainPlayer.getComponent(Vision.class).getCamera(), gameScene);
             hud.displayCrosshair(game.getUser().getCrosshair(), window.getWidth() / 2, window.getHeight() / 2);
         }
     }

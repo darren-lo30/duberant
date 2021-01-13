@@ -5,12 +5,15 @@ import java.util.Stack;
 import duber.engine.Cleansable;
 import duber.engine.exceptions.LWJGLException;
 import duber.game.client.gui.MainMenu;
+import duber.game.client.gui.OptionsMenu;
 import duber.game.client.match.Match;
 
 public class GameStateManager implements Cleansable {
+    
     public enum GameStateOption {
         MAIN_MENU    (new MainMenu()),
-        MATCH        (new Match());
+        MATCH        (new Match()),
+        OPTIONS_MENU (new OptionsMenu());
 
         private final GameState gameState;
         private GameStateOption(GameState gameState) {

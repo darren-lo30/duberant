@@ -24,6 +24,7 @@ public class Player extends Entity {
             throw new IllegalArgumentException("The team must either be 0 or 1 for red or blue");
         }
 
+        playerData = new PlayerData();
         playerData.setTeam(team);
     }
 
@@ -49,6 +50,7 @@ public class Player extends Entity {
 
         private Gun primaryGun;
         private Gun secondaryGun;
+        private Gun equippedGun;
         
         public void setTeam(int team) {
             this.team = team;

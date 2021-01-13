@@ -24,8 +24,4 @@ public class Vision extends Component {
     public Camera getCamera() {
         return camera;
     }
-
-    public Vector3f getVisionRay() {
-        //Get ray that represents visiion
-    }
 }

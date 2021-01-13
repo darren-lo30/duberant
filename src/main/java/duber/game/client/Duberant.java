@@ -7,6 +7,9 @@ import duber.engine.exceptions.LWJGLException;
 import duber.game.User;
 import duber.game.client.GameStateManager.GameStateOption;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+
+
 public class Duberant implements IGameLogic {
     private Window window;
     private User user;
@@ -57,6 +60,11 @@ public class Duberant implements IGameLogic {
     @Override
     public void update() {
         gameStateManager.update();
+
+        //Open up options panel
+        if(window.getKeyboardInput().isKeyPressed(GLFW_KEY_ESCAPE)) {
+            gameStateManager.pushState(GameStateOption.OPTIONS_MENU);
+        }
     }
 
     @Override

@@ -33,7 +33,7 @@ public class DuberantCollisionHandler implements ICollisionHandler {
         List<CollisionResponse> collisionResponses = new ArrayList<>();
 
         constantEntityCollisionDetection(collidingCollider, collisionResponses); 
-        //dynamicEntityCollisionDetection(collidingEntity, collisionResponses);
+        dynamicEntityCollisionDetection(collidingEntity, collisionResponses);
         return collisionResponses;
     }
 
@@ -56,10 +56,9 @@ public class DuberantCollisionHandler implements ICollisionHandler {
     private List<CollisionResponse> dynamicEntityCollisionDetection(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
         for(Entity entity : dynamicEntities) {
             if(entity != collidingEntity) {
-
+                //Do something
             }
         }
-
         return collisionResponses;
     }
 
