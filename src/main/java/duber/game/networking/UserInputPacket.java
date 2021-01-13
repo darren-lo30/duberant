@@ -3,7 +3,7 @@ package duber.game.networking;
 import duber.engine.KeyboardInput;
 import duber.engine.MouseInput;
 
-public class UserInputPacket {
+public class UserInputPacket extends Packet{
     public KeyboardInput keyboardInput;
     public MouseInput mouseInput;
 

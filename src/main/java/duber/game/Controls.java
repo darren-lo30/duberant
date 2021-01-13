@@ -5,6 +5,8 @@ import org.joml.Vector3f;
 
 import duber.engine.KeyboardInput;
 import duber.engine.MouseInput;
+import duber.engine.entities.components.RigidBody;
+import duber.engine.entities.components.Transform;
 import duber.game.gameobjects.Player;
 import duber.game.server.DuberantPhysicsWorld;
 
@@ -63,16 +65,20 @@ public class Controls {
             controlVelocity.add(0, moveSpeed, 0);
         }
 
-        
-        Vector3f playerVelocity = player.getRigidBody().getVelocity();
+        if(mouseInput.leftButtonIsPressed()) {
+            //Shoot gun
+        }
+
+        Vector3f playerVelocity = player.getComponent(RigidBody.class).getVelocity();
         
         if (!player.getPlayerData().isJumping() && keyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
             player.getPlayerData().setJumping(true);
             controlVelocity.add(0, player.getPlayerData().getJumpingSpeed(), 0);
         }
         
-        addControlVelocity(playerVelocity, player.getTransform().getRotation(), controlVelocity);
-        player.getRigidBody().getAngularVelocity().add(
+        addControlVelocity(playerVelocity, player.getComponent(Transform.class).getRotation(), controlVelocity);
+        
+        player.getComponent(RigidBody.class).getAngularVelocity().add(
             controlRotation.y * mouseSensitivity, controlRotation.x * mouseSensitivity, 0.0f);
     }
 }

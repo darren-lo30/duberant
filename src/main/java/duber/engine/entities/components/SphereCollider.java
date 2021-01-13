@@ -1,7 +1,6 @@
 package duber.engine.entities.components;
 
 import org.joml.Vector3f;
-import duber.engine.entities.Entity;
 import duber.engine.entities.Face;
 import duber.engine.entities.Edge;
 import duber.engine.physics.collisions.Box;
@@ -12,14 +11,18 @@ public class SphereCollider extends ColliderPart {
     private float unscaledRadius;
     private Vector3f colliderOffset;
     
-    public SphereCollider(Entity entity, float unscaledRadius, Vector3f colliderOffset) {
-        super(entity);
+    public SphereCollider(float unscaledRadius, Vector3f colliderOffset) {
         this.unscaledRadius = unscaledRadius;
         this.colliderOffset = colliderOffset;
     }
 
+    private Transform getEntityTransform() {
+        return getCollider().getEntity().getComponent(Transform.class);
+    }
+
+
     public float getRadius() {
-        return unscaledRadius * getTransform().getScale();
+        return unscaledRadius * getEntityTransform().getScale();
     }
 
     public void setUnscaledRadius(float unscaledRadius) {
@@ -27,9 +30,9 @@ public class SphereCollider extends ColliderPart {
     }
 
     public Vector3f getColliderPosition() {
-       return new Vector3f(colliderOffset)
-            .mul(getTransform().getScale())
-            .add(getTransform().getPosition());
+        return new Vector3f(colliderOffset)
+            .mul(getEntityTransform().getScale())
+            .add(getEntityTransform().getPosition());
     }
 
     @Override
@@ -90,7 +93,7 @@ public class SphereCollider extends ColliderPart {
 
     @Override
     public CollisionResponse checkCollision(EntityFace entityFace) {
-        CollisionResponse response = new CollisionResponse(getEntity(), entityFace.getEntity());
+        CollisionResponse response = new CollisionResponse(getCollider().getEntity(), entityFace.getEntity());
         Vector3f colliderPosition = getColliderPosition();
 
         Face face = entityFace.getFace();

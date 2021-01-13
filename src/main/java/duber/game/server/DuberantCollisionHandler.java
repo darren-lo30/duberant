@@ -7,8 +7,10 @@ import java.util.Set;
 import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
+import duber.engine.entities.components.Collider;
 import duber.engine.entities.components.ColliderPart;
 import duber.engine.entities.components.RigidBody;
+import duber.engine.entities.components.Transform;
 import duber.engine.physics.collisions.CollisionResponse;
 import duber.engine.physics.collisions.EntityFace;
 import duber.engine.physics.collisions.ICollisionHandler;
@@ -27,16 +29,16 @@ public class DuberantCollisionHandler implements ICollisionHandler {
     }
 
     @Override
-    public List<CollisionResponse> detectCollisions(Entity collidingEntity) {
+    public List<CollisionResponse> detectCollisions(Collider collidingCollider, Entity collidingEntity) {
         List<CollisionResponse> collisionResponses = new ArrayList<>();
 
-        constantEntityCollisionDetection(collidingEntity, collisionResponses); 
+        constantEntityCollisionDetection(collidingCollider, collisionResponses); 
         //dynamicEntityCollisionDetection(collidingEntity, collisionResponses);
         return collisionResponses;
     }
 
-    private List<CollisionResponse> constantEntityCollisionDetection(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
-        List<ColliderPart> colliderParts = collidingEntity.getCollider().getColliderParts();
+    private List<CollisionResponse> constantEntityCollisionDetection(Collider collidingCollider, List<CollisionResponse> collisionResponses) {
+        List<ColliderPart> colliderParts = collidingCollider.getColliderParts();
         for(ColliderPart colliderPart : colliderParts) {
             for(EntityFace entityFace: constantEntities.getIntersectingFaces(colliderPart.getBox())) {
                 CollisionResponse response = colliderPart.checkCollision(entityFace);
@@ -73,13 +75,13 @@ public class DuberantCollisionHandler implements ICollisionHandler {
             Vector3f resultPush = new Vector3f();
             collisionResponses.forEach(response -> resultPush.add(response.getContactNormal()));   
 
-            RigidBody playerBody = player.getRigidBody();
+            RigidBody playerBody = player.getComponent(RigidBody.class);
             Utils.clamp(resultPush, new Vector3f(1.00f, 1.00f, 1.00f));
     
             //Apply resultPush to the object
             Vector3f snapBack = new Vector3f(resultPush);
             snapBack.y *= 0.5f;
-            player.getTransform().getPosition().add(snapBack);
+            player.getComponent(Transform.class).getPosition().add(snapBack);
             
             //Resolve the resultPush
             resultPush.normalize();
@@ -91,7 +93,7 @@ public class DuberantCollisionHandler implements ICollisionHandler {
 
             //Resolve jumpng
             if(resultPush.isFinite() && collisionResponse.isCollides() && player.getPlayerData().isJumping() &&
-                collisionResponse.getCollidedEntityColliderPart() == player.getCollider().getBaseCollider()) {
+                collisionResponse.getCollidedEntityColliderPart() == player.getComponent(Collider.class).getBaseCollider()) {
                 Vector3f groundNormal = new Vector3f(0, 1, 0);
                 Vector3f faceNormal = collisionResponse.getFaceNormal();
 

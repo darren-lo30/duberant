@@ -2,32 +2,26 @@ package duber.engine.entities.components;
 
 import org.joml.Vector3f;
 
-import duber.engine.entities.Entity;
 import duber.engine.entities.Edge;
 import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.CollisionResponse;
 import duber.engine.physics.collisions.EntityFace;
 
 public abstract class ColliderPart {   
-    private Transform transform;
-    private Entity entity;
-    
-    protected ColliderPart(){
-        entity = null;
-        transform = null;
+    private Collider collider;
+
+    protected ColliderPart(){}
+
+    protected ColliderPart(Collider collider) {
+        this.collider = collider;
     }
 
-    protected ColliderPart(Entity entity) {
-        this.entity = entity;
-        this.transform = entity.getTransform();
+    public Collider getCollider() {
+        return collider;
     }
-    
-    public Transform getTransform() {
-        return transform;
-    }   
 
-    public Entity getEntity() {
-        return entity;
+    public void setCollider(Collider collider) {
+        this.collider = collider;
     }
 
     public abstract Box getBox();

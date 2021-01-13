@@ -8,7 +8,9 @@ import duber.engine.Cleansable;
 import duber.engine.Window;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
+import duber.engine.entities.components.Follow;
 import duber.engine.entities.components.MeshBody;
+import duber.engine.entities.components.Transform;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Renderer;
@@ -86,8 +88,9 @@ public class Match extends GameState implements Cleansable {
                     Player modifiedPlayer = getPlayer(playerPositionData.userId);
 
                     if(modifiedPlayer != null) {
-                        modifiedPlayer.getTransform().set(playerPositionData.playerTransform);
-                        modifiedPlayer.updateCamera();
+                        //Update the player position and camera
+                        modifiedPlayer.getComponent(Transform.class).set(playerPositionData.playerTransform);
+                        modifiedPlayer.getView().getComponent(Transform.class).set(playerPositionData.cameTransform);
                     }
                 }
             }
@@ -102,7 +105,7 @@ public class Match extends GameState implements Cleansable {
             Duberant game = getGame();
             Window window = game.getWindow();
 
-            renderer.render(window, mainPlayer.getCamera(), gameScene);
+            renderer.render(window, mainPlayer.getComponent(Follow.class).getCamera(), gameScene);
             hud.displayCrosshair(game.getUser().getCrosshair(), window.getWidth() / 2, window.getHeight() / 2);
         }
     }
@@ -141,18 +144,18 @@ public class Match extends GameState implements Cleansable {
                 playerMeshBody.setVisible(true);
             }
 
-            player.setMeshBody(playerMeshBody);
+            player.addComponent(playerMeshBody);
         }
 
         //Set map meshes
         Mesh[] mapMeshes = MeshLoader.load(matchData.mapModel.modelFile, matchData.mapModel.textureDirectory);
         Entity map = matchData.map;
-        map.setMeshBody(new MeshBody(mapMeshes, true));
+        map.addComponent(new MeshBody(mapMeshes, true));
 
         //Set skybox mesh
         Mesh[] skyBoxMeshes = MeshLoader.load(matchData.skyBoxModel.modelFile, matchData.skyBoxModel.textureDirectory);
         SkyBox skyBox = matchData.skyBox;
-        skyBox.setMeshBody(new MeshBody(skyBoxMeshes, true));
+        skyBox.addComponent(new MeshBody(skyBoxMeshes, true));
 
         //Add all enitties to the scene
         for(Player player: players.values()) {

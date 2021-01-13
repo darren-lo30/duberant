@@ -7,7 +7,9 @@ import java.util.Set;
 
 import org.joml.Vector3f;
 
+import duber.engine.entities.components.Collider;
 import duber.engine.entities.components.ColliderPart;
+import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.entities.Entity;
 import duber.engine.entities.Face;
@@ -20,11 +22,11 @@ public class Octree {
     }
 
     public void addEntity(Entity entity, Transform faceTransform) {
-        if(!entity.hasMeshBody()){
+        if(!entity.hasComponent(MeshBody.class)){
             throw new IllegalArgumentException("To add an entity to the octree, it must have a mesh body");
         }
         
-        for(Face face: entity.getMeshBody().getFaces()) {
+        for(Face face: entity.getComponent(MeshBody.class).getFaces()) {
             addFace(entity, face, faceTransform);
         }
     }
@@ -43,7 +45,7 @@ public class Octree {
     public List<EntityFace> getIntersectingFaces(Entity entity) {
         Set<EntityFace> intersectingFaces = new HashSet<>();
 
-        List<ColliderPart> entityColliderParts = entity.getCollider().getColliderParts();
+        List<ColliderPart> entityColliderParts = entity.getComponent(Collider.class).getColliderParts();
         for(ColliderPart colliderPart : entityColliderParts) {
             root.getIntersectingFaces(colliderPart.getBox(), intersectingFaces);
         }

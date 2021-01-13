@@ -6,9 +6,9 @@ import duber.engine.graphics.Mesh;
 import duber.engine.entities.Face;
 
 public class MeshBody extends Component {
-    private final Face[] faces;
-    private final Vector3f[] vertices;
-    private final Mesh[] meshes;
+    private transient Face[] faces;
+    private transient Vector3f[] vertices;
+    private transient Mesh[] meshes;
 
     private boolean visible;
     
@@ -80,4 +80,7 @@ public class MeshBody extends Component {
     public Face[] getFaces() {
         return faces;
     }
+
+    @SuppressWarnings("unused")
+    private MeshBody() {}
 }

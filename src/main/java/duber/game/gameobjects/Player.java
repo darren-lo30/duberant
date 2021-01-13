@@ -1,25 +1,24 @@
 package duber.game.gameobjects;
 
-import org.joml.Vector3f;
-
 import duber.engine.entities.Camera;
 import duber.engine.entities.Entity;
+import duber.engine.entities.components.Collider;
 import duber.engine.entities.components.Component;
-import duber.engine.entities.components.Transform;
+import duber.engine.entities.components.Follow;
+import duber.engine.entities.components.RigidBody;
 
 /**
  * Player
  */
 public class Player extends Entity {    
-    private Camera camera;
     private PlayerData playerData;
 
     public Player(int team) {
-        addRigidBody();
+        addComponent(new Collider());
+        addComponent(new RigidBody());
+        addComponent(new Follow());
 
-        camera = new Camera();
         playerData = new PlayerData();
-        
         if(team != 0 && team != 1) {
             throw new IllegalArgumentException("The team must either be 0 or 1 for red or blue");
         }
@@ -27,23 +26,12 @@ public class Player extends Entity {
         playerData.setTeam(team);
     }
 
-    public Camera getCamera() {
-        return camera;
-    }
-
     public PlayerData getPlayerData() {
         return playerData;
     }
 
-    public void updateCamera() {
-        Vector3f playerPosition = getTransform().getPosition();
-        Vector3f playerRotation = getTransform().getRotation();
-
-        
-        Transform cameraTransform = getCamera().getTransform();
-        cameraTransform.getPosition().set(playerPosition);
-        cameraTransform.getPosition().add(0, 30, 50);
-        cameraTransform.getRotation().set(playerRotation);
+    public Camera getView() {
+        return getComponent(Follow.class).getCamera();
     }
 
     @SuppressWarnings("unused")
@@ -58,6 +46,9 @@ public class Player extends Entity {
         private int money = 1000;
         private boolean jumping = false;
 
+        private Gun primaryGun;
+        private Gun secondaryGun;
+        
         public void setTeam(int team) {
             this.team = team;
         }

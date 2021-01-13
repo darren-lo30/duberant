@@ -4,6 +4,8 @@ import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
 import duber.engine.entities.components.Transform;
+import duber.engine.entities.components.Collider;
+import duber.engine.entities.components.Follow;
 import duber.engine.entities.components.RigidBody;
 import duber.engine.physics.collisions.ICollisionHandler;
 
@@ -18,28 +20,26 @@ public abstract class PhysicsWorld {
         this.collisionHandler = collisionHandler;
     }
     
-    public void updateEntityComponents(Entity entity) {
-        if(entity.hasRigidBody()) {
-            updateRigidBody(entity);
+    public void updateEntityPhysics(Entity entity) {
+        if(entity.hasComponent(RigidBody.class)) {
+            updateRigidBody(entity.getComponent(RigidBody.class), entity);
         }
         
-        if(entity.hasCollider()) {
-            updateCollider(entity);            
-        }  
-    }
-
-    private void updateCollider(Entity entity) {
-        collisionHandler.handleCollisions(entity);
-    }
-
-    private void updateRigidBody(Entity entity) {
-        Transform transform = entity.getTransform();
-
-        if(!entity.hasRigidBody()) {
-            throw new IllegalArgumentException("Tried updating rigid body of entity without one");
+        if(entity.hasComponent(Collider.class)) {
+            updateCollider(entity.getComponent(Collider.class), entity);            
         }
 
-        RigidBody rigidBody = entity.getRigidBody();
+        if(entity.hasComponent(Follow.class)) {
+            updateFollow(entity.getComponent(Follow.class), entity);
+        }
+    }
+
+    private void updateCollider(Collider collider, Entity entity) {
+        collisionHandler.handleCollisions(collider, entity);
+    }
+
+    private void updateRigidBody(RigidBody rigidBody, Entity entity) {
+        Transform transform = entity.getComponent(Transform.class);
         
         Vector3f velocity = rigidBody.getVelocity();
         Vector3f angularVelocity = rigidBody.getAngularVelocity();
@@ -55,5 +55,14 @@ public abstract class PhysicsWorld {
             velocity.y = -MAX_Y_SPEED;
         }
         angularVelocity.set(0, 0, 0);
+    }
+
+    private void updateFollow(Follow entityFollow, Entity entity) {
+        Transform entityTransform = entity.getComponent(Transform.class);
+        Transform cameraTransform = entityFollow.getCamera().getComponent(Transform.class);
+
+        cameraTransform.getPosition().set(entityTransform.getPosition());
+        cameraTransform.getPosition().add(entityFollow.getCameraOffset());
+        cameraTransform.getRotation().set(entityTransform.getRotation());
     }
 }

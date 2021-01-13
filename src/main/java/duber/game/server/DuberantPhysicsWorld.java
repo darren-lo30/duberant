@@ -6,6 +6,7 @@ import java.util.Set;
 import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
+import duber.engine.entities.components.Transform;
 import duber.engine.physics.PhysicsWorld;
 import duber.engine.physics.collisions.Octree;
 
@@ -29,12 +30,12 @@ public class DuberantPhysicsWorld extends PhysicsWorld {
     }
 
     public void addConstantEntity(Entity entity) {
-        constantEntities.addEntity(entity, entity.getTransform());
+        constantEntities.addEntity(entity, entity.getComponent(Transform.class));
     }
 
     @Override
     public void update() {
-        dynamicEntities.forEach(entity -> updateEntityComponents(entity));
+        dynamicEntities.forEach(entity -> updateEntityPhysics(entity));
 
     }
 }

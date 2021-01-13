@@ -36,6 +36,7 @@ import org.lwjgl.system.MemoryUtil;
 import duber.engine.Cleansable;
 import duber.engine.entities.Entity;
 import duber.engine.entities.Face;
+import duber.engine.entities.components.MeshBody;
 
 public class Mesh implements Cleansable {    
     private static final int MAX_WEIGHTS = 4;
@@ -263,7 +264,8 @@ public class Mesh implements Cleansable {
         initRender();
         for(Entity entity: entities) {
             consumer.accept(entity);
-            if(entity.hasMeshBody() && entity.getMeshBody().isVisible()) {
+            
+            if(entity.hasComponent(MeshBody.class) && entity.getComponent(MeshBody.class).isVisible()) {
                 glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
             }
         }

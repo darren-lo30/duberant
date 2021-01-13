@@ -1,80 +1,34 @@
 package duber.engine.entities;
 
-import duber.engine.entities.components.RigidBody;
-import duber.engine.entities.components.Transform;
-import duber.engine.entities.components.Collider;
+import java.util.HashMap;
+import java.util.Map;
+
 import duber.engine.entities.components.Component;
-import duber.engine.entities.components.MeshBody;
+import duber.engine.entities.components.Transform;
 
 public class Entity {
-    private final Transform transform;
-    private RigidBody rigidBody;
-    private Collider collider;
-    private transient MeshBody meshBody;
-    
+    private Map<Class<? extends Component>, Component> components;
+
     public Entity() {
-        transform = new Transform();
-        rigidBody = null;
-        collider = new Collider();
-        meshBody = null;
+        components = new HashMap<>();
+        addComponent(new Transform());
+    }
+    
+    public <T extends Component> boolean hasComponent(Class<T> type) {
+        return components.containsKey(type);
     }
 
-    public Transform getTransform() {
-        return transform;
+    public <T extends Component> T getComponent(Class<T> type) {
+        return type.cast(components.get(type));
     }
 
-    public RigidBody getRigidBody() {
-        return rigidBody;
+    public <T extends Component> T addComponent(T instance) {
+        instance.setEntity(this);
+        components.put(instance.getClass(), instance);
+        return instance;
     }
 
-    public void setRigidBody(RigidBody rigidBody) {
-        removeComponent(rigidBody);
-
-        rigidBody.setEntity(this);
-        this.rigidBody = rigidBody;
-    }
-
-    public boolean hasRigidBody() {
-        return rigidBody != null;
-    }
-
-    public void addRigidBody() {
-        rigidBody = new RigidBody();
-    }
-
-    public Collider getCollider() {
-        return collider;
-    }
-
-    public void setCollider(Collider collider) {
-        removeComponent(this.collider);
-
-        collider.setEntity(this);
-        this.collider = collider;
-    }
-
-    public boolean hasCollider() {
-        return collider.hasColliderParts();
-    }
-
-    public MeshBody getMeshBody() {
-        return meshBody;
-    }
-
-    public void setMeshBody(MeshBody meshBody) {
-        removeComponent(meshBody);
-
-        meshBody.setEntity(this);
-        this.meshBody = meshBody;
-    }
-
-    public boolean hasMeshBody() {
-        return meshBody != null;
-    }
-
-    public void removeComponent(Component component) {
-        if(component != null) {
-            component.setEntity(null);
-        }
+    public <T extends Component> T removeComponent(Class<T> type) {
+        return type.cast(components.remove(type));
     }
 }

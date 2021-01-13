@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Collider extends Component {
-    private List<ColliderPart> colliderParts;
+    private final List<ColliderPart> colliderParts;
     private ColliderPart baseCollider;
 
     public Collider() {
@@ -20,7 +20,7 @@ public class Collider extends Component {
     }
 
     public void setBaseCollider(ColliderPart baseCollider) {
-        colliderParts.add(baseCollider);
+        addColliderPart(baseCollider);
         this.baseCollider = baseCollider;
     }
 
@@ -30,6 +30,6 @@ public class Collider extends Component {
 
     public void addColliderPart(ColliderPart colliderPart) {
         colliderParts.add(colliderPart);
+        colliderPart.setCollider(this);
     }
-    
 }

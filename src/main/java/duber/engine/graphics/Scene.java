@@ -9,6 +9,7 @@ import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.Cleansable;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
+import duber.engine.entities.components.MeshBody;
 
 public class Scene implements Cleansable {
     private final Map<Mesh, List<Entity>> meshMap;
@@ -51,11 +52,11 @@ public class Scene implements Cleansable {
     }
 
     public void addRenderableEntity(Entity renderableEntity) {
-        if(renderableEntity == null || !renderableEntity.hasMeshBody()) {
+        if(renderableEntity == null || !renderableEntity.hasComponent(MeshBody.class)) {
             return;
         }
         
-        Mesh[] renderableMeshes = renderableEntity.getMeshBody().getMeshes();
+        Mesh[] renderableMeshes = renderableEntity.getComponent(MeshBody.class).getMeshes();
         for(Mesh renderableMesh: renderableMeshes) {
             //Make the mesh renderable
             renderableMesh.makeRenderable();
@@ -66,11 +67,11 @@ public class Scene implements Cleansable {
     }
 
     public void removeRenderableEntity(Entity renderableEntity) {
-        if(!renderableEntity.hasMeshBody()) {
+        if(renderableEntity == null || !renderableEntity.hasComponent(MeshBody.class)) {
             return;
         }
 
-        Mesh[] renderableMeshes = renderableEntity.getMeshBody().getMeshes();
+        Mesh[] renderableMeshes = renderableEntity.getComponent(MeshBody.class).getMeshes();
         for(Mesh renderableMesh: renderableMeshes) {
             if(meshMap.containsKey(renderableMesh)) {
                 meshMap.get(renderableMesh).remove(renderableEntity);

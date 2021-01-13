@@ -13,7 +13,7 @@ public class Camera extends Entity {
     }
 
     public void updateViewMatrix() {
-        Transform cameraTransform = getTransform();
+        Transform cameraTransform = getComponent(Transform.class);
         MatrixTransformer.updateGeneralViewMatrix(cameraTransform.getPosition(), cameraTransform.getRotation(), viewMatrix);
     }
 

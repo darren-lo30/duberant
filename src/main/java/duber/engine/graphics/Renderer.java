@@ -1,6 +1,8 @@
 package duber.engine.graphics;
 
 import duber.engine.entities.Entity;
+import duber.engine.entities.components.MeshBody;
+import duber.engine.entities.components.Transform;
 import duber.engine.entities.Camera;
 import duber.engine.graphics.lighting.*;
 import duber.engine.utilities.Utils;
@@ -122,7 +124,7 @@ public class Renderer implements Cleansable {
             }
 
             renderableMesh.render(entities, (Entity entity) -> {
-                Matrix4f modelMatrix = matrixTransformer.buildModelMatrix(entity.getTransform());
+                Matrix4f modelMatrix = matrixTransformer.buildModelMatrix(entity.getComponent(Transform.class));
                 
                 if(viewMatrix != null) {
                     Matrix4f modelViewMatrix = matrixTransformer.buildModelViewMatrix(modelMatrix, viewMatrix);
@@ -246,10 +248,7 @@ public class Renderer implements Cleansable {
             return;
         }
 
-        if(!skyBox.hasMeshBody()) {
-            throw new IllegalArgumentException("Skybox must have mesh body");
-        }
-        Mesh renderableMesh = skyBox.getMeshBody().getMesh();
+        Mesh renderableMesh = skyBox.getComponent(MeshBody.class).getMesh();
         
         skyBoxShaderProgram.bind();
         skyBoxShaderProgram.setUniform("texture_sampler", 0);
@@ -270,7 +269,7 @@ public class Renderer implements Cleansable {
         viewMatrix.m32(0);
 
         //Set the model view matrix uniform
-        Matrix4f modelViewMatrix = matrixTransformer.buildModelViewMatrix(skyBox.getTransform(), viewMatrix);
+        Matrix4f modelViewMatrix = matrixTransformer.buildModelViewMatrix(skyBox.getComponent(Transform.class), viewMatrix);
         
         //Set uniforms
         skyBoxShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);

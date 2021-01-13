@@ -1,6 +1,6 @@
 package duber.game.networking;
 
-public class ModelLoadPacket {
+public class ModelLoadPacket extends Packet {
     public String modelFile;
     public String textureDirectory;
 

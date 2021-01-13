@@ -6,7 +6,7 @@ import duber.engine.graphics.Mesh;
 public class SkyBox extends Entity {
     public SkyBox(Mesh skyBoxMesh) {
         super();
-        setMeshBody(new MeshBody(skyBoxMesh));        
+        addComponent(new MeshBody(skyBoxMesh));        
     }    
 
     @SuppressWarnings("unused")

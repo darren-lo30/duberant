@@ -12,8 +12,12 @@ import org.joml.Vector3f;
 
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
+import duber.engine.entities.components.Collider;
+import duber.engine.entities.components.Follow;
 import duber.engine.entities.components.MeshBody;
+import duber.engine.entities.components.RigidBody;
 import duber.engine.entities.components.SphereCollider;
+import duber.engine.entities.components.Transform;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.graphics.Mesh;
 import duber.engine.graphics.lighting.DirectionalLight;
@@ -94,20 +98,32 @@ public class MatchManager implements Runnable {
 
     private Player createPlayer(Mesh[] playerMeshes, Vector3f position, int team) {
         Player player = new Player(team);
-        player.setMeshBody(new MeshBody(playerMeshes, false));
+
+        //Add new mesh body
+        player.addComponent(new MeshBody(playerMeshes, false));
+
+        //Add rigid body
+        player.addComponent(new RigidBody());
         
-        player.addRigidBody();
-        SphereCollider sphereCollider1 = new SphereCollider(player, 1.0f, new Vector3f(0, 0, 0));
-        SphereCollider sphereCollider2 = new SphereCollider(player, 0.8f, new Vector3f(0, 1.5f, 0));
-        SphereCollider sphereCollider3 = new SphereCollider(player, 0.8f, new Vector3f(0, 3.0f, 0));
+        //Set up player collider
+        Collider playerCollider = new Collider();
+        SphereCollider sphereCollider1 = new SphereCollider(1.0f, new Vector3f(0, 0, 0));
+        SphereCollider sphereCollider2 = new SphereCollider(0.8f, new Vector3f(0, 1.5f, 0));
+        SphereCollider sphereCollider3 = new SphereCollider(0.8f, new Vector3f(0, 3.0f, 0));
 
-        player.getCollider().setBaseCollider(sphereCollider1);
-        player.getCollider().addColliderPart(sphereCollider2);
-        player.getCollider().addColliderPart(sphereCollider3);
+        playerCollider.setBaseCollider(sphereCollider1);
+        playerCollider.addColliderPart(sphereCollider2);
+        playerCollider.addColliderPart(sphereCollider3);
+        player.addComponent(playerCollider);
 
-        player.getTransform().setScale(5.0f);
-
-        player.getTransform().getPosition().set(position);
+        //Set transform
+        Transform playerTransform = player.getComponent(Transform.class);
+        playerTransform.setScale(5.0f);
+        playerTransform.getPosition().set(position);
+        
+        //Add player camera
+        Follow playerFollow = new Follow(new Vector3f(0, 30, 30));
+        player.addComponent(playerFollow);
 
         return player;
     }
@@ -115,13 +131,13 @@ public class MatchManager implements Runnable {
     private void loadMatch() throws LWJGLException {        
         Mesh[] mapMesh = MeshLoader.load("models/map/map.obj");
         map = new Entity();
-        map.setMeshBody(new MeshBody(mapMesh));
-        map.getTransform().setScale(0.3f);
+        map.addComponent(new MeshBody(mapMesh));
+        map.getComponent(Transform.class).setScale(0.3f);
         physicsWorld.addConstantEntity(map);         
         
         Mesh[] skyBoxMesh = MeshLoader.load("models/skybox/skybox.obj");
         skyBox = new SkyBox(skyBoxMesh[0]);
-        skyBox.getTransform().setScale(3000.0f);
+        skyBox.getComponent(Transform.class).setScale(3000.0f);
         
         gameLighting = new SceneLighting();
 
@@ -207,7 +223,7 @@ public class MatchManager implements Runnable {
             User user = userPlayerEntry.getKey();
             Player player = userPlayerEntry.getValue();
 
-            sendAllUDP(new PlayerPositionPacket(user.getId(), player.getTransform()));
+            sendAllUDP(new PlayerPositionPacket(user.getId(), player));
         }
     }
 
