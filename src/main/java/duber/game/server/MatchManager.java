@@ -13,7 +13,7 @@ import org.joml.Vector3f;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
 import duber.engine.entities.components.Collider;
-import duber.engine.entities.components.Follow;
+import duber.engine.entities.components.Vision;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.RigidBody;
 import duber.engine.entities.components.SphereCollider;
@@ -122,8 +122,8 @@ public class MatchManager implements Runnable {
         playerTransform.getPosition().set(position);
         
         //Add player camera
-        Follow playerFollow = new Follow(new Vector3f(0, 30, 30));
-        player.addComponent(playerFollow);
+        Vision playerVision = new Vision(new Vector3f(0, 30, 30));
+        player.addComponent(playerVision);
 
         return player;
     }

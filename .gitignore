@@ -30,4 +30,6 @@ buildNumber.properties
 
 #Ignore log files
 *.log
+
 notes.txt
+*.html

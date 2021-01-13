@@ -4,15 +4,15 @@ import org.joml.Vector3f;
 
 import duber.engine.entities.Camera;
 
-public class Follow extends Component {
+public class Vision extends Component {
     private Camera camera;
     private Vector3f cameraOffset;
 
-    public Follow() {
+    public Vision() {
         this(new Vector3f());
     }
     
-    public Follow(Vector3f cameraOffset) {
+    public Vision(Vector3f cameraOffset) {
         camera = new Camera();
         this.cameraOffset = cameraOffset;
     }
@@ -23,5 +23,9 @@ public class Follow extends Component {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public Vector3f getVisionRay() {
+        //Get ray that represents visiion
     }
 }

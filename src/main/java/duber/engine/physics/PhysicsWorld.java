@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 import duber.engine.entities.Entity;
 import duber.engine.entities.components.Transform;
 import duber.engine.entities.components.Collider;
-import duber.engine.entities.components.Follow;
+import duber.engine.entities.components.Vision;
 import duber.engine.entities.components.RigidBody;
 import duber.engine.physics.collisions.ICollisionHandler;
 
@@ -29,8 +29,8 @@ public abstract class PhysicsWorld {
             updateCollider(entity.getComponent(Collider.class), entity);            
         }
 
-        if(entity.hasComponent(Follow.class)) {
-            updateFollow(entity.getComponent(Follow.class), entity);
+        if(entity.hasComponent(Vision.class)) {
+            updateVision(entity.getComponent(Vision.class), entity);
         }
     }
 
@@ -57,12 +57,12 @@ public abstract class PhysicsWorld {
         angularVelocity.set(0, 0, 0);
     }
 
-    private void updateFollow(Follow entityFollow, Entity entity) {
+    private void updateVision(Vision entityVision, Entity entity) {
         Transform entityTransform = entity.getComponent(Transform.class);
-        Transform cameraTransform = entityFollow.getCamera().getComponent(Transform.class);
+        Transform cameraTransform = entityVision.getCamera().getComponent(Transform.class);
 
         cameraTransform.getPosition().set(entityTransform.getPosition());
-        cameraTransform.getPosition().add(entityFollow.getCameraOffset());
+        cameraTransform.getPosition().add(entityVision.getCameraOffset());
         cameraTransform.getRotation().set(entityTransform.getRotation());
     }
 }

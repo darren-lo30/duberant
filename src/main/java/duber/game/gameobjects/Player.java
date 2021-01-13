@@ -4,7 +4,7 @@ import duber.engine.entities.Camera;
 import duber.engine.entities.Entity;
 import duber.engine.entities.components.Collider;
 import duber.engine.entities.components.Component;
-import duber.engine.entities.components.Follow;
+import duber.engine.entities.components.Vision;
 import duber.engine.entities.components.RigidBody;
 
 /**
@@ -14,11 +14,12 @@ public class Player extends Entity {
     private PlayerData playerData;
 
     public Player(int team) {
+        //Add default components to a player
         addComponent(new Collider());
         addComponent(new RigidBody());
-        addComponent(new Follow());
+        addComponent(new Vision());
+        addComponent(new PlayerData());
 
-        playerData = new PlayerData();
         if(team != 0 && team != 1) {
             throw new IllegalArgumentException("The team must either be 0 or 1 for red or blue");
         }
@@ -27,11 +28,11 @@ public class Player extends Entity {
     }
 
     public PlayerData getPlayerData() {
-        return playerData;
+        return getComponent(PlayerData.class);
     }
 
     public Camera getView() {
-        return getComponent(Follow.class).getCamera();
+        return getComponent(Vision.class).getCamera();
     }
 
     @SuppressWarnings("unused")

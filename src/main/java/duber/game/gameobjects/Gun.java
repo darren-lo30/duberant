@@ -6,6 +6,10 @@ import duber.engine.entities.components.Component;
 public abstract class Gun extends Entity {
     private GunData gunData;
 
+    public GunData getGunData() {
+        return gunData;
+    }
+
     private static class GunData extends Component {
         private int totalBullets;
         private int remainingBullets;
