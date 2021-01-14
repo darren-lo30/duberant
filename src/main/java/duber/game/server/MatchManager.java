@@ -26,7 +26,9 @@ import duber.engine.loaders.MeshLoader;
 import duber.engine.utilities.Timer;
 import duber.game.Controls;
 import duber.game.MatchData;
+import duber.game.gameobjects.GunBuilder;
 import duber.game.gameobjects.Player;
+import duber.game.gameobjects.Player.WeaponsInventory;
 import duber.game.User;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.Packet;
@@ -50,6 +52,7 @@ public class MatchManager implements Runnable {
     private SceneLighting gameLighting;
 
     private Controls playerControls = new Controls();
+    private GunBuilder gunBuilder = new GunBuilder();
 
     public MatchManager(ServerNetwork serverNetwork, List<User> users) throws LWJGLException {
         this.serverNetwork = serverNetwork;
@@ -78,13 +81,13 @@ public class MatchManager implements Runnable {
     private void loadPlayers() throws LWJGLException {
         Mesh[] playerMeshes = MeshLoader.load("models/cube/cube.obj");
         for(User user: redTeam) {
-            Player redPlayer = createPlayer(playerMeshes, new Vector3f(50, 0, 0), MatchData.RED_TEAM);
+            Player redPlayer = createPlayer(user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.RED_TEAM);
             players.put(user, redPlayer);
             physicsWorld.addDynamicEntity(redPlayer);
         }
 
         for(User user: blueTeam) {
-            Player bluePlayer = createPlayer(playerMeshes, new Vector3f(50, 0, 0), MatchData.BLUE_TEAM);
+            Player bluePlayer = createPlayer(user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.BLUE_TEAM);
             players.put(user, bluePlayer);
             physicsWorld.addDynamicEntity(bluePlayer);
         }
@@ -94,8 +97,8 @@ public class MatchManager implements Runnable {
         return players.keySet();
     }
 
-    private Player createPlayer(Mesh[] playerMeshes, Vector3f position, int team) {
-        Player player = new Player(team);
+    private Player createPlayer(String username, Mesh[] playerMeshes, Vector3f position, int team) {
+        Player player = new Player(username, team);
 
         //Add new mesh body
         player.addComponent(new MeshBody(playerMeshes, false));
@@ -123,6 +126,11 @@ public class MatchManager implements Runnable {
         Vision playerVision = new Vision(new Vector3f(0, 30, 30));
         player.addComponent(playerVision);
 
+        //Add gun
+        WeaponsInventory playerInventory = player.getWeaponsInventory();
+        playerInventory.setSecondaryGun(gunBuilder.buildPistol());
+        playerInventory.equipSecondaryGun();
+        
         return player;
     }
     

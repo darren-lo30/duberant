@@ -36,6 +36,7 @@ public class Match extends GameState implements Cleansable {
 
     // Whether or not it has received data from server
     private volatile boolean initialized = false;
+    private volatile boolean initializing = false;
 
     @Override
     public void init() throws LWJGLException {
@@ -51,18 +52,16 @@ public class Match extends GameState implements Cleansable {
 
     @Override
     public void startup() {
-        gameScene.clear();
-        initialized = false;
-
-        if (!getGame().isLoggedIn()) {
-            System.out.println("Not logged in");
-        }
-
         // Turn off cursor
         getGame().getWindow().setOption(Window.Options.SHOW_CURSOR, false);
         getGame().getWindow().applyOptions();
 
-        new Thread(new GetMatchData()).start();
+        if(!initialized && !initializing) {
+            System.out.println("HII");
+            gameScene.clear();
+            new Thread(new GetMatchData()).start();
+        }
+
     }
 
     @Override
@@ -175,6 +174,7 @@ public class Match extends GameState implements Cleansable {
     private class GetMatchData implements Runnable {
         @Override
         public void run() {
+            initializing = true;
             try {
                 while(receivedMatchData == null && getGame().isLoggedIn()) {
                     Object packet = getGame().getClientNetwork().getPackets().take();
@@ -187,6 +187,8 @@ public class Match extends GameState implements Cleansable {
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
                 Thread.currentThread().interrupt();
+            } finally {
+                initializing = false;
             }
         }
     

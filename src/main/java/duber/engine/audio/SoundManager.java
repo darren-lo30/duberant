@@ -15,14 +15,14 @@ import org.lwjgl.openal.ALCCapabilities;
 
 import static org.lwjgl.openal.ALC10.*;
 
-import duber.engine.entities.Camera;
+import duber.engine.Cleansable;
 import duber.engine.entities.components.Transform;
 import duber.engine.graphics.MatrixTransformer;
 
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 
-public class SoundManager {
+public class SoundManager implements Cleansable {
     private long deviceHandle;
     
     private long context;
@@ -33,15 +33,13 @@ public class SoundManager {
 
     Map<String, SoundSource> soundSources;
 
-    private final Matrix4f cameraMatrix;
+    private final Matrix4f listenerMatrix;
 
     public SoundManager(){
         soundBuffers = new ArrayList<>();
         soundSources = new HashMap<>();
-        cameraMatrix = new Matrix4f();
-    }
+        listenerMatrix = new Matrix4f();
 
-    public void init() {
         deviceHandle = alcOpenDevice((ByteBuffer) null);
 
         if(deviceHandle == NULL){
@@ -88,19 +86,18 @@ public class SoundManager {
         this.listener = listener;
     }
 
-    public void updateListenerPosition(Camera camera){
-        Transform cameraTransform = camera.getComponent(Transform.class);
-        MatrixTransformer.updateGeneralViewMatrix(cameraTransform.getPosition(), cameraTransform.getRotation(), cameraMatrix);
+    public void updateListenerPosition(Transform transform){
+        MatrixTransformer.updateGeneralViewMatrix(transform.getPosition(), transform.getRotation(), listenerMatrix);
 
-        listener.setPosition(cameraTransform.getPosition());
+        listener.setPosition(transform.getPosition());
 
         //Direction that listener is facing
         Vector3f facing = new Vector3f();
-        cameraMatrix.positiveZ(facing).negate();
+        listenerMatrix.positiveZ(facing).negate();
         
         //Direction that is up
         Vector3f up = new Vector3f();
-        cameraMatrix.positiveY(up);
+        listenerMatrix.positiveY(up);
         
         listener.setOrientation(facing, up);
     }

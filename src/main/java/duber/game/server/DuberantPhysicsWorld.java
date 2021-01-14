@@ -38,7 +38,9 @@ public class DuberantPhysicsWorld extends PhysicsWorld {
         constantEntities.addEntity(entity, entity.getComponent(Transform.class));
     }
 
-    public void shootBullet(Player shootingPlayer) {
+    public void simulateShot(Player shootingPlayer) {
+        shootingPlayer.shoot();
+
         Transform cameraTransform = shootingPlayer.getView().getComponent(Transform.class);
         Vector3f cameraRotation = cameraTransform.getRotation();
 

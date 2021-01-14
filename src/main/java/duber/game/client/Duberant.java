@@ -3,21 +3,21 @@ package duber.game.client;
 import duber.engine.GameEngine;
 import duber.engine.IGameLogic;
 import duber.engine.Window;
+import duber.engine.audio.SoundManager;
 import duber.engine.exceptions.LWJGLException;
 import duber.game.User;
 import duber.game.client.GameStateManager.GameStateOption;
-
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-
 
 public class Duberant implements IGameLogic {
     private Window window;
     private User user;
     private ClientNetwork clientNetwork;
     private GameStateManager gameStateManager;
+    private SoundManager soundManager;
     
     public Duberant() {
         clientNetwork = new ClientNetwork();
+        soundManager = new SoundManager();
     }
     
     @Override
@@ -45,6 +45,10 @@ public class Duberant implements IGameLogic {
         return gameStateManager;
     }
 
+    public SoundManager getSoundManager() {
+        return soundManager;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
@@ -60,11 +64,6 @@ public class Duberant implements IGameLogic {
     @Override
     public void update() {
         gameStateManager.update();
-
-        //Open up options panel
-        if(window.getKeyboardInput().isKeyPressed(GLFW_KEY_ESCAPE)) {
-            gameStateManager.pushState(GameStateOption.OPTIONS_MENU);
-        }
     }
 
     @Override

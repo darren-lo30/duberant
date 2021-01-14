@@ -1,7 +1,7 @@
 package duber.game;
 
 public class MatchData {
-    public static final int NUM_PLAYERS_IN_MATCH = 2;
+    public static final int NUM_PLAYERS_IN_MATCH = 1;
 
     public static final int RED_TEAM = 0;
     public static final int BLUE_TEAM = 1;

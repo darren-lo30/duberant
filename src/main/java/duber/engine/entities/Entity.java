@@ -14,7 +14,7 @@ public class Entity {
         addComponent(new Transform());
     }
     
-    public <T extends Component> boolean hasComponent(Class<T> type) {
+    public boolean hasComponent(Class<? extends Component> type) {
         return components.containsKey(type);
     }
 
@@ -22,10 +22,10 @@ public class Entity {
         return type.cast(components.get(type));
     }
 
-    public <T extends Component> T addComponent(T instance) {
-        instance.setEntity(this);
-        components.put(instance.getClass(), instance);
-        return instance;
+    public <T extends Component> T addComponent(T component) {
+        component.setEntity(this);
+        components.put(component.getClass(), component);
+        return component;
     }
 
     public <T extends Component> T removeComponent(Class<T> type) {

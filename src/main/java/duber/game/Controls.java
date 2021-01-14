@@ -65,9 +65,8 @@ public class Controls {
             controlVelocity.add(0, moveSpeed, 0);
         }
 
-        if(mouseInput.leftButtonIsPressed()) {
-            System.out.println("shoot");
-            physicsWorld.shootBullet(player);
+        if(mouseInput.leftButtonIsPressed() && player.canShoot()) {
+            physicsWorld.simulateShot(player);
         }
 
         Vector3f playerVelocity = player.getComponent(RigidBody.class).getVelocity();

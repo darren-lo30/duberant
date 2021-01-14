@@ -75,12 +75,12 @@ public class DuberantCollisionHandler implements ICollisionHandler {
             collisionResponses.forEach(response -> resultPush.add(response.getContactNormal()));   
 
             RigidBody playerBody = player.getComponent(RigidBody.class);
-            Utils.clamp(resultPush, new Vector3f(1.00f, 1.00f, 1.00f));
-    
-            //Apply resultPush to the object
+            Utils.clamp(resultPush, new Vector3f(1.00f, 1.5f, 1.00f));
+            
             Vector3f snapBack = new Vector3f(resultPush);
             snapBack.y *= 0.5f;
-            player.getComponent(Transform.class).getPosition().add(snapBack);
+            //Apply resultPush to the object
+            player.getComponent(Transform.class).getPosition().add(resultPush);
             
             //Resolve the resultPush
             resultPush.normalize();
@@ -92,16 +92,20 @@ public class DuberantCollisionHandler implements ICollisionHandler {
 
             //Resolve jumpng
             if(resultPush.isFinite() && collisionResponse.isCollides() && player.getPlayerData().isJumping() &&
-                collisionResponse.getCollidedEntityColliderPart() == player.getComponent(Collider.class).getBaseCollider()) {
-                Vector3f groundNormal = new Vector3f(0, 1, 0);
-                Vector3f faceNormal = collisionResponse.getFaceNormal();
+                collisionResponse.getCollidedEntityColliderPart() == player.getComponent(Collider.class).getBaseCollider() &&
+                collisionWithGround(collisionResponse)) {
 
-                float cosAngleBetween = faceNormal.dot(groundNormal);
-                if(cosAngleBetween > 0.9) {
-                    player.getPlayerData().setJumping(false);
-                }
+                player.getPlayerData().setJumping(false);
             }
         }
+    }
+
+    private boolean collisionWithGround(CollisionResponse collisionData) {
+        Vector3f groundNormal = new Vector3f(0, 1, 0);
+        Vector3f faceNormal = collisionData.getFaceNormal();
+
+        float cosAngleBetween = faceNormal.dot(groundNormal);
+        return cosAngleBetween > 0.9;
     }
 
     

@@ -6,12 +6,21 @@ import duber.engine.graphics.Mesh;
 import duber.engine.entities.Face;
 
 public class MeshBody extends Component {
+    private transient Mesh[] meshes;
     private transient Face[] faces;
     private transient Vector3f[] vertices;
-    private transient Mesh[] meshes;
 
     private boolean visible;
+
+    public MeshBody() {}
     
+    public MeshBody(MeshBody meshBody) {
+        meshes = meshBody.getMeshes();
+        faces = meshBody.getFaces();
+        vertices = meshBody.getVertices();
+        visible = meshBody.isVisible();
+    }
+
     public MeshBody(Mesh mesh) {
         this(new Mesh[]{mesh});
     }
@@ -80,7 +89,4 @@ public class MeshBody extends Component {
     public Face[] getFaces() {
         return faces;
     }
-
-    @SuppressWarnings("unused")
-    private MeshBody() {}
 }
