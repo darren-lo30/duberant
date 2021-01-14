@@ -1,5 +1,7 @@
 package duber.game.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import duber.engine.Cleansable;
@@ -14,7 +16,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class GameStateManager implements Cleansable {
     public enum GameStateOption {
-        MAIN_MENU(new MainMenu()), MATCH(new Match()), OPTIONS_MENU(new OptionsMenu());
+        MAIN_MENU       (new MainMenu()), 
+        MATCH           (new Match()), 
+        OPTIONS_MENU    (new OptionsMenu());
 
         private final GameState gameState;
 
@@ -46,50 +50,70 @@ public class GameStateManager implements Cleansable {
     }
 
     public void pushState(GameStateOption gameStateOption) {
-        gameStates.push(gameStateOption.getGameState());
-        gameStateStartup();
+        GameState gameState = gameStateOption.getGameState();
+
+        gameState.startup();
+        gameState.enter();
+
+        gameStates.push(gameState);
     }
 
     public GameState popState() {
         GameState popped = gameStates.pop();
-        gameStateStartup();
+        popped.close();
+
+        if(!gameStates.isEmpty()) {
+            gameStates.peek().enter();
+        }
         return popped;
     }
 
-    public void clearState(GameState firstState) {
-        gameStates.clear();
-        gameStates.push(firstState);
+    public void clearState(GameStateOption firstState) {
+        while(!gameStates.isEmpty()) {
+            gameStates.pop().close();
+        }
+
+        pushState(firstState);
     }
 
-    public void changeState(GameStateOption gameStateOption) {
-        gameStates.pop();
+    public GameState changeState(GameStateOption gameStateOption) {
+        GameState popped = gameStates.pop();
+        popped.close();
         pushState(gameStateOption);
+
+        return popped;
     }
 
-    public GameState getCurrState() {
+    public GameState getFocusedState() {
         return gameStates.peek();
     }
 
-    public boolean isCurrState(GameStateOption stateOption) {
-        return getCurrState() == stateOption.getGameState();
+    public boolean stateIsFocused(GameState gameState) {
+        return getFocusedState() == gameState;
     }
 
-    public void gameStateStartup() {
-        gameStates.peek().startup();
+    public boolean stateIsFocused(GameStateOption gameStateOption) {
+        return stateIsFocused(gameStateOption.getGameState());
     }
 
     public void update() {
-        for(GameState gameState : gameStates) {
-            if(gameState == getCurrState() || gameState.isUpdateInBackground()) {
+        List<GameState> gameStatesList = new ArrayList<>(gameStates);
+
+
+        //Iterate the list backwards to simulate the stack order
+        for(int i = gameStatesList.size() -1; i >= 0; i--) {
+            GameState gameState = gameStatesList.get(i);
+            
+            if(gameState == getFocusedState() || gameState.isUpdateInBackground()) {
                 gameState.update();
             }
         }
-
+    
         //Open up options panel
         if(window.getKeyboardInput().isKeyPressed(GLFW_KEY_ESCAPE)) {
             if(!escapeHeldDown) {
                 escapeHeldDown = true;
-                if(isCurrState(GameStateOption.OPTIONS_MENU)) {
+                if(stateIsFocused(GameStateOption.OPTIONS_MENU)) {
                     popState();
                 } else {
                     pushState(GameStateOption.OPTIONS_MENU);
@@ -112,7 +136,5 @@ public class GameStateManager implements Cleansable {
                 ((Cleansable) nextState).cleanup();
             }
         }
-    }
-
-    
+    }    
 }

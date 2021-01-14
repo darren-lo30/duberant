@@ -2,7 +2,10 @@ package duber.engine.loaders;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.AIColor4D;
@@ -23,19 +26,33 @@ import duber.engine.graphics.Texture;
 import static org.lwjgl.assimp.Assimp.*;
 
 public class MeshLoader {
+    private static Map<MeshResource, Mesh[]> meshDatabase = new HashMap<>();
+
     private MeshLoader() {}
 
-    public static Mesh[] load(String resourcePath) throws LWJGLException {
-        return load(resourcePath, null);
+    public static Mesh[] load(String modelFile) throws LWJGLException {
+        return load(modelFile, null);
     }
 
-    public static Mesh[] load(String resourcePath, String textureDirectory) throws LWJGLException {
-        return load(resourcePath, textureDirectory, 
+    public static Mesh[] load(String modelFile, String textureDirectory) throws LWJGLException {
+        return load(modelFile, textureDirectory, 
             aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
     }
 
-    public static Mesh[] load(String resourcePath, String textureDirectory, int flags) throws LWJGLException {
-        AIScene aiScene = aiImportFile(resourcePath, flags);
+    public static Mesh[] load(String modelFile, String textureDirectory, int flags) throws LWJGLException {
+        return load(new MeshResource(modelFile, textureDirectory, flags));
+    }
+
+    public static Mesh[] load(MeshResource meshResource) throws LWJGLException {
+        if(meshDatabase.containsKey(meshResource)) {
+            return meshDatabase.get(meshResource);
+        }
+        
+        String modelFile = meshResource.getModelFile();
+        String textureDirectory = meshResource.getTextureDirectory();
+        int flags = meshResource.getFlags();
+
+        AIScene aiScene = aiImportFile(modelFile, flags);
         if(aiScene == null) {
             throw new LWJGLException("Could not load model");
         }
@@ -48,7 +65,7 @@ public class MeshLoader {
         if(textureDirectory == null) {
             for(int i = 0; i<numMeshes; i++) {
                 AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
-                meshes[i] = processRenderableMesh(aiMesh, new ArrayList<>(0));
+                meshes[i] = processMesh(aiMesh, new ArrayList<>(0));
             }
         } else {
             int numMaterials = aiScene.mNumMaterials();
@@ -62,11 +79,14 @@ public class MeshLoader {
 
             for(int i = 0; i<numMeshes; i++) {
                 AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
-                meshes[i] = processRenderableMesh(aiMesh, materials);
+                meshes[i] = processMesh(aiMesh, materials);
             }
         }        
+
+        meshDatabase.put(meshResource, meshes);
         return meshes;
     }
+
 
     private static void processMaterial(AIMaterial aiMaterial, List<Material> materials, String textureDirectory) throws LWJGLException {
 
@@ -112,7 +132,7 @@ public class MeshLoader {
         materials.add(material);
     }
 
-    private static Mesh processRenderableMesh(AIMesh aiMesh, List<Material> materials) {
+    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
         List<Float> vertexPositions = new ArrayList<>();
         List<Float> textureCoords = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
@@ -123,7 +143,7 @@ public class MeshLoader {
         processNormals(aiMesh, normals);
         processVertexIndices(aiMesh, vertexIndices);
 
-        Mesh renderableMesh = new Mesh(
+        Mesh mesh = new Mesh(
             Utils.listToFloatArray(vertexPositions),
             Utils.listToFloatArray(textureCoords),
             Utils.listToFloatArray(normals),
@@ -138,9 +158,9 @@ public class MeshLoader {
             material = new Material();
         }
 
-        renderableMesh.setMaterial(material);
+        mesh.setMaterial(material);
 
-        return renderableMesh;
+        return mesh;
     }
 
     private static void processVertexPositions(AIMesh aiMesh, List<Float> vertexPositions) {

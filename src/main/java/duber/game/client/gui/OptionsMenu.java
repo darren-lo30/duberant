@@ -10,6 +10,16 @@ public class OptionsMenu extends GUI {
     }
 
     @Override
+    public void startup() {
+        //Nothing to do on startup
+    }
+
+    @Override
+    public void close() {
+        //Nothing to do on close
+    }
+
+    @Override
     public void update() {
         // TODO Auto-generated method stub
     }
@@ -17,7 +27,8 @@ public class OptionsMenu extends GUI {
     @Override
     public void render() {
         // TODO Auto-generated method stub
-
     }
+
+
     
 }

@@ -17,6 +17,16 @@ public class MainMenu extends GUI {
     public void init() throws LWJGLException {
         // Nothing to init
     }
+    
+    @Override
+    public void startup() {
+        //Nothing to do on startup
+    }
+
+    @Override
+    public void close() {
+        //Nothing to do on close
+    }
 
     @Override
     public void update() {
@@ -29,7 +39,7 @@ public class MainMenu extends GUI {
         
         if (game.isLoggedIn()) {
             // If the user is already signed in, then proceed to a match
-            getManager().changeState(GameStateOption.MATCH);
+            getManager().pushState(GameStateOption.MATCH);
         }
     }
 
@@ -88,6 +98,5 @@ public class MainMenu extends GUI {
             }
             
         }
-
     }
 }

@@ -36,7 +36,6 @@ public class Match extends GameState implements Cleansable {
 
     // Whether or not it has received data from server
     private volatile boolean initialized = false;
-    private volatile boolean initializing = false;
 
     @Override
     public void init() throws LWJGLException {
@@ -52,16 +51,25 @@ public class Match extends GameState implements Cleansable {
 
     @Override
     public void startup() {
-        // Turn off cursor
+        initialized = false;
+        gameScene.clear();
+        new Thread(new GetMatchData()).start();
+    }
+
+    @Override
+    public void enter() {
         getGame().getWindow().setOption(Window.Options.SHOW_CURSOR, false);
         getGame().getWindow().applyOptions();
+    }
 
-        if(!initialized && !initializing) {
-            System.out.println("HII");
-            gameScene.clear();
-            new Thread(new GetMatchData()).start();
-        }
+    @Override
+    public void close() {
+        //Nothing to do on close
+    }
 
+    @Override
+    public void cleanup() {
+        renderer.cleanup();
     }
 
     @Override
@@ -74,23 +82,30 @@ public class Match extends GameState implements Cleansable {
             }
         } else if (initialized) {
             Window window = getGame().getWindow();
-            UserInputPacket matchCommands = new UserInputPacket(window.getKeyboardInput(), window.getMouseInput());
-
-            //Send the command 
-            getGame().getUser().getConnection().sendUDP(matchCommands);
+            
+            //If the current window is focused, then send user inputs to server
+            if(isFocused()) {
+                //Send the command 
+                UserInputPacket matchCommands = new UserInputPacket(window.getKeyboardInput(), window.getMouseInput());
+                getGame().getUser().getConnection().sendUDP(matchCommands);
+            }
 
             //Update player transforms
-            while(!getGame().getClientNetwork().getPackets().isEmpty()){
-                Object packet = getGame().getClientNetwork().getPackets().poll();
-                if(packet instanceof PlayerPositionPacket) {
-                    PlayerPositionPacket playerPositionData = (PlayerPositionPacket) packet;
-                    Player modifiedPlayer = getPlayer(playerPositionData.userId);
+            receiveMatchUpdate();
+        }
+    }
 
-                    if(modifiedPlayer != null) {
-                        //Update the player position and camera
-                        modifiedPlayer.getComponent(Transform.class).set(playerPositionData.playerTransform);
-                        modifiedPlayer.getView().getComponent(Transform.class).set(playerPositionData.cameraTransform);
-                    }
+    private void receiveMatchUpdate() {
+        while(!getGame().getClientNetwork().getPackets().isEmpty()){
+            Object packet = getGame().getClientNetwork().getPackets().poll();
+            if(packet instanceof PlayerPositionPacket) {
+                PlayerPositionPacket playerPositionData = (PlayerPositionPacket) packet;
+                Player modifiedPlayer = getPlayer(playerPositionData.userId);
+
+                if(modifiedPlayer != null) {
+                    //Update the player position and camera
+                    modifiedPlayer.getComponent(Transform.class).set(playerPositionData.playerTransform);
+                    modifiedPlayer.getView().getComponent(Transform.class).set(playerPositionData.cameraTransform);
                 }
             }
         }
@@ -109,10 +124,6 @@ public class Match extends GameState implements Cleansable {
         }
     }
 
-    @Override
-    public void cleanup() {
-        renderer.cleanup();
-    }
 
     private Player getPlayer(int userId) {
         for (Entry<User, Player> playersEntry : players.entrySet()) {
@@ -125,7 +136,7 @@ public class Match extends GameState implements Cleansable {
     }
 
     private void initializeMatch(MatchInitializePacket matchData) throws LWJGLException {
-        System.out.println("received iniitlaize match pakcet");
+        System.out.println("received iniitlaize match packet");
 
         
         players = matchData.players;
@@ -174,7 +185,7 @@ public class Match extends GameState implements Cleansable {
     private class GetMatchData implements Runnable {
         @Override
         public void run() {
-            initializing = true;
+            System.out.println("HI");
             try {
                 while(receivedMatchData == null && getGame().isLoggedIn()) {
                     Object packet = getGame().getClientNetwork().getPackets().take();
@@ -187,8 +198,6 @@ public class Match extends GameState implements Cleansable {
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
                 Thread.currentThread().interrupt();
-            } finally {
-                initializing = false;
             }
         }
     

@@ -5,7 +5,7 @@ import duber.engine.exceptions.LWJGLException;
 public abstract class GameState {
     private Duberant game;
     private GameStateManager manager;
-    private boolean updateInBackground;
+    private boolean updateInBackground = false;
 
     public Duberant getGame() {
         return game;
@@ -15,19 +15,6 @@ public abstract class GameState {
         return manager;
     }
 
-    public void init(Duberant game, GameStateManager manager) throws LWJGLException {
-        this.game = game;
-        this.manager = manager;
-        updateInBackground = false;
-        init();
-    }
-
-    protected abstract void init() throws LWJGLException;
-
-    public abstract void startup();
-    public abstract void update();
-    public abstract void render();
-
     public boolean isUpdateInBackground() {
         return updateInBackground;
     }
@@ -36,9 +23,22 @@ public abstract class GameState {
         this.updateInBackground = updateInBackground;
     }
 
-    public void popSelf() {
-        if(manager.popState() != this) {
-            throw new IllegalStateException("Closing game state that is not currently at the top");
-        }
-    }    
+    public boolean isFocused() {
+        return manager.stateIsFocused(this);
+    }
+
+    public void init(Duberant game, GameStateManager manager) throws LWJGLException {
+        this.game = game;
+        this.manager = manager;
+        init();
+    }
+
+    protected abstract void init() throws LWJGLException;
+
+    public abstract void startup();
+    public abstract void enter();
+    public abstract void close();
+    
+    public abstract void update();
+    public abstract void render();
 }
