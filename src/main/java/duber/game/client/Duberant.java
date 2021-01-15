@@ -3,7 +3,6 @@ package duber.game.client;
 import duber.engine.GameEngine;
 import duber.engine.IGameLogic;
 import duber.engine.Window;
-import duber.engine.audio.SoundManager;
 import duber.engine.exceptions.LWJGLException;
 import duber.game.User;
 import duber.game.client.GameStateManager.GameStateOption;

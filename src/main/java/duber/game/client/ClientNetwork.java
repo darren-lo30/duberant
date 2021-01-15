@@ -30,7 +30,7 @@ public class ClientNetwork extends Listener {
         this.ipAddress = ipAddress;
         this.port = port;
         
-        client = new Client();
+        client = new Client(50000, 50000);
         
         //Register packets
         KryoRegister.registerPackets(client.getKryo());

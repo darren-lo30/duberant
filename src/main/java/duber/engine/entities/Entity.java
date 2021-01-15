@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import duber.engine.entities.components.Component;
+import duber.engine.entities.components.Identifier;
 import duber.engine.entities.components.Transform;
 
 public class Entity {
@@ -30,5 +31,40 @@ public class Entity {
 
     public <T extends Component> T removeComponent(Class<T> type) {
         return type.cast(components.remove(type));
+    }
+
+    @Override
+    public int hashCode() {
+        if(!hasComponent(Identifier.class)) {
+            return super.hashCode();
+        }
+
+        return getComponent(Identifier.class).getId();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!hasComponent(Identifier.class)) {
+            return super.equals(obj);
+        }
+
+        if(obj == this) {
+            return true;
+        }
+
+        if(obj == null) {
+            return false;
+        }
+
+        if(obj.getClass() != getClass()) {
+            return false;
+        }
+        
+        Entity entity = (Entity) obj;
+
+        int thisId = getComponent(Identifier.class).getId();
+        int otherId = entity.getComponent(Identifier.class).getId();
+        return thisId == otherId;
+        
     }
 }

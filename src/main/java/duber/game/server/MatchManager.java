@@ -1,5 +1,6 @@
 package duber.game.server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,14 +68,8 @@ public class MatchManager implements Runnable {
     }
 
     private <E extends Packet> void sendAllUDP(E packet) {
-        for(User user : usersInMatch()) {
+        for(User user : getUsers()) {
             user.getConnection().sendUDP(packet);
-        }
-    }
-
-    private <E extends Packet> void sendAllTCP(E packet) {
-        for(User user : usersInMatch()) {
-            user.getConnection().sendTCP(packet);
         }
     }
 
@@ -93,11 +88,15 @@ public class MatchManager implements Runnable {
         }
     }
     
-    private Set<User> usersInMatch() {
+    private Set<User> getUsers() {
         return players.keySet();
     }
 
-    private Player createPlayer(long id, String username, Mesh[] playerMeshes, Vector3f position, int team) {
+    private List<Player> getPlayers() {
+        return new ArrayList<>(players.values());
+    }
+
+    private Player createPlayer(int id, String username, Mesh[] playerMeshes, Vector3f position, int team) {
         Player player = new Player(id, username, team);
 
         //Add new mesh body
@@ -159,8 +158,12 @@ public class MatchManager implements Runnable {
     }
 
     private void sendMatchInitializationData() {
-        MatchInitializePacket matchInitializePacket = new MatchInitializePacket(players, skyBox, map, gameLighting);
-        sendAllTCP(matchInitializePacket);
+        for(User user : getUsers()) {
+            Player usersPlayer = players.get(user);
+            MatchInitializePacket matchInitializePacket = 
+                new MatchInitializePacket(getPlayers(), usersPlayer.getId(), skyBox, map, gameLighting);
+            user.getConnection().sendTCP(matchInitializePacket);
+        }
     }
 
 
@@ -225,11 +228,8 @@ public class MatchManager implements Runnable {
      * Send out any updates to the users
      */
     private void sendGameUpdates() {
-        for(Entry<User, Player> userPlayerEntry : players.entrySet()) {
-            User user = userPlayerEntry.getKey();
-            Player player = userPlayerEntry.getValue();
-
-            sendAllUDP(new PlayerPositionPacket(user.getId(), player));
+        for(Player player : getPlayers()) {
+            sendAllUDP(new PlayerPositionPacket(player.getId(), player));
         }
     }
 

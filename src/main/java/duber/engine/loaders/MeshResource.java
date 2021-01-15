@@ -5,12 +5,14 @@ import static org.lwjgl.assimp.Assimp.aiProcess_Triangulate;
 
 
 public class MeshResource {
+    private static final int DEFAULT_FLAGS = aiProcess_JoinIdenticalVertices | aiProcess_Triangulate;
+
     private String modelFile;
     private String textureDirectory;
     private int flags;
-
+    
     public MeshResource(String modelFile, String textureDirectory) {
-        this(modelFile, textureDirectory, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
+        this(modelFile, textureDirectory, DEFAULT_FLAGS);
     }
 
     public MeshResource(String modelFile, String textureDirectory, int flags) {
@@ -30,4 +32,7 @@ public class MeshResource {
     public int getFlags() {
         return flags;
     }
+
+    @SuppressWarnings("unused")
+    private MeshResource() {}
 }

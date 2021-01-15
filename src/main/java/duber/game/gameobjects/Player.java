@@ -15,7 +15,7 @@ import duber.engine.entities.components.RigidBody;
  * Player
  */
 public class Player extends Entity {
-    public Player(long id, String name, int team) {
+    public Player(int id, String name, int team) {
         //Add default components to a player
         addComponent(new Collider());
         addComponent(new MeshBody());
@@ -35,6 +35,10 @@ public class Player extends Entity {
         addComponent(playerData);
 
         addComponent(new WeaponsInventory());
+    }
+
+    public int getId() {
+        return getComponent(Identifier.class).getId();
     }
 
     public PlayerData getPlayerData() {

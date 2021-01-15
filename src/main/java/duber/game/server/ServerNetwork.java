@@ -24,7 +24,7 @@ public class ServerNetwork extends Listener {
     
     public ServerNetwork(int port) throws IOException {
         this.port = port;
-        server = new Server();
+        server = new Server(50000, 50000);
         server.bind(port, port);
 
         KryoRegister.registerPackets(server.getKryo());

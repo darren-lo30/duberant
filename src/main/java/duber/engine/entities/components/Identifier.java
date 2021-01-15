@@ -1,17 +1,17 @@
 package duber.engine.entities.components;
 
 public class Identifier extends Component {
-    private long id;
+    private int id;
     
-    public Identifier(long id) {
+    public Identifier(int id) {
         this.id = id;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

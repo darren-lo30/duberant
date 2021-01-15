@@ -1,14 +1,17 @@
 package duber.game.client.match;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import duber.engine.Cleansable;
 import duber.engine.Window;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
 import duber.engine.entities.components.Vision;
+import duber.engine.entities.components.Identifier;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.exceptions.LWJGLException;
@@ -22,7 +25,6 @@ import duber.game.client.GameState;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.PlayerPositionPacket;
 import duber.game.networking.UserInputPacket;
-import duber.game.User;
 
 public class Match extends GameState implements Cleansable {
     // Used to render the game
@@ -31,7 +33,8 @@ public class Match extends GameState implements Cleansable {
     private Scene gameScene;
     private Player mainPlayer;
 
-    private Map<User, Player> players;
+    private Map<Integer, Player> playersById = new HashMap<>();
+
     private MatchInitializePacket receivedMatchData;
 
     private Scoreboard scoreboard;
@@ -106,7 +109,7 @@ public class Match extends GameState implements Cleansable {
             Object packet = getGame().getClientNetwork().getPackets().poll();
             if(packet instanceof PlayerPositionPacket) {
                 PlayerPositionPacket playerPositionData = (PlayerPositionPacket) packet;
-                Player modifiedPlayer = getPlayer(playerPositionData.userId);
+                Player modifiedPlayer = getPlayerById(playerPositionData.playerId);
 
                 if(modifiedPlayer != null) {
                     //Update the player position and camera
@@ -131,29 +134,32 @@ public class Match extends GameState implements Cleansable {
     }
 
 
-    private Player getPlayer(int userId) {
-        for (Entry<User, Player> playersEntry : players.entrySet()) {
-            if(playersEntry.getKey().getId() == userId) {
-                return playersEntry.getValue();
-            }
-        }
+    private Player getPlayerById(int playerId) {
+        return playersById.get(playerId);
+    }
 
-        return null;
+    private Collection<Player> getPlayers() {
+        return playersById.values();
     }
 
     private void initializeMatch(MatchInitializePacket matchData) throws LWJGLException {
         System.out.println("received iniitlaize match packet");
 
         
-        players = matchData.players;
-        mainPlayer = getPlayer(getGame().getUser().getId());
+        List<Player> players = matchData.players;
+        for(Player player: players) {
+            playersById.put(player.getId(), player);
+        }
+
+        mainPlayer = getPlayerById(matchData.mainPlayerId);
+        
         if(mainPlayer == null) {
             throw new IllegalStateException("The current user is not in the game");
         }
 
         //Set player meshes
-        Mesh[] playerMeshes = MeshLoader.load(matchData.playerModel.modelFile, matchData.playerModel.textureDirectory);
-        for(Player player : players.values()) {
+        Mesh[] playerMeshes = MeshLoader.load(matchData.playerModel);
+        for(Player player : getPlayers()) {
             MeshBody playerMeshBody = new MeshBody(playerMeshes, true);
             
             if(player == mainPlayer) {
@@ -164,17 +170,17 @@ public class Match extends GameState implements Cleansable {
         }
 
         //Set map meshes
-        Mesh[] mapMeshes = MeshLoader.load(matchData.mapModel.modelFile, matchData.mapModel.textureDirectory);
+        Mesh[] mapMeshes = MeshLoader.load(matchData.mapModel);
         Entity map = matchData.map;
         map.addComponent(new MeshBody(mapMeshes, true));
 
         //Set skybox mesh
-        Mesh[] skyBoxMeshes = MeshLoader.load(matchData.skyBoxModel.modelFile, matchData.skyBoxModel.textureDirectory);
+        Mesh[] skyBoxMeshes = MeshLoader.load(matchData.skyBoxModel);
         SkyBox skyBox = matchData.skyBox;
         skyBox.addComponent(new MeshBody(skyBoxMeshes, true));
 
         //Add all enitties to the scene
-        for(Player player: players.values()) {
+        for(Player player: getPlayers()) {
             gameScene.addRenderableEntity(player);
         }
 
