@@ -81,13 +81,13 @@ public class MatchManager implements Runnable {
     private void loadPlayers() throws LWJGLException {
         Mesh[] playerMeshes = MeshLoader.load("models/cube/cube.obj");
         for(User user: redTeam) {
-            Player redPlayer = createPlayer(user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.RED_TEAM);
+            Player redPlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.RED_TEAM);
             players.put(user, redPlayer);
             physicsWorld.addDynamicEntity(redPlayer);
         }
 
         for(User user: blueTeam) {
-            Player bluePlayer = createPlayer(user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.BLUE_TEAM);
+            Player bluePlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.BLUE_TEAM);
             players.put(user, bluePlayer);
             physicsWorld.addDynamicEntity(bluePlayer);
         }
@@ -97,8 +97,8 @@ public class MatchManager implements Runnable {
         return players.keySet();
     }
 
-    private Player createPlayer(String username, Mesh[] playerMeshes, Vector3f position, int team) {
-        Player player = new Player(username, team);
+    private Player createPlayer(long id, String username, Mesh[] playerMeshes, Vector3f position, int team) {
+        Player player = new Player(id, username, team);
 
         //Add new mesh body
         player.addComponent(new MeshBody(playerMeshes, false));

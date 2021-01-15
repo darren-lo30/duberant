@@ -13,11 +13,9 @@ public class Duberant implements IGameLogic {
     private User user;
     private ClientNetwork clientNetwork;
     private GameStateManager gameStateManager;
-    private SoundManager soundManager;
     
     public Duberant() {
         clientNetwork = new ClientNetwork();
-        soundManager = new SoundManager();
     }
     
     @Override
@@ -43,10 +41,6 @@ public class Duberant implements IGameLogic {
 
     public GameStateManager getGameStateManager() {
         return gameStateManager;
-    }
-
-    public SoundManager getSoundManager() {
-        return soundManager;
     }
 
     public void setUser(User user) {

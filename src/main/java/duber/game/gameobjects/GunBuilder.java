@@ -1,6 +1,6 @@
 package duber.game.gameobjects;
 
-import duber.engine.entities.components.Identifier;
+import duber.engine.entities.components.Named;
 import duber.engine.entities.components.MeshBody;
 import duber.game.gameobjects.Gun.GunData;
 
@@ -59,10 +59,10 @@ public class GunBuilder {
 
 
     public <T extends Gun> T buildGunInstance(T gun, T gunInstance) {
-        String name = gun.getComponent(Identifier.class).getName();
+        String name = gun.getComponent(Named.class).getName();
 
         //Copy important gun's fields over while leaving others untouched
-        gunInstance.addComponent(new Identifier(name));
+        gunInstance.addComponent(new Named(name));
         gunInstance.addComponent(new GunData(gun.getGunData()));
         gunInstance.addComponent(new MeshBody(gun.getComponent(MeshBody.class)));
 

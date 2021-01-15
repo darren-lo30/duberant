@@ -75,12 +75,12 @@ public class DuberantCollisionHandler implements ICollisionHandler {
             collisionResponses.forEach(response -> resultPush.add(response.getContactNormal()));   
 
             RigidBody playerBody = player.getComponent(RigidBody.class);
-            Utils.clamp(resultPush, new Vector3f(1.00f, 1.5f, 1.00f));
+            Utils.clamp(resultPush, new Vector3f(1.0f, 1.0f, 1.0f));
             
             Vector3f snapBack = new Vector3f(resultPush);
             snapBack.y *= 0.5f;
             //Apply resultPush to the object
-            player.getComponent(Transform.class).getPosition().add(resultPush);
+            player.getComponent(Transform.class).getPosition().add(snapBack);
             
             //Resolve the resultPush
             resultPush.normalize();

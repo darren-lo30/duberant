@@ -34,8 +34,14 @@ public class Match extends GameState implements Cleansable {
     private Map<User, Player> players;
     private MatchInitializePacket receivedMatchData;
 
+    private Scoreboard scoreboard;
+
     // Whether or not it has received data from server
     private volatile boolean initialized = false;
+
+    public Scoreboard getScoreboard() {
+        return scoreboard;
+    }
 
     @Override
     public void init() throws LWJGLException {
@@ -185,7 +191,6 @@ public class Match extends GameState implements Cleansable {
     private class GetMatchData implements Runnable {
         @Override
         public void run() {
-            System.out.println("HI");
             try {
                 while(receivedMatchData == null && getGame().isLoggedIn()) {
                     Object packet = getGame().getClientNetwork().getPackets().take();
@@ -200,6 +205,5 @@ public class Match extends GameState implements Cleansable {
                 Thread.currentThread().interrupt();
             }
         }
-    
     }
 }

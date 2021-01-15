@@ -2,8 +2,8 @@ package duber.game.gameobjects;
 
 import duber.engine.entities.Entity;
 import duber.engine.entities.components.Component;
-import duber.engine.entities.components.Identifier;
 import duber.engine.entities.components.MeshBody;
+import duber.engine.entities.components.Named;
 
 public abstract class Gun extends Entity {    
     protected Gun(){
@@ -16,7 +16,7 @@ public abstract class Gun extends Entity {
         }
 
         addComponent(new MeshBody());
-        addComponent(new Identifier(name));
+        addComponent(new Named(name));
         addComponent(gunData);
     }
     

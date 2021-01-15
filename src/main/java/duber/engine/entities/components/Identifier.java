@@ -1,19 +1,20 @@
 package duber.engine.entities.components;
 
 public class Identifier extends Component {
-    private String name;
-
-    public Identifier(){}
+    private long id;
     
-    public Identifier(String name) {
-        this.name = name;
+    public Identifier(long id) {
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public long getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(long id) {
+        this.id = id;
     }
+
+    @SuppressWarnings("unused")
+    private Identifier() {}
 }

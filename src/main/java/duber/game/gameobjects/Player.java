@@ -5,6 +5,8 @@ import duber.engine.entities.Entity;
 import duber.engine.entities.components.Collider;
 import duber.engine.entities.components.Component;
 import duber.engine.entities.components.Identifier;
+import duber.engine.entities.components.Named;
+
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Vision;
 import duber.engine.entities.components.RigidBody;
@@ -13,14 +15,17 @@ import duber.engine.entities.components.RigidBody;
  * Player
  */
 public class Player extends Entity {
-    public Player(String name, int team) {
+    public Player(long id, String name, int team) {
         //Add default components to a player
         addComponent(new Collider());
         addComponent(new MeshBody());
         addComponent(new RigidBody());
         addComponent(new Vision());
-        addComponent(new Identifier(name));
+        addComponent(new Score());
 
+        addComponent(new Identifier(id));
+        addComponent(new Named(name));
+        
         if(team != 0 && team != 1) {
             throw new IllegalArgumentException("The team must either be 0 or 1 for red or blue");
         }

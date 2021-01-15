@@ -17,16 +17,6 @@ public class MainMenu extends GUI {
     public void init() throws LWJGLException {
         // Nothing to init
     }
-    
-    @Override
-    public void startup() {
-        //Nothing to do on startup
-    }
-
-    @Override
-    public void close() {
-        //Nothing to do on close
-    }
 
     @Override
     public void update() {

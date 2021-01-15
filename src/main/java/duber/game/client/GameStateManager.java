@@ -9,6 +9,7 @@ import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 import duber.game.client.gui.MainMenu;
 import duber.game.client.gui.OptionsMenu;
+import duber.game.client.gui.ScoreboardDisplay;
 import duber.game.client.match.Match;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -16,9 +17,10 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class GameStateManager implements Cleansable {
     public enum GameStateOption {
-        MAIN_MENU       (new MainMenu()), 
-        MATCH           (new Match()), 
-        OPTIONS_MENU    (new OptionsMenu());
+        MAIN_MENU           (new MainMenu()), 
+        MATCH               (new Match()), 
+        OPTIONS_MENU        (new OptionsMenu()),
+        SCOREBOARD_DISPLAY  (new ScoreboardDisplay());
 
         private final GameState gameState;
 
@@ -47,6 +49,10 @@ public class GameStateManager implements Cleansable {
 
         //Update match in background
         GameStateOption.MATCH.getGameState().setUpdateInBackground(true);
+    }
+
+    public GameState getState(GameStateOption gameStateOption) {
+        return gameStateOption.getGameState();
     }
 
     public void pushState(GameStateOption gameStateOption) {
@@ -96,6 +102,9 @@ public class GameStateManager implements Cleansable {
         return stateIsFocused(gameStateOption.getGameState());
     }
 
+
+
+    
     public void update() {
         List<GameState> gameStatesList = new ArrayList<>(gameStates);
 
@@ -125,7 +134,7 @@ public class GameStateManager implements Cleansable {
     }
 
     public void render() {
-        gameStates.peek().render();
+        getFocusedState().render();
     }
 
     @Override
@@ -137,4 +146,5 @@ public class GameStateManager implements Cleansable {
             }
         }
     }    
+
 }

@@ -5,7 +5,9 @@ import duber.engine.exceptions.LWJGLException;
 public abstract class GameState {
     private Duberant game;
     private GameStateManager manager;
+
     private boolean updateInBackground = false;
+    private boolean opened = false;
 
     public Duberant getGame() {
         return game;
@@ -25,6 +27,14 @@ public abstract class GameState {
 
     public boolean isFocused() {
         return manager.stateIsFocused(this);
+    }
+
+    public boolean isOpened() {
+        return opened;
+    }
+
+    public void setOpened(boolean opened) {
+        this.opened = opened;
     }
 
     public void init(Duberant game, GameStateManager manager) throws LWJGLException {
