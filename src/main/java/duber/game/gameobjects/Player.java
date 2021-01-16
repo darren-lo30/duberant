@@ -53,6 +53,10 @@ public class Player extends Entity {
         return getComponent(Vision.class).getCamera();
     }
 
+    public Score getScore() {
+        return getComponent(Score.class);
+    }
+
     public boolean canShoot() {
         WeaponsInventory weaponsInventory = getWeaponsInventory();
         if(weaponsInventory.getEquippedGun() != null) {
@@ -77,6 +81,29 @@ public class Player extends Entity {
         getWeaponsInventory().equipSecondaryGun();
     }
 
+    public boolean isEnemy(Player player) {
+        return player.getPlayerData().getTeam() != getPlayerData().getTeam();
+    }
+
+    public void takeShot(Bullet bullet) {
+        int health = getPlayerData().getHealth();
+        int newHealth = health - bullet.getDamage();
+
+        getPlayerData().setHealth(newHealth);
+    }
+
+    public boolean isAlive() {
+        return getPlayerData().getHealth() > 0;
+    }
+
+    public void addKill() {
+        getScore().setKills(getScore().getKills() + 1);
+    }
+
+    public void addDeath() {
+        getScore().setDeaths(getScore().getDeaths() + 1);
+    }
+
     @SuppressWarnings("unused")
     private Player(){}
     
@@ -88,6 +115,16 @@ public class Player extends Entity {
         private int health = 100;
         private int money = 1000;
         private boolean jumping = false;
+
+        public void set(PlayerData playerData) {
+            team = playerData.getTeam();
+            runningSpeed = playerData.runningSpeed;
+            walkingSpeed = playerData.walkingSpeed;
+            jumpingSpeed = playerData.jumpingSpeed;
+            health = playerData.health;
+            money = playerData.health;
+            jumping = playerData.jumping;
+        }
         
         public void setTeam(int team) {
             this.team = team;

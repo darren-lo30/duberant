@@ -12,6 +12,11 @@ public class Score extends Component {
         deaths = 0;
     }
 
+    public void set(Score score) {
+        kills = score.getKills();
+        deaths = score.getDeaths();
+    }
+
     public int getKills() {
         return kills;
     }

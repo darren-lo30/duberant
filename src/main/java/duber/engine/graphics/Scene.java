@@ -53,7 +53,7 @@ public class Scene implements Cleansable {
 
     public void addRenderableEntity(Entity renderableEntity) {
         if(renderableEntity == null || !renderableEntity.hasComponent(MeshBody.class)) {
-            return;
+            throw new IllegalArgumentException("Not nullable and add a mesh body to the entity before rendering");
         }
         
         Mesh[] renderableMeshes = renderableEntity.getComponent(MeshBody.class).getMeshes();
@@ -68,7 +68,7 @@ public class Scene implements Cleansable {
 
     public void removeRenderableEntity(Entity renderableEntity) {
         if(renderableEntity == null || !renderableEntity.hasComponent(MeshBody.class)) {
-            return;
+            throw new IllegalArgumentException("Not nullable and renderable entity without mesh body does not exist");
         }
 
         Mesh[] renderableMeshes = renderableEntity.getComponent(MeshBody.class).getMeshes();

@@ -11,7 +11,6 @@ import duber.engine.Window;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
 import duber.engine.entities.components.Vision;
-import duber.engine.entities.components.Identifier;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.exceptions.LWJGLException;
@@ -23,7 +22,8 @@ import duber.game.gameobjects.Player;
 import duber.game.client.Duberant;
 import duber.game.client.GameState;
 import duber.game.networking.MatchInitializePacket;
-import duber.game.networking.PlayerPositionPacket;
+import duber.game.networking.PlayerDeathPacket;
+import duber.game.networking.PlayerDataPacket;
 import duber.game.networking.UserInputPacket;
 
 public class Match extends GameState implements Cleansable {
@@ -42,6 +42,7 @@ public class Match extends GameState implements Cleansable {
     // Whether or not it has received data from server
     private volatile boolean initialized = false;
 
+
     public Scoreboard getScoreboard() {
         return scoreboard;
     }
@@ -56,6 +57,14 @@ public class Match extends GameState implements Cleansable {
         }
 
         gameScene = new Scene();
+    }
+
+    private Player getPlayerById(int playerId) {
+        return playersById.get(playerId);
+    }
+
+    private Collection<Player> getPlayers() {
+        return playersById.values();
     }
 
     @Override
@@ -77,11 +86,6 @@ public class Match extends GameState implements Cleansable {
     }
 
     @Override
-    public void cleanup() {
-        renderer.cleanup();
-    }
-
-    @Override
     public void update() {
         if (!initialized && receivedMatchData != null) {
             try {
@@ -99,24 +103,8 @@ public class Match extends GameState implements Cleansable {
                 getGame().getUser().getConnection().sendUDP(matchCommands);
             }
 
-            //Update player transforms
+            //Receive any match data from the server
             receiveMatchUpdate();
-        }
-    }
-
-    private void receiveMatchUpdate() {
-        while(!getGame().getClientNetwork().getPackets().isEmpty()){
-            Object packet = getGame().getClientNetwork().getPackets().poll();
-            if(packet instanceof PlayerPositionPacket) {
-                PlayerPositionPacket playerPositionData = (PlayerPositionPacket) packet;
-                Player modifiedPlayer = getPlayerById(playerPositionData.playerId);
-
-                if(modifiedPlayer != null) {
-                    //Update the player position and camera
-                    modifiedPlayer.getComponent(Transform.class).set(playerPositionData.playerTransform);
-                    modifiedPlayer.getView().getComponent(Transform.class).set(playerPositionData.cameraTransform);
-                }
-            }
         }
     }
 
@@ -134,13 +122,35 @@ public class Match extends GameState implements Cleansable {
     }
 
 
-    private Player getPlayerById(int playerId) {
-        return playersById.get(playerId);
+    private void receiveMatchUpdate() {
+        while(!getGame().getClientNetwork().getPackets().isEmpty()){
+            Object packet = getGame().getClientNetwork().getPackets().poll();
+            if(packet instanceof PlayerDataPacket) {
+                processPacket((PlayerDataPacket) packet);
+            } else if (packet instanceof PlayerDeathPacket) {
+                processPacket((PlayerDeathPacket) packet);
+            }
+        }
     }
 
-    private Collection<Player> getPlayers() {
-        return playersById.values();
+    private void processPacket(PlayerDataPacket playerDataPacket) {
+        Player modifiedPlayer = getPlayerById(playerDataPacket.playerId);
+
+        if(modifiedPlayer != null) {
+            //Update the player position and camera
+            modifiedPlayer.getComponent(Transform.class).set(playerDataPacket.playerTransform);
+            modifiedPlayer.getView().getComponent(Transform.class).set(playerDataPacket.cameraTransform);
+
+            modifiedPlayer.getPlayerData().set(playerDataPacket.playerData);
+        }
     }
+
+
+    private void processPacket(PlayerDeathPacket playerDeathPacket) {
+        Player deadPlayer = getPlayerById(playerDeathPacket.playerId);
+        gameScene.removeRenderableEntity(deadPlayer);
+    }
+
 
     private void initializeMatch(MatchInitializePacket matchData) throws LWJGLException {
         System.out.println("received iniitlaize match packet");
@@ -189,6 +199,11 @@ public class Match extends GameState implements Cleansable {
 
         gameScene.setSceneLighting(matchData.gameLighting);        
         initialized = true;
+    }
+    
+    @Override
+    public void cleanup() {
+        renderer.cleanup();
     }
 
     /**

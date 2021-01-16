@@ -25,7 +25,6 @@ import duber.engine.graphics.lighting.DirectionalLight;
 import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.loaders.MeshLoader;
 import duber.engine.utilities.Timer;
-import duber.game.Controls;
 import duber.game.MatchData;
 import duber.game.gameobjects.GunBuilder;
 import duber.game.gameobjects.Player;
@@ -33,7 +32,7 @@ import duber.game.gameobjects.Player.WeaponsInventory;
 import duber.game.User;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.Packet;
-import duber.game.networking.PlayerPositionPacket;
+import duber.game.networking.PlayerDataPacket;
 import duber.game.networking.UserInputPacket;
 
 public class MatchManager implements Runnable {
@@ -46,18 +45,20 @@ public class MatchManager implements Runnable {
     private Set<User> blueTeam = new HashSet<>();
     private Map<User, Player> players = new HashMap<>();
 
-    private DuberantPhysicsWorld physicsWorld;
+    private DuberantWorld gameWorld;
 
     private Entity map;
     private SkyBox skyBox;
     private SceneLighting gameLighting;
 
-    private Controls playerControls = new Controls();
-    private GunBuilder gunBuilder = new GunBuilder();
+    private Controls playerControls;
+    private GunBuilder gunBuilder;
 
     public MatchManager(ServerNetwork serverNetwork, List<User> users) throws LWJGLException {
         this.serverNetwork = serverNetwork;
-        physicsWorld = new DuberantPhysicsWorld();
+        gameWorld = new DuberantWorld(this);
+        playerControls = new Controls(this);
+        gunBuilder = new GunBuilder();
         
         redTeam = new HashSet<>(users.subList(0, MatchData.NUM_PLAYERS_IN_MATCH/2));
         blueTeam = new HashSet<>(users.subList(MatchData.NUM_PLAYERS_IN_MATCH/2, MatchData.NUM_PLAYERS_IN_MATCH));
@@ -67,7 +68,17 @@ public class MatchManager implements Runnable {
         sendMatchInitializationData();
     }
 
-    private <E extends Packet> void sendAllUDP(E packet) {
+    public DuberantWorld getGameWorld() {
+        return gameWorld;
+    }
+
+    public <E extends Packet> void sendAllTCP(E packet) {
+        for(User user : getUsers()) {
+            user.getConnection().sendTCP(packet);
+        }
+    }
+
+    public <E extends Packet> void sendAllUDP(E packet) {
         for(User user : getUsers()) {
             user.getConnection().sendUDP(packet);
         }
@@ -78,13 +89,13 @@ public class MatchManager implements Runnable {
         for(User user: redTeam) {
             Player redPlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.RED_TEAM);
             players.put(user, redPlayer);
-            physicsWorld.addDynamicEntity(redPlayer);
+            gameWorld.addDynamicEntity(redPlayer);
         }
 
         for(User user: blueTeam) {
             Player bluePlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.BLUE_TEAM);
             players.put(user, bluePlayer);
-            physicsWorld.addDynamicEntity(bluePlayer);
+            gameWorld.addDynamicEntity(bluePlayer);
         }
     }
     
@@ -138,7 +149,7 @@ public class MatchManager implements Runnable {
         map = new Entity();
         map.addComponent(new MeshBody(mapMesh));
         map.getComponent(Transform.class).setScale(0.3f);
-        physicsWorld.addConstantEntity(map);         
+        gameWorld.addConstantEntity(map);         
         
         Mesh[] skyBoxMesh = MeshLoader.load("models/skybox/skybox.obj");
         skyBox = new SkyBox(skyBoxMesh[0]);
@@ -198,7 +209,7 @@ public class MatchManager implements Runnable {
 
     private void update() {
         receivePlayerInputs();
-        physicsWorld.update();
+        gameWorld.update();
         sendGameUpdates();
     }
 
@@ -218,7 +229,7 @@ public class MatchManager implements Runnable {
                 Object packet = receivedPackets.poll();
                 if(packet instanceof UserInputPacket) {
                     UserInputPacket userInput = (UserInputPacket) packet;
-                    playerControls.update(player, physicsWorld, userInput.mouseInput, userInput.keyboardInput);
+                    playerControls.update(player, userInput.mouseInput, userInput.keyboardInput);
                 }
             }
         }
@@ -229,7 +240,7 @@ public class MatchManager implements Runnable {
      */
     private void sendGameUpdates() {
         for(Player player : getPlayers()) {
-            sendAllUDP(new PlayerPositionPacket(player.getId(), player));
+            sendAllUDP(new PlayerDataPacket(player));
         }
     }
 

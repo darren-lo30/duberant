@@ -13,9 +13,14 @@ import duber.engine.entities.components.Transform;
 import duber.engine.physics.PhysicsWorld;
 import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.Octree;
+import duber.game.gameobjects.Bullet;
 import duber.game.gameobjects.Player;
+import duber.game.networking.PlayerDeathPacket;
 
-public class DuberantPhysicsWorld extends PhysicsWorld {
+/**
+ * A class that manages the entities in the duberant match. This includes most of the game logic used to simulate the game.
+ */
+public class DuberantWorld extends PhysicsWorld {
     private static final float MIN_BOUNDS_VALUE = -10000.0f;
     private static final float MAX_BOUNDS_VALUE = 10000.0f;
 
@@ -25,8 +30,11 @@ public class DuberantPhysicsWorld extends PhysicsWorld {
     private final Set<Entity> dynamicEntities = new HashSet<>();
     private final Octree constantEntities = new Octree(minBounds, maxBounds);
 
-    public DuberantPhysicsWorld() {
+    private MatchManager matchManager;
+    
+    public DuberantWorld(MatchManager matchManager) {
         super();        
+        this.matchManager = matchManager;
         setCollisionHandler(new DuberantCollisionHandler(constantEntities, dynamicEntities));
     }
 
@@ -44,16 +52,13 @@ public class DuberantPhysicsWorld extends PhysicsWorld {
         Transform cameraTransform = shootingPlayer.getView().getComponent(Transform.class);
         Vector3f cameraRotation = cameraTransform.getRotation();
 
+
         //Set up bullet ray origin and direction
         Vector3f bulletOrigin = cameraTransform.getPosition();
         Vector3f bulletDirection = new Vector3f(0, 0, -1);
         bulletDirection.rotateX(-cameraRotation.x())
                        .rotateY(-cameraRotation.y());
         bulletDirection.normalize();
-
-    
-        System.out.println("Bullet origin: " + bulletOrigin);
-        System.out.println("Bullet direction: " + bulletDirection);
 
         //Create a ray for the bullet
         RayAabIntersection bulletRay = new RayAabIntersection(
@@ -63,21 +68,39 @@ public class DuberantPhysicsWorld extends PhysicsWorld {
         for(Entity entity : dynamicEntities) {
             //Find all instances of players in the dynamic entities
             if(entity instanceof Player && entity != shootingPlayer) {
-                Player player = (Player) entity;
-                boolean hitsPlayer = false;
+                Player hitPlayer = (Player) entity;
+                
+                //Make sure the player is the enemy and also alive and that the bullet hits them
+                if(shootingPlayer.isEnemy(hitPlayer) && hitPlayer.isAlive() && bulletHitsPlayer(hitPlayer, bulletRay)) {
+                    //Make hit player take the damage
+                    Bullet shotBullet = shootingPlayer.getWeaponsInventory().getEquippedGun().getGunData().getGunBullets();
+                    hitPlayer.takeShot(shotBullet);                        
+                    
 
-                //Determine if the bullet ray intersects the boxes of any of the player's colliders
-                for(ColliderPart colliderPart : player.getComponent(Collider.class).getColliderParts()) {
-                    Box colliderBox = colliderPart.getBox();
-                    hitsPlayer |= (bulletRay.test(colliderBox.getMinXYZ().x(), colliderBox.getMinXYZ().y(), colliderBox.getMinXYZ().z(),
-                        colliderBox.getMaxXYZ().x(), colliderBox.getMaxXYZ().y(), colliderBox.getMaxXYZ().z()));
-                }
+                    //Update the player's scores if it was a kill
+                    if(!hitPlayer.isAlive()) {
+                        shootingPlayer.addKill();
+                        hitPlayer.addDeath();
 
-                if(hitsPlayer) {
-                    System.out.println("player hit!");
+                        //Remove the player from the game temporarily
+                        matchManager.sendAllTCP(new PlayerDeathPacket(hitPlayer.getId()));
+                    }
                 }
             }
         }
+    }
+
+    private boolean bulletHitsPlayer(Player hitPlayer, RayAabIntersection bulletRay) {
+        for(ColliderPart colliderPart : hitPlayer.getComponent(Collider.class).getColliderParts()) {
+            Box colliderBox = colliderPart.getBox();
+
+            if(bulletRay.test(colliderBox.getMinXYZ().x(), colliderBox.getMinXYZ().y(), colliderBox.getMinXYZ().z(),
+               colliderBox.getMaxXYZ().x(), colliderBox.getMaxXYZ().y(), colliderBox.getMaxXYZ().z())) {
+                   return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

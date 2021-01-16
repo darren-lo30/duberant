@@ -20,7 +20,11 @@ public class Entity {
     }
 
     public <T extends Component> T getComponent(Class<T> type) {
-        return type.cast(components.get(type));
+        Component component = components.get(type);
+        if(component == null) {
+            throw new IllegalArgumentException("The entity does not have the component with class: " + type);
+        }
+        return type.cast(component);
     }
 
     public <T extends Component> T addComponent(T component) {

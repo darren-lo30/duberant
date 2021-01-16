@@ -1,4 +1,4 @@
-package duber.game;
+package duber.game.server;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -8,24 +8,25 @@ import duber.engine.MouseInput;
 import duber.engine.entities.components.RigidBody;
 import duber.engine.entities.components.Transform;
 import duber.game.gameobjects.Player;
-import duber.game.server.DuberantPhysicsWorld;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 
 
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_X;
-
 
 public class Controls {
     private float mouseSensitivity = 0.0006f;
+    private MatchManager matchManager;
 
+    public Controls(MatchManager matchManager) {
+        this.matchManager = matchManager;
+    }
+    
     private void addControlVelocity(Vector3f playerVelocity, Vector3f controlRotation, Vector3f controlVelocity) {
         if(controlVelocity.z() != 0) {
             playerVelocity.x += (float)Math.sin(controlRotation.y()) * -1.0f * controlVelocity.z();
@@ -39,7 +40,7 @@ public class Controls {
         playerVelocity.y += controlVelocity.y();
     }
 
-    public void update(Player player, DuberantPhysicsWorld physicsWorld, MouseInput mouseInput, KeyboardInput keyboardInput) {
+    public void update(Player player, MouseInput mouseInput, KeyboardInput keyboardInput) {
         Vector2f controlRotation = mouseInput.getCursorDisplacement();
         Vector3f controlVelocity = new Vector3f();
 
@@ -59,14 +60,8 @@ public class Controls {
             controlVelocity.add(moveSpeed, 0, 0);
         }
 
-        if(keyboardInput.isKeyPressed(GLFW_KEY_Z)) {
-            controlVelocity.add(0, -moveSpeed, 0);
-        } else if(keyboardInput.isKeyPressed(GLFW_KEY_X)) {
-            controlVelocity.add(0, moveSpeed, 0);
-        }
-
         if(mouseInput.leftButtonIsPressed() && player.canShoot()) {
-            physicsWorld.simulateShot(player);
+            matchManager.getGameWorld().simulateShot(player);
         }
 
         Vector3f playerVelocity = player.getComponent(RigidBody.class).getVelocity();
