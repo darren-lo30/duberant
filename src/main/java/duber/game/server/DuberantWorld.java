@@ -15,7 +15,6 @@ import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.Octree;
 import duber.game.gameobjects.Bullet;
 import duber.game.gameobjects.Player;
-import duber.game.networking.PlayerDeathPacket;
 
 /**
  * A class that manages the entities in the duberant match. This includes most of the game logic used to simulate the game.
@@ -29,17 +28,18 @@ public class DuberantWorld extends PhysicsWorld {
 
     private final Set<Entity> dynamicEntities = new HashSet<>();
     private final Octree constantEntities = new Octree(minBounds, maxBounds);
-
-    private MatchManager matchManager;
     
-    public DuberantWorld(MatchManager matchManager) {
+    public DuberantWorld() {
         super();        
-        this.matchManager = matchManager;
         setCollisionHandler(new DuberantCollisionHandler(constantEntities, dynamicEntities));
     }
 
     public void addDynamicEntity(Entity entity) {
         dynamicEntities.add(entity);
+    }
+
+    public void removeDynamicEntity(Entity entity) {
+        dynamicEntities.remove(entity);
     }
 
     public void addConstantEntity(Entity entity) {
@@ -81,9 +81,6 @@ public class DuberantWorld extends PhysicsWorld {
                     if(!hitPlayer.isAlive()) {
                         shootingPlayer.addKill();
                         hitPlayer.addDeath();
-
-                        //Remove the player from the game temporarily
-                        matchManager.sendAllTCP(new PlayerDeathPacket(hitPlayer.getId()));
                     }
                 }
             }

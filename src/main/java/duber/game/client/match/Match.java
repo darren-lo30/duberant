@@ -22,7 +22,6 @@ import duber.game.gameobjects.Player;
 import duber.game.client.Duberant;
 import duber.game.client.GameState;
 import duber.game.networking.MatchInitializePacket;
-import duber.game.networking.PlayerDeathPacket;
 import duber.game.networking.PlayerDataPacket;
 import duber.game.networking.UserInputPacket;
 
@@ -35,13 +34,10 @@ public class Match extends GameState implements Cleansable {
 
     private Map<Integer, Player> playersById = new HashMap<>();
 
-    private MatchInitializePacket receivedMatchData;
-
     private Scoreboard scoreboard;
 
     // Whether or not it has received data from server
     private volatile boolean initialized = false;
-
 
     public Scoreboard getScoreboard() {
         return scoreboard;
@@ -71,7 +67,6 @@ public class Match extends GameState implements Cleansable {
     public void startup() {
         initialized = false;
         gameScene.clear();
-        new Thread(new GetMatchData()).start();
     }
 
     @Override
@@ -87,88 +82,72 @@ public class Match extends GameState implements Cleansable {
 
     @Override
     public void update() {
-        if (!initialized && receivedMatchData != null) {
-            try {
-                initializeMatch(receivedMatchData);
-            } catch (LWJGLException le) {
-                System.out.println("Unable to initialize match data");
-            }
-        } else if (initialized) {
-            Window window = getGame().getWindow();
-            
-            //If the current window is focused, then send user inputs to server
-            if(isFocused()) {
-                //Send the command 
-                UserInputPacket matchCommands = new UserInputPacket(window.getKeyboardInput(), window.getMouseInput());
-                getGame().getUser().getConnection().sendUDP(matchCommands);
-            }
+        Window window = getGame().getWindow();
+        
+        //If the current window is focused, the match has been initialized
+        if(isFocused() && initialized) {
+            //Send the command 
+            UserInputPacket matchCommands = new UserInputPacket(window.getKeyboardInput(), window.getMouseInput());
+            getGame().getUser().getConnection().sendUDP(matchCommands);
+        }
 
-            //Receive any match data from the server
+        //Receive any match data from the server
+        try {
             receiveMatchUpdate();
+        } catch (LWJGLException le) {
+            System.out.println("Received bad data from server");
         }
     }
 
     @Override
     public void render() {
+        Duberant game = getGame();
+        Window window = game.getWindow();
+
         if (!initialized) {
             hud.displayText("Loading...");
-        } else {
-            Duberant game = getGame();
-            Window window = game.getWindow();
-
+        } else if(mainPlayer.isAlive()) {
             renderer.render(window, mainPlayer.getComponent(Vision.class).getCamera(), gameScene);
             hud.displayCrosshair(game.getUser().getCrosshair(), window.getWidth() / 2, window.getHeight() / 2);
+        } else {
+            hud.displayText("You died...");
         }
+        
     }
 
-
-    private void receiveMatchUpdate() {
+    private void receiveMatchUpdate() throws LWJGLException {
         while(!getGame().getClientNetwork().getPackets().isEmpty()){
             Object packet = getGame().getClientNetwork().getPackets().poll();
-            if(packet instanceof PlayerDataPacket) {
-                processPacket((PlayerDataPacket) packet);
-            } else if (packet instanceof PlayerDeathPacket) {
-                processPacket((PlayerDeathPacket) packet);
+            
+            if(!initialized) {
+                //If the game is not initialized wait for a match initializiation packet
+                if(packet instanceof MatchInitializePacket) {
+                    processPacket((MatchInitializePacket) packet);
+                }
+            } else {
+                //If the game is already initialized, listen for any game updates
+                if(packet instanceof PlayerDataPacket) {
+                    processPacket((PlayerDataPacket) packet);
+                }
             }
         }
     }
 
-    private void processPacket(PlayerDataPacket playerDataPacket) {
-        Player modifiedPlayer = getPlayerById(playerDataPacket.playerId);
-
-        if(modifiedPlayer != null) {
-            //Update the player position and camera
-            modifiedPlayer.getComponent(Transform.class).set(playerDataPacket.playerTransform);
-            modifiedPlayer.getView().getComponent(Transform.class).set(playerDataPacket.cameraTransform);
-
-            modifiedPlayer.getPlayerData().set(playerDataPacket.playerData);
-        }
-    }
-
-
-    private void processPacket(PlayerDeathPacket playerDeathPacket) {
-        Player deadPlayer = getPlayerById(playerDeathPacket.playerId);
-        gameScene.removeRenderableEntity(deadPlayer);
-    }
-
-
-    private void initializeMatch(MatchInitializePacket matchData) throws LWJGLException {
-        System.out.println("received iniitlaize match packet");
-
-        
-        List<Player> players = matchData.players;
+    private void processPacket(MatchInitializePacket matchInitializePacket) throws LWJGLException {        
+        List<Player> players = matchInitializePacket.players;
         for(Player player: players) {
             playersById.put(player.getId(), player);
         }
 
-        mainPlayer = getPlayerById(matchData.mainPlayerId);
+        mainPlayer = getPlayerById(matchInitializePacket.mainPlayerId);
         
         if(mainPlayer == null) {
             throw new IllegalStateException("The current user is not in the game");
         }
 
+
         //Set player meshes
-        Mesh[] playerMeshes = MeshLoader.load(matchData.playerModel);
+        Mesh[] playerMeshes = MeshLoader.load(matchInitializePacket.playerModel);
         for(Player player : getPlayers()) {
             MeshBody playerMeshBody = new MeshBody(playerMeshes, true);
             
@@ -180,13 +159,13 @@ public class Match extends GameState implements Cleansable {
         }
 
         //Set map meshes
-        Mesh[] mapMeshes = MeshLoader.load(matchData.mapModel);
-        Entity map = matchData.map;
+        Mesh[] mapMeshes = MeshLoader.load(matchInitializePacket.mapModel);
+        Entity map = matchInitializePacket.map;
         map.addComponent(new MeshBody(mapMeshes, true));
 
         //Set skybox mesh
-        Mesh[] skyBoxMeshes = MeshLoader.load(matchData.skyBoxModel);
-        SkyBox skyBox = matchData.skyBox;
+        Mesh[] skyBoxMeshes = MeshLoader.load(matchInitializePacket.skyBoxModel);
+        SkyBox skyBox = matchInitializePacket.skyBox;
         skyBox.addComponent(new MeshBody(skyBoxMeshes, true));
 
         //Add all enitties to the scene
@@ -197,34 +176,31 @@ public class Match extends GameState implements Cleansable {
         gameScene.addRenderableEntity(map);
         gameScene.setSkyBox(skyBox);
 
-        gameScene.setSceneLighting(matchData.gameLighting);        
+        gameScene.setSceneLighting(matchInitializePacket.gameLighting);        
         initialized = true;
     }
+
+    private void processPacket(PlayerDataPacket playerDataPacket) {
+        Player modifiedPlayer = getPlayerById(playerDataPacket.playerId);
+
+        if(modifiedPlayer != null) {
+            //Update the player position and camera
+            modifiedPlayer.getComponent(Transform.class).set(playerDataPacket.playerTransform);
+            modifiedPlayer.getView().getComponent(Transform.class).set(playerDataPacket.cameraTransform);
+
+            //Update the player's data
+            modifiedPlayer.getPlayerData().set(playerDataPacket.playerData);
+
+            //Remove the player from being rendered if they died
+            if(!modifiedPlayer.isAlive()) {
+                gameScene.removeRenderableEntity(modifiedPlayer);
+            }
+        }
+    }
+
     
     @Override
     public void cleanup() {
         renderer.cleanup();
-    }
-
-    /**
-     * Initializes match on another thread
-     */
-    private class GetMatchData implements Runnable {
-        @Override
-        public void run() {
-            try {
-                while(receivedMatchData == null && getGame().isLoggedIn()) {
-                    Object packet = getGame().getClientNetwork().getPackets().take();
-                    
-                    //Initialize match in main thread because of OpenGL requirements and GL Context
-                    if(packet instanceof MatchInitializePacket) {
-                        receivedMatchData = (MatchInitializePacket) packet;
-                    } 
-                }
-            } catch (InterruptedException ie) {
-                ie.printStackTrace();
-                Thread.currentThread().interrupt();
-            }
-        }
     }
 }

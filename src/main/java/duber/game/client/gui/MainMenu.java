@@ -47,11 +47,12 @@ public class MainMenu extends GUI {
 
         @Override
         public void run() {
+            
             // If the game is not already connected to the server, attempt to connect
             // Send in login request to server
             try {
                 if (!getGame().isConnected()) {
-                    getGame().getClientNetwork().connect(100000);
+                    getGame().getClientNetwork().connect(100);
                 }
 
                 //Send user login packet with username
@@ -59,6 +60,7 @@ public class MainMenu extends GUI {
 
                 //Wait to receive response from server
                 waitForLoginResponse();
+                
 
                 System.out.println("Send user connect packet");
             } catch (IOException ioe) {
@@ -70,9 +72,12 @@ public class MainMenu extends GUI {
             } finally {
                 loggingIn = false;
             }
+
+            
         }
 
         private void waitForLoginResponse() throws InterruptedException {
+            
             BlockingQueue<Object> receivedPackets = getGame().getClientNetwork().getPackets();
             Object packet = receivedPackets.take();
             if(packet instanceof LoginConfirmationPacket) {
@@ -85,8 +90,7 @@ public class MainMenu extends GUI {
                 getGame().setUser(connectedUser);
             } else {
                 System.out.println("Received faulty packet");
-            }
-            
+            }            
         }
     }
 }

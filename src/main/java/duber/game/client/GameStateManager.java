@@ -101,9 +101,6 @@ public class GameStateManager implements Cleansable {
     public boolean stateIsFocused(GameStateOption gameStateOption) {
         return stateIsFocused(gameStateOption.getGameState());
     }
-
-
-
     
     public void update() {
         List<GameState> gameStatesList = new ArrayList<>(gameStates);

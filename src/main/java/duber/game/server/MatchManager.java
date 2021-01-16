@@ -2,7 +2,6 @@ package duber.game.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -41,8 +40,6 @@ public class MatchManager implements Runnable {
     private volatile boolean running = true;
     private ServerNetwork serverNetwork;
 
-    private Set<User> redTeam = new HashSet<>();
-    private Set<User> blueTeam = new HashSet<>();
     private Map<User, Player> players = new HashMap<>();
 
     private DuberantWorld gameWorld;
@@ -56,14 +53,14 @@ public class MatchManager implements Runnable {
 
     public MatchManager(ServerNetwork serverNetwork, List<User> users) throws LWJGLException {
         this.serverNetwork = serverNetwork;
-        gameWorld = new DuberantWorld(this);
+        gameWorld = new DuberantWorld();
         playerControls = new Controls(this);
         gunBuilder = new GunBuilder();
         
-        redTeam = new HashSet<>(users.subList(0, MatchData.NUM_PLAYERS_IN_MATCH/2));
-        blueTeam = new HashSet<>(users.subList(MatchData.NUM_PLAYERS_IN_MATCH/2, MatchData.NUM_PLAYERS_IN_MATCH));
+        List<User> redTeam = users.subList(0, MatchData.NUM_PLAYERS_IN_MATCH/2);
+        List<User> blueTeam = users.subList(MatchData.NUM_PLAYERS_IN_MATCH/2, MatchData.NUM_PLAYERS_IN_MATCH);
         
-        loadPlayers();
+        loadPlayers(redTeam, blueTeam);
         loadMatch();
         sendMatchInitializationData();
     }
@@ -84,7 +81,7 @@ public class MatchManager implements Runnable {
         }
     }
 
-    private void loadPlayers() throws LWJGLException {
+    private void loadPlayers(List<User> redTeam, List<User> blueTeam) throws LWJGLException {
         Mesh[] playerMeshes = MeshLoader.load("models/cube/cube.obj");
         for(User user: redTeam) {
             Player redPlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.RED_TEAM);

@@ -8,5 +8,4 @@ public class GameMap extends Entity {
     private Entity mainMap;
     private SkyBox skyBox;
     private SceneLighting gameLighting;
-    
 }

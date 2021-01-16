@@ -1,5 +1,6 @@
 package duber.game.client.match;
 
+import duber.engine.Cleansable;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.utilities.Utils;
@@ -14,7 +15,7 @@ import java.nio.ByteBuffer;
 
 import org.joml.Vector4f;
 
-public class HUD {
+public class HUD implements Cleansable {
     private static final String MAIN_FONT = "OpenSans";
     
     private Window window;
@@ -50,23 +51,22 @@ public class HUD {
         }
     }
 
-    private void displayInit(Window window) {
+    private void displayInit() {
         nvgBeginFrame(vgContext, window.getWidth(), window.getHeight(), 1);
     }
 
-    private void displayEnd(Window window) {
+    private void displayEnd() {
         nvgEndFrame(vgContext);
         window.restoreState();
     }
 
     public void displayCrosshair(Crosshair crosshair, int posX, int posY) {
-        displayInit(window);
+        displayInit();
 
         float crosshairHorizontalStart = posX - (float) crosshair.getWidth()/2;
         float crosshairVerticalStart = posY - (float)crosshair.getHeight()/2;
         float lineThickness = crosshair.getThickness();
         
-        //Draw horizontal portion of crosshair
         nvgBeginPath(vgContext);
         nvgRect(vgContext, crosshairHorizontalStart, posY - lineThickness/2, crosshair.getWidth(), lineThickness);
         nvgFillColor(vgContext, setColour(crosshair.getColour()));
@@ -77,7 +77,7 @@ public class HUD {
         nvgFillColor(vgContext, setColour(crosshair.getColour()));
         nvgFill(vgContext);
         
-        displayEnd(window);
+        displayEnd();
     }
 
     private NVGColor setColour(float r, float g, float b, float a) {
@@ -93,7 +93,7 @@ public class HUD {
     }
 
     public void displayText(String text) {
-        displayInit(window);
+        displayInit();
         //Set font
         
         nvgFontSize(vgContext, 25.0f);
@@ -102,6 +102,11 @@ public class HUD {
         nvgFillColor(vgContext, setColour(255.0f, 255.0f, 255.0f, 255.0f));
         nvgText(vgContext, window.getWidth()/2.0f, window.getHeight()/2.0f, text);
 
-        displayEnd(window);
+        displayEnd();
+    }
+
+    @Override
+    public void cleanup() {
+        nvgDelete(vgContext);
     }
 }

@@ -28,10 +28,9 @@ public class DuberantServer {
     private volatile boolean running;
     private ServerNetwork serverNetwork;
 
+    private Set<User> usersSearchingForMatch = new LinkedHashSet<>();
     private Set<User> usersInMatch = new HashSet<>();
     private Map<Connection, User> connectedUsers = new HashMap<>();
-    private Set<User> usersSearchingForMatch = new LinkedHashSet<>();
-    private Set<MatchManager> ongoingMatches = new HashSet<>();
     
     public DuberantServer() throws IOException {
         serverNetwork = new ServerNetwork(5000);
@@ -108,8 +107,6 @@ public class DuberantServer {
 
             try {
                 MatchManager matchManager = new MatchManager(serverNetwork, newMatchUsers);
-                ongoingMatches.add(matchManager);
-    
                 //Start a new thread with the match manager
                 new Thread(matchManager).start();
             } catch (LWJGLException le) {

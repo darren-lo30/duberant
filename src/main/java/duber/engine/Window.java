@@ -29,6 +29,11 @@ import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -122,10 +127,12 @@ public class Window {
 
     public void restoreState() {
         glClearColor(0.f, 0.f, 0.f, 0.f);
+        glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_DEPTH_TEST);
+
+        applyOptions();
     }
 
     public int getWidth() {
@@ -249,5 +256,9 @@ public class Window {
         public void setOption(int option, boolean turnedOn) {
             optionsMap.put(option, turnedOn);
         }
+    }
+
+    public void clear() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 }

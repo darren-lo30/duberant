@@ -41,6 +41,12 @@ public class Controls {
     }
 
     public void update(Player player, MouseInput mouseInput, KeyboardInput keyboardInput) {
+        //Do not update the player if they are not alive
+        if(!player.isAlive()) {
+            return;
+        }
+
+
         Vector2f controlRotation = mouseInput.getCursorDisplacement();
         Vector3f controlVelocity = new Vector3f();
 

@@ -116,6 +116,7 @@ public final class GameEngine implements Runnable, Cleansable {
     }
 
     public void render() {
+        window.clear();
         calculateAndDisplayFps();        
         gameLogic.render();
         window.update();

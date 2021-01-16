@@ -11,9 +11,6 @@ import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
 
 import static org.lwjgl.opengl.GL11.glViewport;
 
@@ -91,15 +88,9 @@ public class Renderer implements Cleansable {
         skyBoxShaderProgram.createUniform("colour");
     }
 
-    
 
-    public void clear() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    }
 
-    public void render(Window window, Camera camera, Scene scene) {
-        clear();
-        
+    public void render(Window window, Camera camera, Scene scene) {        
         //Update camera view matrix
         camera.updateViewMatrix();
 
