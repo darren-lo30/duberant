@@ -392,6 +392,13 @@
       <version>${joml.version}</version>
     </dependency>
     
+    <!-- LEGUI - SNAPSHOT - https://github.com/SpinyOwl/legui -->
+    <dependency>
+       <groupId>org.liquidengine</groupId>
+       <artifactId>legui</artifactId>
+       <version>${legui_version}-SNAPSHOT</version>
+    </dependency>
+    
     <!-- kryonet -->
     <dependency>
       <groupId>com.esotericsoftware</groupId>
