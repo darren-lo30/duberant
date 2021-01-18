@@ -11,7 +11,7 @@ public class MatchData {
     public static final int RED_TEAM = 0;
     public static final int BLUE_TEAM = 1;
 
-    public static final int NUM_ROUNDS = 1;
+    public static final int NUM_ROUNDS = 3;
     public static final int NUM_ROUNDS_TO_WIN = (int) Math.ceil(NUM_ROUNDS/2.0);
 
     //Match models

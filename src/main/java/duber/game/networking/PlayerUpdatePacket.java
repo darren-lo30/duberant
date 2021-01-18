@@ -8,7 +8,7 @@ import duber.game.gameobjects.Score;
 import duber.game.gameobjects.Player.PlayerData;
 import duber.game.gameobjects.Player.WeaponsInventory;
 
-public class PlayerDataPacket extends Packet {
+public class PlayerUpdatePacket extends Packet {
     public int playerId;
     public Transform playerTransform;
     public Transform cameraTransform;
@@ -17,7 +17,7 @@ public class PlayerDataPacket extends Packet {
     public WeaponsInventory weaponsInventory;
     public boolean visible;
 
-    public PlayerDataPacket(Player player) {
+    public PlayerUpdatePacket(Player player) {
         this.playerId = player.getId();
         playerTransform = player.getComponent(Transform.class);
         cameraTransform = player.getComponent(Vision.class)
@@ -30,5 +30,5 @@ public class PlayerDataPacket extends Packet {
     }
 
     @SuppressWarnings("unused")
-    private PlayerDataPacket() {}
+    private PlayerUpdatePacket() {}
 }

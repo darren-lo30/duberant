@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joml.Vector4f;
-
 import duber.engine.Cleansable;
 import duber.engine.Window;
 import duber.engine.entities.Entity;
@@ -23,12 +21,11 @@ import duber.engine.loaders.MeshLoader;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.phases.MatchPhaseManager;
-import duber.game.client.Duberant;
 import duber.game.client.GameState;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.MatchPhasePacket;
-import duber.game.networking.PlayerDataPacket;
+import duber.game.networking.PlayerUpdatePacket;
 import duber.game.networking.UserInputPacket;
 import duber.game.phases.MatchPhase;
 
@@ -144,8 +141,8 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
             }
             
             if(isInitialized()) {
-                if(packet instanceof PlayerDataPacket) {
-                    processPacket((PlayerDataPacket) packet);
+                if(packet instanceof PlayerUpdatePacket) {
+                    processPacket((PlayerUpdatePacket) packet);
                 }
             }
         }
@@ -199,18 +196,18 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         }
     }
 
-    private void processPacket(PlayerDataPacket playerDataPacket) {
-        Player modifiedPlayer = getPlayerById(playerDataPacket.playerId);
+    private void processPacket(PlayerUpdatePacket playerUpdatePacket) {
+        Player modifiedPlayer = getPlayerById(playerUpdatePacket.playerId);
 
         //Update the player position and camera
-        modifiedPlayer.getComponent(Transform.class).set(playerDataPacket.playerTransform);
-        modifiedPlayer.getView().getComponent(Transform.class).set(playerDataPacket.cameraTransform);
-        modifiedPlayer.getComponent(MeshBody.class).setVisible(playerDataPacket.visible);
+        modifiedPlayer.getComponent(Transform.class).set(playerUpdatePacket.playerTransform);
+        modifiedPlayer.getView().getComponent(Transform.class).set(playerUpdatePacket.cameraTransform);
+        modifiedPlayer.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
 
         //Update the player's data
-        modifiedPlayer.getScore().set(playerDataPacket.playerScore);
-        modifiedPlayer.getPlayerData().set(playerDataPacket.playerData);
-        modifiedPlayer.getWeaponsInventory().updateData(playerDataPacket.weaponsInventory);
+        modifiedPlayer.getScore().set(playerUpdatePacket.playerScore);
+        modifiedPlayer.getPlayerData().set(playerUpdatePacket.playerData);
+        modifiedPlayer.getWeaponsInventory().updateData(playerUpdatePacket.weaponsInventory);
     }
 
     private void processPacket(MatchPhasePacket matchPhasePacket) {

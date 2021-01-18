@@ -32,6 +32,8 @@ public abstract class Gun extends Entity {
 
         return notReloading && gunData.hasBullets();
     }
+
+
     
     public void fire() {
         GunData gunData = getGunData();
@@ -102,6 +104,10 @@ public abstract class Gun extends Entity {
 
         public Bullet getGunBullets() {
             return gunBullets;
+        }
+
+        public void reset() {
+            remainingBullets = totalBullets;
         }
     }    
 }

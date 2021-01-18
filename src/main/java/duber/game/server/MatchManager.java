@@ -35,7 +35,7 @@ import duber.game.User;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.MatchPhasePacket;
 import duber.game.networking.Packet;
-import duber.game.networking.PlayerDataPacket;
+import duber.game.networking.PlayerUpdatePacket;
 import duber.game.networking.UserInputPacket;
 import duber.game.phases.LoadingPhase;
 import duber.game.phases.MatchPhase;
@@ -281,13 +281,13 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         gameMap = new GameMap(map, skyBox, gameLighting, redPositions, bluePositions);   
     }
 
-
     public void startRound() {
         for(Player player : getPlayers()) {
             player.getPlayerData().setHealth(PlayerData.DEFAULT_HEALTH);
             player.getPlayerData().addMoney(1000);
-            player.getComponent(MeshBody.class).setVisible(true);
+            player.getWeaponsInventory().resetGuns();
             
+            player.getComponent(MeshBody.class).setVisible(true);
             gameWorld.addDynamicEntity(player);
         } 
 
@@ -325,7 +325,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
      */
     public void sendPackets() {
         for(Player player : getPlayers()) {
-            sendAllUDP(new PlayerDataPacket(player));
+            sendAllUDP(new PlayerUpdatePacket(player));
         } 
     }
 

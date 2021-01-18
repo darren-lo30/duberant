@@ -90,8 +90,9 @@ public class Player extends Entity {
         int newHealth = health - bullet.getDamage();
 
         getPlayerData().setHealth(newHealth);
-        
+
         if(!isAlive()) {
+            getComponent(MeshBody.class).setVisible(false);
             getWeaponsInventory().clear();
         }
     }
@@ -195,6 +196,16 @@ public class Player extends Entity {
         public void clear() {
             guns[0] = null;
             guns[1] = null;
+        }
+
+        public void resetGuns() {
+            if(getPrimaryGun() != null) {
+                getPrimaryGun().getGunData().reset();
+            }
+
+            if(getSecondaryGun() != null) {
+                getSecondaryGun().getGunData().reset();
+            }
         }
 
         public Gun getEquippedGun() {
