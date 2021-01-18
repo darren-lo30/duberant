@@ -29,7 +29,6 @@
 
     <!-- Java Math Library for Open GL -->
     <joml.version>1.10.0</joml.version>
-    
     <imgui.java.version>1.79-1.4.0</imgui.java.version>
   </properties>
 
@@ -43,6 +42,10 @@
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
       <releases><enabled>false</enabled></releases>
       <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+    <repository>
+      <id>spinyowl</id>
+      <url>https://raw.github.com/SpinyOwl/repo/releases</url>
     </repository>
   </repositories>
   
@@ -392,24 +395,23 @@
       <version>${joml.version}</version>
     </dependency>
     
-    <!-- LEGUI - SNAPSHOT - https://github.com/SpinyOwl/legui -->
-    <dependency>
-       <groupId>org.liquidengine</groupId>
-       <artifactId>legui</artifactId>
-       <version>${legui_version}-SNAPSHOT</version>
-    </dependency>
-    
     <!-- kryonet -->
     <dependency>
       <groupId>com.esotericsoftware</groupId>
       <artifactId>kryo</artifactId>
       <version>5.0.3</version>
-   </dependency>
+    </dependency>
     <dependency>
       <groupId>kryonet</groupId>
       <artifactId>kryonet</artifactId>
       <version>2.21</version>
-   </dependency>
+    </dependency>
+
+    <dependency>
+      <groupId>org.liquidengine</groupId>
+      <artifactId>legui</artifactId>
+      <version>3.2.3</version>
+    </dependency>
   </dependencies>
   
   <build>
@@ -567,57 +569,5 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>natives-linux-amd64</id>
-      <activation>
-          <os>
-              <family>unix</family>
-              <arch>amd64</arch>
-          </os>
-      </activation>
-      <properties>
-          <imguiNatives>imgui-java-natives-linux</imguiNatives>
-          <lwjglNatives>natives-linux</lwjglNatives>
-      </properties>
-  </profile>
-  <profile>
-      <id>natives-macos-amd64</id>
-      <activation>
-          <os>
-              <family>mac</family>
-              <arch>amd64</arch>
-          </os>
-      </activation>
-      <properties>
-          <imguiNatives>imgui-java-natives-macos</imguiNatives>
-          <lwjglNatives>natives-macos</lwjglNatives>
-      </properties>
-  </profile>
-  <profile>
-      <id>natives-windows-amd64</id>
-      <activation>
-          <os>
-              <family>windows</family>
-              <arch>amd64</arch>
-          </os>
-      </activation>
-      <properties>
-          <imguiNatives>imgui-java-natives-windows</imguiNatives>
-          <lwjglNatives>natives-windows</lwjglNatives>
-      </properties>
-  </profile>
-  <profile>
-      <id>natives-windows-x86</id>
-      <activation>
-          <os>
-              <family>windows</family>
-              <arch>x86</arch>
-          </os>
-      </activation>
-      <properties>
-          <imguiNatives>imgui-java-natives-windows-x86</imguiNatives>
-          <lwjglNatives>natives-windows-x86</lwjglNatives>
-      </properties>
-  </profile>
   </profiles>
 </project>
