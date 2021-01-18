@@ -24,7 +24,7 @@
     <jacoco.unit-tests.limit.method-complexity>5</jacoco.unit-tests.limit.method-complexity>
 
     <!-- LWJGL Library -->
-    <lwjgl.version>3.2.4-SNAPSHOT</lwjgl.version>
+    <lwjgl.version>3.2.3</lwjgl.version>
 	  <lwjgl.natives>natives-windows</lwjgl.natives>
 
     <!-- Java Math Library for Open GL -->
@@ -83,10 +83,6 @@
     <dependency>
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-bgfx</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.lwjgl</groupId>
-      <artifactId>lwjgl-bullet</artifactId>
     </dependency>
     <dependency>
       <groupId>org.lwjgl</groupId>
@@ -388,39 +384,15 @@
       <artifactId>lwjgl-zstd</artifactId>
       <classifier>${lwjgl.natives}</classifier>
     </dependency>
-    <dependency>
-      <groupId>org.lwjgl</groupId>
-      <artifactId>lwjgl-bullet</artifactId>
-      <classifier>${lwjgl.natives}</classifier>
-    </dependency>
 
+    <!-- joml -->
     <dependency>
       <groupId>org.joml</groupId>
       <artifactId>joml</artifactId>
       <version>${joml.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.github.nifty-gui</groupId>
-      <artifactId>nifty</artifactId>
-      <version>1.4.3</version>
-    </dependency>
     
-    <!-- imgui-java -->
-    <dependency>
-      <groupId>io.imgui.java</groupId>
-      <artifactId>imgui-java-binding</artifactId>
-      <version>${imgui.java.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>io.imgui.java</groupId>
-        <artifactId>imgui-java-lwjgl3</artifactId>
-        <version>${imgui.java.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>io.imgui.java</groupId>
-        <artifactId>${imguiNatives}</artifactId>
-        <version>${imgui.java.version}</version>
-    </dependency>
+    <!-- kryonet -->
     <dependency>
       <groupId>com.esotericsoftware</groupId>
       <artifactId>kryo</artifactId>

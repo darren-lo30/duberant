@@ -48,7 +48,7 @@ public class DuberantWorld extends PhysicsWorld {
 
     public void simulateShot(Player shootingPlayer) {
         shootingPlayer.shoot();
-
+        
         Transform cameraTransform = shootingPlayer.getView().getComponent(Transform.class);
         Vector3f cameraRotation = cameraTransform.getRotation();
 

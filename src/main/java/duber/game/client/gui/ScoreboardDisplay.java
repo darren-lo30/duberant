@@ -2,8 +2,8 @@ package duber.game.client.gui;
 
 import duber.engine.exceptions.LWJGLException;
 import duber.game.client.GameStateManager.GameStateOption;
-import duber.game.client.match.Scoreboard;
 import duber.game.client.match.Match;
+import duber.game.gameobjects.Scoreboard;
 
 public class ScoreboardDisplay extends GUI {
     @Override
@@ -17,6 +17,8 @@ public class ScoreboardDisplay extends GUI {
         if(!getManager().getState(GameStateOption.MATCH).isOpened()) {
             throw new IllegalStateException("There must be a match ongoing to open the scoreboard");
         }
+
+        getMatchScoreboard().updateScoreboard();
     }
 
     @Override

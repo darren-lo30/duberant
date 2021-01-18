@@ -13,7 +13,16 @@ public class Timer {
 
     public float getElapsedTime() {
         double currTime = getTime();
-        float elapsed =  (float) (currTime - lastRecordedTime);
+        return (float) (currTime - lastRecordedTime);
+    }
+
+    public void updateTime() {
+        lastRecordedTime = getTime();
+    }
+
+    public float getElapsedTimeAndUpdate() {
+        double currTime = getTime();
+        float elapsed = (float) (currTime - lastRecordedTime);
         lastRecordedTime = currTime;
         return elapsed;
     }

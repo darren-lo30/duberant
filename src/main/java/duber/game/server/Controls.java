@@ -20,14 +20,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 
 
 public class Controls {
-    private float mouseSensitivity = 0.0006f;
-    private MatchManager matchManager;
+    private static float mouseSensitivity = 0.0006f;
 
-    public Controls(MatchManager matchManager) {
-        this.matchManager = matchManager;
-    }
+    private Controls() {}
     
-    private void addControlVelocity(Vector3f playerVelocity, Vector3f controlRotation, Vector3f controlVelocity) {
+    private static void addControlVelocity(Vector3f playerVelocity, Vector3f controlRotation, Vector3f controlVelocity) {
         if(controlVelocity.z() != 0) {
             playerVelocity.x += (float)Math.sin(controlRotation.y()) * -1.0f * controlVelocity.z();
             playerVelocity.z += (float)Math.cos(controlRotation.y()) * controlVelocity.z();
@@ -40,13 +37,7 @@ public class Controls {
         playerVelocity.y += controlVelocity.y();
     }
 
-    public void update(Player player, MouseInput mouseInput, KeyboardInput keyboardInput) {
-        //Do not update the player if they are not alive
-        if(!player.isAlive()) {
-            return;
-        }
-
-
+    public static void updatePlayer(MatchManager match, Player player, MouseInput mouseInput, KeyboardInput keyboardInput) {
         Vector2f controlRotation = mouseInput.getCursorDisplacement();
         Vector3f controlVelocity = new Vector3f();
 
@@ -67,7 +58,7 @@ public class Controls {
         }
 
         if(mouseInput.leftButtonIsPressed() && player.canShoot()) {
-            matchManager.getGameWorld().simulateShot(player);
+            match.getGameWorld().simulateShot(player);
         }
 
         Vector3f playerVelocity = player.getComponent(RigidBody.class).getVelocity();

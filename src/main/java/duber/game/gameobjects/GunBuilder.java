@@ -9,7 +9,17 @@ public class GunBuilder {
     private PrimaryGun lmg;
     private SecondaryGun pistol;
 
-    public GunBuilder() {
+    private static GunBuilder instance;
+
+    public static GunBuilder getInstance() {
+        if(instance == null) {
+            instance = new GunBuilder();
+        }
+
+        return instance;
+    }
+    
+    private GunBuilder() {
         setRifle();
         setLmg();
         setPistol();
@@ -26,7 +36,7 @@ public class GunBuilder {
         Bullet bullet = new Bullet(damagePerBullet);
         GunData gunData = new GunData(totalBullets, bulletsPerSecond, bullet);
 
-        rifle = new PrimaryGun(name, gunData);
+        rifle = new PrimaryGun(name, gunData, 2500);
     }
 
     private void setLmg() {
@@ -40,7 +50,7 @@ public class GunBuilder {
         Bullet bullet = new Bullet(damagePerBullet);
         GunData gunData = new GunData(totalBullets, bulletsPerSecond, bullet);
 
-        lmg = new PrimaryGun(name, gunData);
+        lmg = new PrimaryGun(name, gunData, 2000);
     }
 
     private void setPistol() {
@@ -54,9 +64,8 @@ public class GunBuilder {
         Bullet bullet = new Bullet(damagePerBullet);
         GunData gunData = new GunData(totalBullets, bulletsPerSecond, bullet);
 
-        pistol = new SecondaryGun(name, gunData);
+        pistol = new SecondaryGun(name, gunData, 500);
     }
-
 
     public <T extends Gun> T buildGunInstance(T gun, T gunInstance) {
         String name = gun.getComponent(Named.class).getName();
@@ -68,6 +77,7 @@ public class GunBuilder {
 
         return gunInstance;
     }
+    
 
     public PrimaryGun buildRifle() { 
         return buildGunInstance(rifle, new PrimaryGun());
@@ -75,10 +85,10 @@ public class GunBuilder {
 
     public PrimaryGun buildLmg() {
         return buildGunInstance(lmg, new PrimaryGun());
-
     }
 
     public SecondaryGun buildPistol() {
         return buildGunInstance(pistol, new SecondaryGun());
     }
+
 }

@@ -1,13 +1,13 @@
 package duber.game.client;
 
 import duber.engine.GameEngine;
-import duber.engine.IGameLogic;
+import duber.engine.GameLogic;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 import duber.game.User;
 import duber.game.client.GameStateManager.GameStateOption;
 
-public class Duberant implements IGameLogic {
+public class Duberant extends GameLogic {
     private Window window;
     private User user;
     private ClientNetwork clientNetwork;
@@ -71,8 +71,8 @@ public class Duberant implements IGameLogic {
 
     public static void main(String[] args) {
         try {
-            IGameLogic gameLogic = new Duberant();
-            GameEngine gameEngine = new GameEngine("Duberant", 1000, 1000, gameLogic);
+            GameLogic gameLogic = new Duberant();
+            GameEngine gameEngine = new GameEngine("Duberant", 1920, 1080, gameLogic);
             gameEngine.run();
         } catch (Exception e) {
             e.printStackTrace();

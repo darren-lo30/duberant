@@ -1,8 +1,13 @@
 package duber.game.networking;
 
-import duber.game.MatchData;
+import duber.game.phases.MatchPhase;
 
 public class MatchPhasePacket extends Packet {
-    public MatchData.MatchPhase matchPhase;
+    public MatchPhase currMatchPhase;
 
+    public MatchPhasePacket(MatchPhase currMatchPhase) {
+        this.currMatchPhase = currMatchPhase;
+    }
+
+    protected MatchPhasePacket() {}
 }

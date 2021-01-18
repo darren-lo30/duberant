@@ -12,7 +12,7 @@ public class Crosshair {
         width = 20;
         height = 20;
         thickness = 5;
-        colour = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+        colour = new Vector4f(255f, 255f, 255f, 255f);
     }
 
     public int getWidth() {

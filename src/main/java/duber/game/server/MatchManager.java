@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.joml.Vector3f;
 
@@ -25,48 +25,109 @@ import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.loaders.MeshLoader;
 import duber.engine.utilities.Timer;
 import duber.game.MatchData;
+import duber.game.gameobjects.GameMap;
 import duber.game.gameobjects.GunBuilder;
 import duber.game.gameobjects.Player;
+import duber.game.gameobjects.Scoreboard;
+import duber.game.gameobjects.Player.PlayerData;
 import duber.game.gameobjects.Player.WeaponsInventory;
 import duber.game.User;
 import duber.game.networking.MatchInitializePacket;
+import duber.game.networking.MatchPhasePacket;
 import duber.game.networking.Packet;
 import duber.game.networking.PlayerDataPacket;
 import duber.game.networking.UserInputPacket;
+import duber.game.phases.LoadingPhase;
+import duber.game.phases.MatchPhase;
+import duber.game.phases.MatchPhaseManager;
 
-public class MatchManager implements Runnable {
+public class MatchManager implements Runnable, MatchPhaseManager {
     public static final int TARGET_UPS = 30;
     
     private volatile boolean running = true;
+    private boolean isOver = false;
     private ServerNetwork serverNetwork;
 
+    private GameMap gameMap;
     private Map<User, Player> players = new HashMap<>();
 
     private DuberantWorld gameWorld;
 
-    private Entity map;
-    private SkyBox skyBox;
-    private SceneLighting gameLighting;
+    private MatchPhase currMatchPhase;
 
-    private Controls playerControls;
-    private GunBuilder gunBuilder;
+    private Scoreboard scoreboard;
 
     public MatchManager(ServerNetwork serverNetwork, List<User> users) throws LWJGLException {
         this.serverNetwork = serverNetwork;
         gameWorld = new DuberantWorld();
-        playerControls = new Controls(this);
-        gunBuilder = new GunBuilder();
+
+        List<User> redTeam = users.subList(0, MatchData.NUM_PLAYERS_PER_TEAM);
+        List<User> blueTeam = users.subList(MatchData.NUM_PLAYERS_PER_TEAM, MatchData.NUM_PLAYERS_IN_MATCH);
+
+        try {
+            loadGameMap();
+            loadPlayers(redTeam, blueTeam);
+        } catch (LWJGLException le) {
+            System.out.println("Error: Could not load match");
+        }
+
+        scoreboard = new Scoreboard(getPlayers());
         
-        List<User> redTeam = users.subList(0, MatchData.NUM_PLAYERS_IN_MATCH/2);
-        List<User> blueTeam = users.subList(MatchData.NUM_PLAYERS_IN_MATCH/2, MatchData.NUM_PLAYERS_IN_MATCH);
-        
-        loadPlayers(redTeam, blueTeam);
-        loadMatch();
-        sendMatchInitializationData();
+        changeMatchPhase(new LoadingPhase());
     }
 
+    @Override
+    public void changeMatchPhase(MatchPhase nextMatchPhase) {
+        currMatchPhase = nextMatchPhase;
+        currMatchPhase.makeServerLogic(this);
+        sendAllTCP(new MatchPhasePacket(currMatchPhase));
+    }
+
+    public GameMap getGameMap() {
+        return gameMap;
+    }
+
+    public MatchPhase getCurrMatchPhase() {
+        return currMatchPhase;
+    }
+    
     public DuberantWorld getGameWorld() {
         return gameWorld;
+    }
+
+    public ServerNetwork getServerNetwork() {
+        return serverNetwork;
+    }
+
+    public Scoreboard getScoreboard() {
+        return scoreboard;
+    }
+
+    @Override
+    public void run() {
+        serverLoop();
+    }
+
+    private void serverLoop() {
+        Timer updateTimer = new Timer();
+        float elapsedTime;
+        float accumulator = 0f;
+        float interval = 1.0f/TARGET_UPS;
+
+        while(running) {
+            elapsedTime = Math.min(0.25f, updateTimer.getElapsedTimeAndUpdate());
+            accumulator += elapsedTime;
+
+            //Calculate updates in the scene
+            while(accumulator >= interval) {
+                update();
+                accumulator -= interval;
+            }
+        }
+    }
+    
+    private void update() {
+        currMatchPhase.update();
     }
 
     public <E extends Packet> void sendAllTCP(E packet) {
@@ -81,30 +142,76 @@ public class MatchManager implements Runnable {
         }
     }
 
-    private void loadPlayers(List<User> redTeam, List<User> blueTeam) throws LWJGLException {
-        Mesh[] playerMeshes = MeshLoader.load("models/cube/cube.obj");
+    public void sendMatchInitializationData() {
+        for(User user : getUsers()) {
+            Player usersPlayer = players.get(user);
+            MatchInitializePacket matchInitializePacket = 
+                new MatchInitializePacket(getPlayers(), usersPlayer.getId(), gameMap);
+            user.getConnection().sendTCP(matchInitializePacket);
+        }
+    }
+
+    public Set<User> getUsers() {
+        return players.keySet();
+    }
+
+    public List<Player> getPlayers() {
+        return new ArrayList<>(players.values());
+    }
+
+    public Player getUsersPlayer(User user) {
+        return players.get(user);
+    }
+
+    public int getRoundWinner() {
+        //Choose a random team if it draws
+        boolean redWin = getPlayersByTeam(MatchData.BLUE_TEAM).stream().allMatch(p -> !p.isAlive());
+        boolean blueWin = getPlayersByTeam(MatchData.RED_TEAM).stream().allMatch(p -> !p.isAlive());
+
+        if(redWin && blueWin) {
+            double choice = Math.random();
+            if(choice > 0.5) {
+                return MatchData.RED_TEAM;
+            } else {
+                return MatchData.BLUE_TEAM;
+            }
+        } else if(redWin) {
+            return MatchData.RED_TEAM;
+        } else if(blueWin) {
+            return MatchData.BLUE_TEAM;
+        } else {
+            return MatchData.NULL_TEAM;
+        }
+    }
+
+    public List<Player> getPlayersByTeam(int team) {
+        return players.values()
+                      .stream()
+                      .filter(p -> p.getPlayerData().getTeam() == team)
+                      .collect(Collectors.toList());
+    }
+
+    public void loadPlayers(List<User> redTeam, List<User> blueTeam) throws LWJGLException {
+        Mesh[] playerMeshes = MeshLoader.load(MatchData.playerModel.getModelFile());
+
         for(User user: redTeam) {
-            Player redPlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.RED_TEAM);
+            Player redPlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, MatchData.RED_TEAM);
             players.put(user, redPlayer);
             gameWorld.addDynamicEntity(redPlayer);
         }
 
         for(User user: blueTeam) {
-            Player bluePlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, new Vector3f(50, 0, 0), MatchData.BLUE_TEAM);
+            Player bluePlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, MatchData.BLUE_TEAM);
             players.put(user, bluePlayer);
             gameWorld.addDynamicEntity(bluePlayer);
         }
     }
+
+    public int getMatchWinner() {
+        return scoreboard.getWinner();
+    }
     
-    private Set<User> getUsers() {
-        return players.keySet();
-    }
-
-    private List<Player> getPlayers() {
-        return new ArrayList<>(players.values());
-    }
-
-    private Player createPlayer(int id, String username, Mesh[] playerMeshes, Vector3f position, int team) {
+    private Player createPlayer(int id, String username, Mesh[] playerMeshes, int team) {
         Player player = new Player(id, username, team);
 
         //Add new mesh body
@@ -127,7 +234,6 @@ public class MatchManager implements Runnable {
         //Set transform
         Transform playerTransform = player.getComponent(Transform.class);
         playerTransform.setScale(5.0f);
-        playerTransform.getPosition().set(position);
         
         //Add player camera
         Vision playerVision = new Vision(new Vector3f(0, 30, 30));
@@ -135,24 +241,24 @@ public class MatchManager implements Runnable {
 
         //Add gun
         WeaponsInventory playerInventory = player.getWeaponsInventory();
-        playerInventory.setSecondaryGun(gunBuilder.buildPistol());
+        playerInventory.setSecondaryGun(GunBuilder.getInstance().buildPistol());
         playerInventory.equipSecondaryGun();
         
         return player;
     }
     
-    private void loadMatch() throws LWJGLException {        
-        Mesh[] mapMesh = MeshLoader.load("models/map/map.obj");
-        map = new Entity();
+    public void loadGameMap() throws LWJGLException {        
+        Mesh[] mapMesh = MeshLoader.load(MatchData.mapModel.getModelFile());
+        Entity map = new Entity();
         map.addComponent(new MeshBody(mapMesh));
         map.getComponent(Transform.class).setScale(0.3f);
         gameWorld.addConstantEntity(map);         
         
-        Mesh[] skyBoxMesh = MeshLoader.load("models/skybox/skybox.obj");
-        skyBox = new SkyBox(skyBoxMesh[0]);
+        Mesh[] skyBoxMesh = MeshLoader.load(MatchData.skyBoxModel.getModelFile());
+        SkyBox skyBox = new SkyBox(skyBoxMesh[0]);
         skyBox.getComponent(Transform.class).setScale(3000.0f);
         
-        gameLighting = new SceneLighting();
+        SceneLighting gameLighting = new SceneLighting();
 
         // Ambient Light
         gameLighting.setAmbientLight(new Vector3f(1.0f, 1.0f, 1.0f));
@@ -162,62 +268,38 @@ public class MatchManager implements Runnable {
         float lightIntensity = 0.3f;
         Vector3f lightDirection = new Vector3f(0, 1, 1);
         DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
-        gameLighting.setDirectionalLight(directionalLight);        
+        gameLighting.setDirectionalLight(directionalLight);   
+
+        Vector3f[] redPositions = new Vector3f[] {
+            new Vector3f(50, 0, 0)
+        };
+
+        Vector3f[] bluePositions = new Vector3f[] {
+            new Vector3f(70, 0, 0)
+        };
+        
+        gameMap = new GameMap(map, skyBox, gameLighting, redPositions, bluePositions);   
     }
 
-    private void sendMatchInitializationData() {
-        for(User user : getUsers()) {
-            Player usersPlayer = players.get(user);
-            MatchInitializePacket matchInitializePacket = 
-                new MatchInitializePacket(getPlayers(), usersPlayer.getId(), skyBox, map, gameLighting);
-            user.getConnection().sendTCP(matchInitializePacket);
-        }
-    }
 
+    public void startRound() {
+        for(Player player : getPlayers()) {
+            player.getPlayerData().setHealth(PlayerData.DEFAULT_HEALTH);
+            player.getPlayerData().addMoney(1000);
+            player.getComponent(MeshBody.class).setVisible(true);
+            
+            gameWorld.addDynamicEntity(player);
+        } 
 
-    @Override
-    public void run() {
-        serverLoop();
-    }
-
-    private void serverLoop() {
-        Timer updateTimer = new Timer();
-        float elapsedTime;
-        float accumulator = 0f;
-        float interval = 1.0f/TARGET_UPS;
-
-        while(running) {
-            elapsedTime = updateTimer.getElapsedTime();
-            if(elapsedTime > 0.25f) {
-                elapsedTime = 0.25f;
-            }
-
-            accumulator += elapsedTime;
-
-            //Get any input
-
-            //Calculate updates in the scene
-            while(accumulator >= interval) {
-                update();
-                accumulator -= interval;
-            }
-        }
-    }
-
-    private void update() {
-        receivePlayerInputs();
-        gameWorld.update();
-        sendGameUpdates();
+        gameMap.setPlayerInitialPositions(MatchData.RED_TEAM, getPlayersByTeam(MatchData.RED_TEAM));
+        gameMap.setPlayerInitialPositions(MatchData.BLUE_TEAM, getPlayersByTeam(MatchData.BLUE_TEAM));
     }
 
     /**
-     * Receive an inputs from the client and apply them
+     * Receive an packets from the client and apply them to the game
      */
-    private void receivePlayerInputs() {
-        for(Entry<User, Player> userPlayerEntry : players.entrySet()) {
-            User user = userPlayerEntry.getKey();
-            Player player = userPlayerEntry.getValue();
-            
+    public void receivePackets() {
+        for(User user: getUsers()) {            
             //Get any packets from the users connection
             Queue<Object> receivedPackets = serverNetwork.getPackets(user.getConnection());
                 
@@ -225,21 +307,37 @@ public class MatchManager implements Runnable {
             while(!receivedPackets.isEmpty()) {
                 Object packet = receivedPackets.poll();
                 if(packet instanceof UserInputPacket) {
-                    UserInputPacket userInput = (UserInputPacket) packet;
-                    playerControls.update(player, userInput.mouseInput, userInput.keyboardInput);
+                    processPacket(user, (UserInputPacket) packet);
                 }
             }
         }
     }
-    
-    /**
-     * Send out any updates to the users
-     */
-    private void sendGameUpdates() {
-        for(Player player : getPlayers()) {
-            sendAllUDP(new PlayerDataPacket(player));
+
+    private void processPacket(User user, UserInputPacket userInput) {
+        if(currMatchPhase.playerCanMove()) {
+            Player player = getUsersPlayer(user);
+            Controls.updatePlayer(this, player, userInput.mouseInput, userInput.keyboardInput);
         }
     }
+    
+    /**
+     * Update the match state and send updates out to users
+     */
+    public void sendPackets() {
+        for(Player player : getPlayers()) {
+            sendAllUDP(new PlayerDataPacket(player));
+        } 
+    }
 
+    public void close() {
+        running = false;
+    }
 
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public void setIsOver(boolean isOver) {
+        this.isOver = isOver;
+    }
 }    

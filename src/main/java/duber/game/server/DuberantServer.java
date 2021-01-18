@@ -85,7 +85,7 @@ public class DuberantServer {
 
             //Ensure that a maximum of 10 updates per second happens
             //It is fine if less than 10 updates per second happens
-            elapsedTime = serverLoopTimer.getElapsedTime();
+            elapsedTime = serverLoopTimer.getElapsedTimeAndUpdate();
             if(elapsedTime < interval) {
                 Thread.sleep((long) (interval - elapsedTime) * 1_000_000L);
             }

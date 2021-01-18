@@ -67,9 +67,9 @@ public class Player extends Entity {
     }
 
     public void shoot() {
-        Gun equippedGun = getWeaponsInventory().getEquippedGun();
-        if(equippedGun != null) {
-            equippedGun.fire();
+        Gun equippedGunIdx = getWeaponsInventory().getEquippedGun();
+        if(equippedGunIdx != null) {
+            equippedGunIdx.fire();
         }
     }
 
@@ -90,6 +90,10 @@ public class Player extends Entity {
         int newHealth = health - bullet.getDamage();
 
         getPlayerData().setHealth(newHealth);
+        
+        if(!isAlive()) {
+            getWeaponsInventory().clear();
+        }
     }
 
     public boolean isAlive() {
@@ -108,21 +112,23 @@ public class Player extends Entity {
     private Player(){}
     
     public static class PlayerData extends Component {
+        public static final int DEFAULT_HEALTH = 150;
+        
         private int team = 0;
         private float runningSpeed = 1.3f;
         private float walkingSpeed = 0.7f;
         private float jumpingSpeed = 3.0f;
-        private int health = 100;
+        private int health = DEFAULT_HEALTH;
         private int money = 1000;
         private boolean jumping = false;
 
         public void set(PlayerData playerData) {
-            team = playerData.getTeam();
+            team = playerData.team;
             runningSpeed = playerData.runningSpeed;
             walkingSpeed = playerData.walkingSpeed;
             jumpingSpeed = playerData.jumpingSpeed;
             health = playerData.health;
-            money = playerData.health;
+            money = playerData.money;
             jumping = playerData.jumping;
         }
         
@@ -166,34 +172,65 @@ public class Player extends Entity {
             return money;
         }
     
-        public void setMoney(int money) {
-            this.money = money;
+        public void addMoney(int addedMoney) {
+            money += addedMoney;
         }
     }
 
     public static class WeaponsInventory extends Component {
-        private PrimaryGun primaryGun;
-        private SecondaryGun secondaryGun;
-        private Gun equippedGun;
+        private static final int PRIMARY_GUN_IDX = 0;
+        private static final int SECONDARY_GUN_IDX = 1;
+        
+        Gun[] guns = new Gun[2];
+        private int equippedGunIdx = 0;
+
+        public void updateData(WeaponsInventory weaponsInventory) {
+            setPrimaryGun(weaponsInventory.getPrimaryGun());
+            setSecondaryGun(weaponsInventory.getSecondaryGun());
+
+            //Update equipped index
+            equippedGunIdx = weaponsInventory.getEquippedGunIdx();
+        }    
+        
+        public void clear() {
+            guns[0] = null;
+            guns[1] = null;
+        }
 
         public Gun getEquippedGun() {
-            return equippedGun;
+            return guns[equippedGunIdx];
+        }
+
+        public int getEquippedGunIdx() {
+            return equippedGunIdx;
+        }
+
+        public boolean hasEquippedGun() {
+            return guns[equippedGunIdx] != null;
+        }
+
+        public PrimaryGun getPrimaryGun() {
+            return (PrimaryGun) guns[PRIMARY_GUN_IDX];
         }
 
         public void setPrimaryGun(PrimaryGun primaryGun) {
-            this.primaryGun = primaryGun;
+            guns[PRIMARY_GUN_IDX] = primaryGun;
+        }
+
+        public SecondaryGun getSecondaryGun() {
+            return (SecondaryGun) guns[SECONDARY_GUN_IDX];
         }
 
         public void setSecondaryGun(SecondaryGun secondaryGun) {
-            this.secondaryGun = secondaryGun;
+            guns[SECONDARY_GUN_IDX] = secondaryGun;
         }
 
         public void equipPrimaryGun() {
-            equippedGun = primaryGun;
+            equippedGunIdx = PRIMARY_GUN_IDX;
         }
 
         public void equipSecondaryGun() {
-            equippedGun = secondaryGun;
+            equippedGunIdx = SECONDARY_GUN_IDX;
         }
     }
 }

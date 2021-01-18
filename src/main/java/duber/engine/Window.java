@@ -69,8 +69,8 @@ public class Window {
 
         init();
 
-        mouseInput = new MouseInput(windowHandle);
-        keyboardInput = new KeyboardInput(windowHandle);
+        mouseInput = new MouseInput();
+        keyboardInput = new KeyboardInput();
     }
 
     private void init() {
@@ -85,14 +85,14 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         glfwWindowHint(GLFW_DECORATED, GL_TRUE);
-        glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
+        //glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        windowHandle = glfwCreateWindow(vidmode.width(), vidmode.height(), title, NULL, NULL);
+        windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
         if(windowHandle == NULL) {
             throw new IllegalStateException("Could not start the window");
         }
@@ -105,8 +105,8 @@ public class Window {
         });
 
         //Call back to close window on key press
-        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
-            if(key == GLFW_KEY_F11 && action == GLFW_RELEASE) {
+        glfwSetKeyCallback(windowHandle, (window, keyCode, scancode, action, mods) -> {
+            if(keyCode == GLFW_KEY_F11 && action == GLFW_RELEASE) {
                 if(isFullScreen()) {
                     glfwSetWindowMonitor(windowHandle, NULL, 0, 0, width, height, GLFW_DONT_CARE);
                 } else {
@@ -114,6 +114,25 @@ public class Window {
                     glfwSetWindowMonitor(windowHandle, monitor, 0, 0, vidmode.width(), vidmode.height(), vidmode.refreshRate());
                 }
             }
+
+            if(action == GLFW_PRESS) {
+                keyboardInput.setKeyPressed(keyCode, true);
+            }            
+
+            if(action == GLFW_RELEASE) {
+                keyboardInput.setKeyPressed(keyCode, false);
+            }
+        });
+
+        //Mouse calalbacks
+        glfwSetCursorPos(windowHandle, 0, 0);
+        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> {
+            mouseInput.setCurrentPos(xPos, yPos);
+        });
+
+        glfwSetMouseButtonCallback(windowHandle, (window, button, action, mode) -> {
+            mouseInput.setLeftButtonIsPressed(button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS);
+            mouseInput.setRightButtonIsPressed(button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS);
         });
 
         glfwMakeContextCurrent(windowHandle);
@@ -247,10 +266,7 @@ public class Window {
 
         public boolean isTurnedOn(int option) {
             //Default is option turned off
-            if(!optionsMap.keySet().contains(option)) {
-                return false;
-            }
-            return optionsMap.get(option);
+            return optionsMap.keySet().contains(option) && optionsMap.get(option);
         }
 
         public void setOption(int option, boolean turnedOn) {

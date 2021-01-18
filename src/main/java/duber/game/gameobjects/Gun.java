@@ -7,19 +7,20 @@ import duber.engine.entities.components.Named;
 
 public abstract class Gun extends Entity {    
     protected Gun(){
-        this(null, new GunData());
+        this(null, new GunData(), 0);
     }
 
-    protected Gun(String name, GunData gunData) {
+    protected Gun(String name, GunData gunData, int cost) {
         if(gunData == null) {
             throw new IllegalArgumentException("Gun must have gun data");
         }
 
         addComponent(new MeshBody());
         addComponent(new Named(name));
+        addComponent(new Buyable(cost));
         addComponent(gunData);
     }
-    
+
     public GunData getGunData() {
         return getComponent(GunData.class);
     }

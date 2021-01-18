@@ -2,12 +2,8 @@ package duber.engine;
 
 import org.joml.Vector2d;
 import org.joml.Vector2f;
-import static org.lwjgl.glfw.GLFW.*;
 
 public class MouseInput {
-
-    private long windowHandle;
-
     private final Vector2d previousPos = new Vector2d(0, 0);
 
     private final Vector2d currentPos = new Vector2d(0, 0);
@@ -18,22 +14,16 @@ public class MouseInput {
 
     private boolean rightButtonIsPressed = false;
 
-    public MouseInput(long windowHandle) {
-        this.windowHandle = windowHandle;        
-        init();
+    public void setCurrentPos(double xPos, double yPos) {
+        this.currentPos.set(xPos, yPos);
     }
-    
-    private void init() {
-        glfwSetCursorPos(windowHandle, 0, 0);
-        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> {
-            currentPos.x = xPos;
-            currentPos.y = yPos;
-        });
 
-        glfwSetMouseButtonCallback(windowHandle, (window, button, action, mode) -> {
-            leftButtonIsPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
-            rightButtonIsPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
-        });
+    public void setLeftButtonIsPressed(boolean pressed) {
+        leftButtonIsPressed = pressed;
+    }
+
+    public void setRightButtonIsPressed(boolean pressed) {
+        rightButtonIsPressed = pressed;
     }
 
     public Vector2f getCursorDisplacement() {
@@ -47,10 +37,6 @@ public class MouseInput {
         previousPos.y = currentPos.y;
     }
 
-    public void setCursorPosition(float xPos, float yPos) {
-        glfwSetCursorPos(windowHandle, xPos, yPos);
-    }
-
     public boolean leftButtonIsPressed() {
         return leftButtonIsPressed;
     }
@@ -58,7 +44,4 @@ public class MouseInput {
     public boolean rightButtonIsPressed() {
         return rightButtonIsPressed;
     }
-
-    @SuppressWarnings("unused")
-    private MouseInput() {}
 }

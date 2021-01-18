@@ -16,16 +16,19 @@ public final class GameEngine implements Runnable, Cleansable {
     
     private final Timer updateTimer;
     
-    private final IGameLogic gameLogic;    
+    private final GameLogic gameLogic;    
 
     private final Timer fpsTimer;
     
     private int fps;
 
+    private float interpolationFactor;
+
     
-    public GameEngine(String windowTitle, int width, int height, IGameLogic gameLogic) {
+    public GameEngine(String windowTitle, int width, int height, GameLogic gameLogic) {
         this.windowTitle = windowTitle;
         this.gameLogic = gameLogic;
+        gameLogic.setGameEngine(this);
 
         window = new Window(windowTitle, width, height);
         updateTimer = new Timer();
@@ -33,6 +36,10 @@ public final class GameEngine implements Runnable, Cleansable {
         
         fps = 0;
         fpsTimer = new Timer();
+    }
+
+    public float getInterpolationFactor() {
+        return interpolationFactor;
     }
 
     @Override
@@ -59,11 +66,7 @@ public final class GameEngine implements Runnable, Cleansable {
         float interval = 1.0f/TARGET_UPS;
 
         while(!window.shouldClose()) {
-            elapsedTime = updateTimer.getElapsedTime();
-            if(elapsedTime > 0.25f) {
-                elapsedTime = 0.25f;
-            }
-
+            elapsedTime = Math.min(0.25f, updateTimer.getElapsedTimeAndUpdate());
             accumulator += elapsedTime;
 
             //Get any input
@@ -75,6 +78,7 @@ public final class GameEngine implements Runnable, Cleansable {
                 accumulator -= interval;
             }
 
+            interpolationFactor = accumulator/interval;
             render();
 
             if(!window.optionIsTurnedOn(Window.Options.ENABLE_VSYNC)) {
@@ -106,7 +110,7 @@ public final class GameEngine implements Runnable, Cleansable {
 
     private void calculateAndDisplayFps() {
         if (fpsTimer.secondHasPassed()) {
-            fpsTimer.getElapsedTime();
+            fpsTimer.getElapsedTimeAndUpdate();
             if(window.optionIsTurnedOn(Window.Options.DISPLAY_FPS)) {
                 window.setTitle(windowTitle + " - " + fps + " FPS");
             }
@@ -117,6 +121,7 @@ public final class GameEngine implements Runnable, Cleansable {
 
     public void render() {
         window.clear();
+        
         calculateAndDisplayFps();        
         gameLogic.render();
         window.update();

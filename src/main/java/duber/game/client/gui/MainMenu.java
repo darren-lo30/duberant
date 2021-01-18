@@ -60,9 +60,6 @@ public class MainMenu extends GUI {
 
                 //Wait to receive response from server
                 waitForLoginResponse();
-                
-
-                System.out.println("Send user connect packet");
             } catch (IOException ioe) {
                 //Failed to connect
                 System.out.println("Failed to connect to server!");
