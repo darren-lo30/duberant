@@ -1,5 +1,6 @@
 package duber.game.client;
 
+import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 
 public abstract class GameState {
@@ -8,13 +9,26 @@ public abstract class GameState {
 
     private boolean updateInBackground = false;
     private boolean opened = false;
+    private boolean shouldClose = false;
 
     public Duberant getGame() {
         return game;
     }
 
+    public Window getWindow() {
+        return game.getWindow();
+    }
+
     public GameStateManager getManager() {
         return manager;
+    }
+
+    public void setShouldClose(boolean shouldClose) {
+        this.shouldClose = shouldClose;
+    }
+
+    public boolean shouldClose() {
+        return shouldClose;
     }
 
     public boolean isUpdateInBackground() {
@@ -35,6 +49,18 @@ public abstract class GameState {
 
     public void setOpened(boolean opened) {
         this.opened = opened;
+    }
+
+    public void popSelf() {
+        if(isFocused()) {
+            manager.popState();
+        } else {
+            throw new IllegalStateException("Can't pop self if not focused");
+        }
+    }
+
+    public void pushSelf() {
+        manager.pushState(this);
     }
 
     public void init(Duberant game, GameStateManager manager) throws LWJGLException {

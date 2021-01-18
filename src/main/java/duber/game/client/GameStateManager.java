@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.Stack;
 
 import duber.engine.Cleansable;
-import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 import duber.game.client.gui.MainMenu;
 import duber.game.client.gui.OptionsMenu;
 import duber.game.client.gui.ScoreboardDisplay;
+import duber.game.client.gui.ShopMenu;
 import duber.game.client.match.Match;
-
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 
 public class GameStateManager implements Cleansable {
@@ -20,7 +18,8 @@ public class GameStateManager implements Cleansable {
         MAIN_MENU           (new MainMenu()), 
         MATCH               (new Match()), 
         OPTIONS_MENU        (new OptionsMenu()),
-        SCOREBOARD_DISPLAY  (new ScoreboardDisplay());
+        SCOREBOARD_DISPLAY  (new ScoreboardDisplay()),
+        SHOP_MENU           (new ShopMenu());
 
         private final GameState gameState;
 
@@ -33,14 +32,10 @@ public class GameStateManager implements Cleansable {
         }
     }
 
-    private Window window;
     private Stack<GameState> gameStates;
-
-    private boolean escapeHeldDown;
 
     public GameStateManager(Duberant game) throws LWJGLException {
         gameStates = new Stack<>();
-        window = game.getWindow();
 
         //Initialize all states
         for(GameStateOption option: GameStateOption.values()) {
@@ -56,38 +51,54 @@ public class GameStateManager implements Cleansable {
     }
 
     public void pushState(GameStateOption gameStateOption) {
-        GameState gameState = gameStateOption.getGameState();
+        pushState(gameStateOption.getGameState());
+    }
 
+    public void pushState(GameState gameState) {
+        if(gameState.isOpened()) {
+            throw new IllegalStateException("The game state is already open");
+        }
+
+        gameState.setOpened(true);
+        gameState.setShouldClose(false);
         gameState.startup();
         gameState.enter();
 
         gameStates.push(gameState);
+
+    }
+
+    private GameState popStateLogic() {
+        GameState poppedState = gameStates.pop();
+        poppedState.setOpened(false);
+        poppedState.setShouldClose(false);
+        poppedState.close();
+
+        return poppedState;
     }
 
     public GameState popState() {
-        GameState popped = gameStates.pop();
-        popped.close();
+        GameState poppedState = popStateLogic();
 
         if(!gameStates.isEmpty()) {
             gameStates.peek().enter();
         }
-        return popped;
+        return poppedState;
     }
 
     public void clearState(GameStateOption firstState) {
         while(!gameStates.isEmpty()) {
-            gameStates.pop().close();
+            popStateLogic();
         }
 
         pushState(firstState);
     }
 
     public GameState changeState(GameStateOption gameStateOption) {
-        GameState popped = gameStates.pop();
-        popped.close();
+        GameState poppedState = popStateLogic();
         pushState(gameStateOption);
 
-        return popped;
+        return poppedState;
     }
 
     public GameState getFocusedState() {
@@ -110,28 +121,20 @@ public class GameStateManager implements Cleansable {
         for(int i = gameStatesList.size() -1; i >= 0; i--) {
             GameState gameState = gameStatesList.get(i);
             
-            if(gameState == getFocusedState() || gameState.isUpdateInBackground()) {
+            if(!gameState.shouldClose() && (gameState == getFocusedState() || gameState.isUpdateInBackground())) {
                 gameState.update();
             }
-        }
-    
-        //Open up options panel
-        if(window.getKeyboardInput().isKeyPressed(GLFW_KEY_ESCAPE)) {
-            if(!escapeHeldDown) {
-                escapeHeldDown = true;
-                if(stateIsFocused(GameStateOption.OPTIONS_MENU)) {
-                    popState();
-                } else {
-                    pushState(GameStateOption.OPTIONS_MENU);
-                }
-            }
-        } else {
-            escapeHeldDown = false;
         }
     }
 
     public void render() {
-        getFocusedState().render();
+        while(getFocusedState().shouldClose()) {
+            popState();
+        }
+
+        if(getFocusedState() != null) {
+            getFocusedState().render();
+        }
     }
 
     @Override

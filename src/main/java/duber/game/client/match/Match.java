@@ -22,12 +22,17 @@ import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.phases.MatchPhaseManager;
 import duber.game.client.GameState;
+import duber.game.client.GameStateKeyListener;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.MatchPhasePacket;
 import duber.game.networking.PlayerUpdatePacket;
 import duber.game.networking.UserInputPacket;
 import duber.game.phases.MatchPhase;
+
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_B;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
+
 
 public class Match extends GameState implements Cleansable, MatchPhaseManager {
     // Used to render the game
@@ -41,6 +46,9 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     private Scoreboard scoreboard;
     private MatchPhase currMatchPhase;
 
+    private GameStateKeyListener shopListener;
+    private GameStateKeyListener scoreboardListener;
+
     public Scoreboard getScoreboard() {
         return scoreboard;
     }
@@ -49,12 +57,15 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     public void init() {
         try {
             renderer = new Renderer();
-            hud = new HUD(getGame().getWindow());
+            hud = new HUD(getWindow());
         } catch (IOException | LWJGLException e) {
             leave();
         }
 
         gameScene = new Scene();
+
+        shopListener = new GameStateKeyListener(GLFW_KEY_B, GameStateOption.SHOP_MENU);
+        scoreboardListener = new GameStateKeyListener(GLFW_KEY_TAB, GameStateOption.SCOREBOARD_DISPLAY);
     }
 
     private Player getPlayerById(int playerId) {
@@ -79,8 +90,8 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     @Override
     public void enter() {
-        getGame().getWindow().setOption(Window.Options.SHOW_CURSOR, false);
-        getGame().getWindow().applyOptions();
+        getWindow().setOption(Window.Options.SHOW_CURSOR, false);
+        getWindow().applyOptions();
     }
 
     @Override
@@ -95,6 +106,18 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         } else {
             receivePackets();
         }
+    }
+
+    public void listenInputs() {
+        Window window = getWindow();
+
+        if(currMatchPhase.playerCanBuy()) {
+            shopListener.listenToActivate(window.getKeyboardInput());
+        } else {
+            shopListener.getActivatedGameState().setShouldClose(true);
+        }
+
+        scoreboardListener.listenToActivate(window.getKeyboardInput());
     }
 
     @Override
@@ -112,7 +135,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     }
 
     public void sendPackets() {
-        Window window = getGame().getWindow();
+        Window window = getWindow();
 
         if(isFocused() && isInitialized() && currMatchPhase.playerCanMove()) {
             UserInputPacket matchCommands = new UserInputPacket(window.getKeyboardInput(), window.getMouseInput());
@@ -122,7 +145,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
 
     public void renderGameScene() {
-        renderer.render(getGame().getWindow(), mainPlayer.getComponent(Vision.class).getCamera(), gameScene);
+        renderer.render(getWindow(), mainPlayer.getComponent(Vision.class).getCamera(), gameScene);
         hud.displayMatchHud(this);
     }
 
@@ -146,11 +169,6 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
                 }
             }
         }
-    }
-
-    public void listenInputs() {
-        Window window = getGame().getWindow();
-        
     }
 
     private void processPacket(MatchInitializePacket matchInitializePacket) {        
@@ -215,7 +233,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     }
 
     public void leave() {
-        getManager().changeState(GameStateOption.MAIN_MENU);
+        popSelf();
     }
 
     @Override

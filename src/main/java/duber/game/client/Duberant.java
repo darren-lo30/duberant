@@ -7,11 +7,16 @@ import duber.engine.exceptions.LWJGLException;
 import duber.game.User;
 import duber.game.client.GameStateManager.GameStateOption;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+
+
 public class Duberant extends GameLogic {
     private Window window;
     private User user;
     private ClientNetwork clientNetwork;
     private GameStateManager gameStateManager;
+
+    private GameStateKeyListener optionsListener;
     
     public Duberant() {
         clientNetwork = new ClientNetwork();
@@ -24,6 +29,8 @@ public class Duberant extends GameLogic {
 
         gameStateManager = new GameStateManager(this);
         gameStateManager.pushState(GameStateOption.MAIN_MENU);
+
+        optionsListener = new GameStateKeyListener(GLFW_KEY_ESCAPE, GameStateOption.OPTIONS_MENU);
     }
 
     public Window getWindow() {
@@ -57,6 +64,7 @@ public class Duberant extends GameLogic {
     @Override
     public void update() {
         gameStateManager.update();
+        optionsListener.listenToActivate(window.getKeyboardInput());
     }
 
     @Override
