@@ -6,11 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joml.Vector3f;
 import duber.engine.Cleansable;
 import duber.engine.Window;
-import duber.engine.audio.SoundBuffer;
-import duber.engine.audio.SoundSource;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
 import duber.engine.entities.components.Vision;
@@ -52,7 +49,6 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     private GameStateKeyListener shopListener;
     private GameStateKeyListener scoreboardListener;
-
     
     @Override
     public void init() {
@@ -83,25 +79,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     public void enter() {
         //Disable cursor
         getWindow().setOption(Window.Options.SHOW_CURSOR, false);
-        getWindow().applyOptions();
-        
-        /*
-        try {
-
-            SoundBuffer fire = new SoundBuffer("/sounds/fire.ogg");
-            getGame().getSoundManager().addSoundBuffer("fire", fire);
-    
-            fireSource = new SoundSource(true, false);
-            fireSource.setPosition(firePos);
-            fireSource.setBuffer(fire.getId());
-
-            getGame().getSoundManager().addSoundSource("fireSource", fireSource);
-
-            fireSource.play();
-        } catch (Exception e) {
-            
-        }
-        */
+        getWindow().applyOptions();        
     }
 
     @Override
@@ -115,12 +93,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
             currMatchPhase.update();
         } else {
             receivePackets();
-        }
-
-        /*
-        firePos.z -= 0.25f;
-        fireSource.setPosition(firePos);
-        */
+        }        
     }
 
     @Override

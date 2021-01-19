@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
-import duber.engine.audio.SoundListener;
 import duber.engine.audio.SoundManager;
 import duber.engine.audio.SoundSource;
 import duber.engine.entities.components.Transform;
@@ -42,10 +41,11 @@ public class MatchSounds  {
     }
 
     public void playSounds() {
-        //Update listener
+        //Update main player listener
         Transform mainPlayerTransform = match.getMainPlayer().getComponent(Transform.class);
         soundManager.updateListenerPosition(mainPlayerTransform);
         
+        //Update sound sources for each user
         for(Player player : match.getPlayers()) {
             SoundSource playerSoundSource = getPlayerSoundSource(player);
             SoundSource gunSoundSource = getGunSoundSource(player);
