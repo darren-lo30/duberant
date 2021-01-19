@@ -77,4 +77,13 @@ public class ClientNetwork extends Listener {
     public void received(Connection clientConnection, Object packet) {
         packets.add(packet);
     }
+
+    public void close() {
+        if(client != null) {
+            client.close();
+        }
+        if(connection != null) {
+            connection.close();
+        }
+    }
 }

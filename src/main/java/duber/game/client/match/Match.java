@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joml.Vector3f;
 import duber.engine.Cleansable;
 import duber.engine.Window;
+import duber.engine.audio.SoundBuffer;
+import duber.engine.audio.SoundSource;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
 import duber.engine.entities.components.Vision;
@@ -34,8 +37,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_B;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 
 
-public class Match extends GameState implements Cleansable, MatchPhaseManager {
-    // Used to render the game
+public class Match extends GameState implements Cleansable, MatchPhaseManager {    
     private Renderer renderer;
     private HUD hud;
     private Scene gameScene;
@@ -46,13 +48,12 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     private Scoreboard scoreboard;
     private MatchPhase currMatchPhase;
 
+    private MatchSounds matchSounds;
+
     private GameStateKeyListener shopListener;
     private GameStateKeyListener scoreboardListener;
 
-    public Scoreboard getScoreboard() {
-        return scoreboard;
-    }
-
+    
     @Override
     public void init() {
         try {
@@ -64,20 +65,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
         gameScene = new Scene();
 
+        matchSounds = new MatchSounds(this, getGame().getSoundManager());
+
         shopListener = new GameStateKeyListener(GLFW_KEY_B, GameStateOption.SHOP_MENU);
         scoreboardListener = new GameStateKeyListener(GLFW_KEY_TAB, GameStateOption.SCOREBOARD_DISPLAY);
-    }
-
-    private Player getPlayerById(int playerId) {
-        return playersById.get(playerId);
-    }
-
-    private Collection<Player> getPlayers() {
-        return playersById.values();
-    }
-
-    public Player getMainPlayer() {
-        return mainPlayer;
     }
 
     @Override
@@ -90,13 +81,32 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     @Override
     public void enter() {
+        //Disable cursor
         getWindow().setOption(Window.Options.SHOW_CURSOR, false);
         getWindow().applyOptions();
+        
+        /*
+        try {
+
+            SoundBuffer fire = new SoundBuffer("/sounds/fire.ogg");
+            getGame().getSoundManager().addSoundBuffer("fire", fire);
+    
+            fireSource = new SoundSource(true, false);
+            fireSource.setPosition(firePos);
+            fireSource.setBuffer(fire.getId());
+
+            getGame().getSoundManager().addSoundSource("fireSource", fireSource);
+
+            fireSource.play();
+        } catch (Exception e) {
+            
+        }
+        */
     }
 
     @Override
     public void close() {
-        //Nothing to do on close
+        matchSounds.clear();
     }
 
     @Override
@@ -106,6 +116,45 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         } else {
             receivePackets();
         }
+
+        /*
+        firePos.z -= 0.25f;
+        fireSource.setPosition(firePos);
+        */
+    }
+
+    @Override
+    public void render() {
+        if(currMatchPhase != null) {
+            currMatchPhase.render();
+        } else {
+            String matchSearchingMessage = "Finding a match...";
+            hud.displayText(matchSearchingMessage, 0.5f, 0.5f, true, HUD.TITLE_FONT);
+        }
+    }
+
+    public Scoreboard getScoreboard() {
+        return scoreboard;
+    }
+
+    public Player getPlayerById(int playerId) {
+        return playersById.get(playerId);
+    }
+
+    public Collection<Player> getPlayers() {
+        return playersById.values();
+    }
+
+    public Player getMainPlayer() {
+        return mainPlayer;
+    }
+
+    public MatchSounds getMatchSounds() {
+        return matchSounds;
+    }
+
+    public boolean isInitialized() {
+        return mainPlayer != null && currMatchPhase != null;
     }
 
     public void listenInputs() {
@@ -120,20 +169,6 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         scoreboardListener.listenToActivate(window.getKeyboardInput());
     }
 
-    @Override
-    public void render() {
-        if(currMatchPhase != null) {
-            currMatchPhase.render();
-        } else {
-            String matchSearchingMessage = "Finding a match...";
-            hud.displayText(matchSearchingMessage, 0.5f, 0.5f, true, HUD.TITLE_FONT);
-        }
-    }
-
-    public boolean isInitialized() {
-        return mainPlayer != null && currMatchPhase != null;
-    }
-
     public void sendPackets() {
         Window window = getWindow();
 
@@ -142,7 +177,6 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
             getGame().getUser().getConnection().sendUDP(matchCommands);
         }
     }
-
 
     public void renderGameScene() {
         renderer.render(getWindow(), mainPlayer.getComponent(Vision.class).getCamera(), gameScene);
@@ -161,12 +195,8 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
                 processPacket((MatchInitializePacket) packet);
             } else if(packet instanceof MatchPhasePacket) {
                 processPacket((MatchPhasePacket) packet);
-            }
-            
-            if(isInitialized()) {
-                if(packet instanceof PlayerUpdatePacket) {
-                    processPacket((PlayerUpdatePacket) packet);
-                }
+            } else if(packet instanceof PlayerUpdatePacket) {
+                processPacket((PlayerUpdatePacket) packet);
             }
         }
     }
@@ -176,8 +206,8 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         for(Player player: players) {
             playersById.put(player.getId(), player);
         }
-        
 
+        scoreboard = new Scoreboard(getPlayers());
         mainPlayer = getPlayerById(matchInitializePacket.mainPlayerId);
 
         try {
@@ -205,16 +235,21 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     
             gameScene.addRenderableEntity(mainMap);
             gameScene.setSkyBox(skyBox);
-    
             gameScene.setSceneLighting(matchInitializePacket.gameMap.getGameLighting());   
-            
-            scoreboard = new Scoreboard(getPlayers());
         } catch (LWJGLException le) {
+
+            //Leave match if something fails
             leave();
         }
+
+        matchSounds.addMatchPlayers();
     }
 
     private void processPacket(PlayerUpdatePacket playerUpdatePacket) {
+        if(!isInitialized()) {
+            return;
+        }
+
         Player modifiedPlayer = getPlayerById(playerUpdatePacket.playerId);
 
         //Update the player position and camera
@@ -222,10 +257,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         modifiedPlayer.getView().getComponent(Transform.class).set(playerUpdatePacket.cameraTransform);
         modifiedPlayer.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
 
-        //Update the player's data
+        //Update other player information
         modifiedPlayer.getScore().set(playerUpdatePacket.playerScore);
         modifiedPlayer.getPlayerData().set(playerUpdatePacket.playerData);
-        modifiedPlayer.getWeaponsInventory().updateData(playerUpdatePacket.weaponsInventory);
+        modifiedPlayer.getWeaponsInventory().updateData(playerUpdatePacket.playerInventory);
     }
 
     private void processPacket(MatchPhasePacket matchPhasePacket) {
@@ -233,7 +268,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     }
 
     public void leave() {
-        popSelf();
+        setShouldClose(true);
     }
 
     @Override
@@ -246,4 +281,5 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         currMatchPhase = nextMatchPhase;
         currMatchPhase.makeClientLogic(this);
     }
+    
 }

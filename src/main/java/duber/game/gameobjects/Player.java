@@ -69,6 +69,7 @@ public class Player extends Entity {
     public void shoot() {
         Gun equippedGunIdx = getWeaponsInventory().getEquippedGun();
         if(equippedGunIdx != null) {
+            getPlayerData().setShooting(true);
             equippedGunIdx.fire();
         }
     }
@@ -109,6 +110,13 @@ public class Player extends Entity {
         getScore().setDeaths(getScore().getDeaths() + 1);
     }
 
+    public enum MovementState {
+        STOP,
+        RUNNING, 
+        WALKING,
+        JUMPING
+    }
+
     @SuppressWarnings("unused")
     private Player(){}
     
@@ -116,21 +124,39 @@ public class Player extends Entity {
         public static final int DEFAULT_HEALTH = 150;
         
         private int team = 0;
+        private MovementState playerMovement = MovementState.STOP;
+        private boolean shooting = false;
         private float runningSpeed = 1.3f;
         private float walkingSpeed = 0.7f;
         private float jumpingSpeed = 3.0f;
         private int health = DEFAULT_HEALTH;
         private int money = 1000;
-        private boolean jumping = false;
 
         public void set(PlayerData playerData) {
             team = playerData.team;
+            shooting = playerData.shooting;
+            playerMovement = playerData.playerMovement;
             runningSpeed = playerData.runningSpeed;
             walkingSpeed = playerData.walkingSpeed;
             jumpingSpeed = playerData.jumpingSpeed;
             health = playerData.health;
             money = playerData.money;
-            jumping = playerData.jumping;
+        }
+
+        public boolean isShooting() {
+            return shooting;
+        }
+
+        public void setShooting(boolean shooting) {
+            this.shooting = shooting;
+        }
+
+        public MovementState getPlayerMovement() {
+            return playerMovement;
+        }
+
+        public void setState(MovementState playerMovement) {
+            this.playerMovement = playerMovement;
         }
         
         public void setTeam(int team) {
@@ -154,11 +180,7 @@ public class Player extends Entity {
         }
     
         public boolean isJumping() {
-            return jumping;
-        }
-    
-        public void setJumping(boolean jumping) {
-            this.jumping = jumping;
+            return playerMovement == MovementState.JUMPING;
         }
     
         public int getHealth() {
@@ -175,73 +197,6 @@ public class Player extends Entity {
     
         public void addMoney(int addedMoney) {
             money += addedMoney;
-        }
-    }
-
-    public static class WeaponsInventory extends Component {
-        private static final int PRIMARY_GUN_IDX = 0;
-        private static final int SECONDARY_GUN_IDX = 1;
-        
-        Gun[] guns = new Gun[2];
-        private int equippedGunIdx = 0;
-
-        public void updateData(WeaponsInventory weaponsInventory) {
-            setPrimaryGun(weaponsInventory.getPrimaryGun());
-            setSecondaryGun(weaponsInventory.getSecondaryGun());
-
-            //Update equipped index
-            equippedGunIdx = weaponsInventory.getEquippedGunIdx();
-        }    
-        
-        public void clear() {
-            guns[0] = null;
-            guns[1] = null;
-        }
-
-        public void resetGuns() {
-            if(getPrimaryGun() != null) {
-                getPrimaryGun().getGunData().reset();
-            }
-
-            if(getSecondaryGun() != null) {
-                getSecondaryGun().getGunData().reset();
-            }
-        }
-
-        public Gun getEquippedGun() {
-            return guns[equippedGunIdx];
-        }
-
-        public int getEquippedGunIdx() {
-            return equippedGunIdx;
-        }
-
-        public boolean hasEquippedGun() {
-            return guns[equippedGunIdx] != null;
-        }
-
-        public PrimaryGun getPrimaryGun() {
-            return (PrimaryGun) guns[PRIMARY_GUN_IDX];
-        }
-
-        public void setPrimaryGun(PrimaryGun primaryGun) {
-            guns[PRIMARY_GUN_IDX] = primaryGun;
-        }
-
-        public SecondaryGun getSecondaryGun() {
-            return (SecondaryGun) guns[SECONDARY_GUN_IDX];
-        }
-
-        public void setSecondaryGun(SecondaryGun secondaryGun) {
-            guns[SECONDARY_GUN_IDX] = secondaryGun;
-        }
-
-        public void equipPrimaryGun() {
-            equippedGunIdx = PRIMARY_GUN_IDX;
-        }
-
-        public void equipSecondaryGun() {
-            equippedGunIdx = SECONDARY_GUN_IDX;
         }
     }
 }

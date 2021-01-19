@@ -55,6 +55,10 @@ public class SoundSource {
         alSourcei(id, AL_BUFFER, bufferId);
     }
 
+    public int getBuffer() {
+        return alGetSourcei(id, AL_BUFFER);
+    }
+
     public void cleanup(){
         stop();
         alDeleteSources(id);

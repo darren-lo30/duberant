@@ -11,6 +11,31 @@ public class GunBuilder {
 
     private static GunBuilder instance;
 
+    public enum GunTypes {
+        RIFLE {
+            @Override
+            public String toString() {
+                return "Rifle";
+            }
+        }, 
+        LMG {
+            @Override
+            public String toString() {
+                return "Light Machine Gun";
+            }
+        }, 
+        PISTOL {
+            @Override
+            public String toString() {
+                return "Pistol";
+            }
+        };
+
+        public boolean isGunType(Gun gun) {
+            return gun.getComponent(Named.class).getName().equals(this.toString());
+        }
+    }
+
     public static GunBuilder getInstance() {
         if(instance == null) {
             instance = new GunBuilder();
@@ -26,7 +51,7 @@ public class GunBuilder {
     }
 
     private void setRifle() {
-        String name = "Rifle";
+        String name = GunTypes.RIFLE.toString();
         
         int totalBullets = 90;
         float bulletsPerSecond = 10;
@@ -40,7 +65,7 @@ public class GunBuilder {
     }
 
     private void setLmg() {
-        String name = "LMG";
+        String name = GunTypes.LMG.toString();
         
         int totalBullets = 50;
         float bulletsPerSecond = 14;
@@ -54,10 +79,10 @@ public class GunBuilder {
     }
 
     private void setPistol() {
-        String name = "Pistol";
+        String name = GunTypes.PISTOL.toString();
         
         int totalBullets = 20;
-        float bulletsPerSecond = 6.3f;
+        float bulletsPerSecond = 3.3f;
 
         int damagePerBullet = 20;
 

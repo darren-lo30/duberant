@@ -24,7 +24,7 @@ public class RoundEndPhase extends MatchPhase {
     public void makeServerLogic(MatchManager match) {
         setPhaseLogic(new TimedPhaseLogic(match, TIME_TO_LAST, new BuyPhase()));
         match.getScoreboard().addWin(winningTeam);
-
+        match.resetPlayerStates();
     }
     
     private class ClientRoundEndLogic extends ClientLogic {

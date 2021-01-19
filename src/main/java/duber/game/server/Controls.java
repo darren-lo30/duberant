@@ -8,6 +8,8 @@ import duber.engine.MouseInput;
 import duber.engine.entities.components.RigidBody;
 import duber.engine.entities.components.Transform;
 import duber.game.gameobjects.Player;
+import duber.game.gameobjects.Player.MovementState;
+import duber.game.gameobjects.Player.PlayerData;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -21,6 +23,13 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 
 public class Controls {
     private static float mouseSensitivity = 0.0006f;
+
+    private static final int FORWARD = GLFW_KEY_W;
+    private static final int BACKWARD = GLFW_KEY_S;
+    private static final int STRAFE_LEFT = GLFW_KEY_A;
+    private static final int STRAFE_RIGHT = GLFW_KEY_D;
+    private static final int WALK = GLFW_KEY_LEFT_SHIFT;
+    private static final int JUMP = GLFW_KEY_SPACE;
 
     private Controls() {}
     
@@ -37,40 +46,74 @@ public class Controls {
         playerVelocity.y += controlVelocity.y();
     }
 
-    public static void updatePlayer(MatchManager match, Player player, MouseInput mouseInput, KeyboardInput keyboardInput) {
-        Vector2f controlRotation = mouseInput.getCursorDisplacement();
+    public static Vector3f calculateControlVelocity(PlayerData playerData, KeyboardInput keyboardInput) {
         Vector3f controlVelocity = new Vector3f();
 
-        float moveSpeed = keyboardInput.isKeyPressed(GLFW_KEY_LEFT_SHIFT) ? 
-            player.getPlayerData().getWalkingSpeed() : 
-            player.getPlayerData().getRunningSpeed();
+        boolean walking = keyboardInput.isKeyPressed(WALK);
 
-        if(keyboardInput.isKeyPressed(GLFW_KEY_W)) {
+        float moveSpeed = walking ? playerData.getWalkingSpeed() : playerData.getRunningSpeed();
+
+        if(keyboardInput.isKeyPressed(FORWARD)) {
             controlVelocity.add(0, 0, -moveSpeed);
-        } else if(keyboardInput.isKeyPressed(GLFW_KEY_S)) {
+        } else if(keyboardInput.isKeyPressed(BACKWARD)) {
             controlVelocity.add(0, 0, moveSpeed);
         }
 
-        if(keyboardInput.isKeyPressed(GLFW_KEY_A)) {
+        if(keyboardInput.isKeyPressed(STRAFE_LEFT)) {
             controlVelocity.add(-moveSpeed, 0, 0);
-        } else if(keyboardInput.isKeyPressed(GLFW_KEY_D)) {
+        } else if(keyboardInput.isKeyPressed(STRAFE_RIGHT)) {
             controlVelocity.add(moveSpeed, 0, 0);
         }
 
-        if(mouseInput.leftButtonIsPressed() && player.canShoot()) {
-            match.getGameWorld().simulateShot(player);
+        //Jumping
+        if (!playerData.isJumping() && keyboardInput.isKeyPressed(JUMP)) {
+            controlVelocity.add(0, playerData.getJumpingSpeed(), 0);
         }
 
-        Vector3f playerVelocity = player.getComponent(RigidBody.class).getVelocity();
-        
-        if (!player.getPlayerData().isJumping() && keyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
-            player.getPlayerData().setJumping(true);
-            controlVelocity.add(0, player.getPlayerData().getJumpingSpeed(), 0);
+        return controlVelocity;
+    }
+
+
+    public static void updatePlayer(MatchManager match, Player player, MouseInput mouseInput, KeyboardInput keyboardInput) {
+        PlayerData playerData = player.getPlayerData();
+    
+        if(mouseInput == null || keyboardInput == null) {
+            playerData.setShooting(false);
+            playerData.setState(MovementState.STOP);
+            return;
         }
-        
+
+
+        //Update player position
+        Vector3f controlVelocity = calculateControlVelocity(playerData, keyboardInput);
+        Vector3f playerVelocity = player.getComponent(RigidBody.class).getVelocity();
         addControlVelocity(playerVelocity, player.getComponent(Transform.class).getRotation(), controlVelocity);
         
+        //Update player rotation
+        Vector2f controlRotation = mouseInput.getCursorDisplacement();
         player.getComponent(RigidBody.class).getAngularVelocity().add(
             controlRotation.y * mouseSensitivity, controlRotation.x * mouseSensitivity, 0.0f);
+
+        //Make player shoot
+        if(mouseInput.leftButtonIsPressed() && player.canShoot()) {
+            match.getGameWorld().simulateShot(player);
+        } else {
+            playerData.setShooting(false);
+        }
+        
+        //Set player movement state
+        if(!playerData.isJumping()) {
+            if(controlVelocity.equals(0, 0, 0)) {
+                playerData.setState(MovementState.STOP);
+            } else if(keyboardInput.isKeyPressed(WALK)) {
+                playerData.setState(MovementState.WALKING);
+            } else {
+                playerData.setState(MovementState.RUNNING);
+            }
+        }
+
+        if(keyboardInput.isKeyPressed(JUMP)) {
+            playerData.setState(MovementState.JUMPING);
+        }
     }
 }

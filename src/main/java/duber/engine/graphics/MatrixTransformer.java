@@ -22,7 +22,8 @@ public class MatrixTransformer {
     public static final Matrix4f updateGeneralViewMatrix(Vector3f position, Vector3f rotation, Matrix4f viewMatrix) {
         //Rotate and translate the object relative to the camera
         return viewMatrix
-            .rotationX(rotation.x)
+            .identity()
+            .rotateX(rotation.x)
             .rotateY(rotation.y)
             .translate(-position.x, -position.y, -position.z);
     }

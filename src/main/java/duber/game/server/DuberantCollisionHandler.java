@@ -17,6 +17,7 @@ import duber.engine.physics.collisions.ICollisionHandler;
 import duber.engine.physics.collisions.Octree;
 import duber.engine.utilities.Utils;
 import duber.game.gameobjects.Player;
+import duber.game.gameobjects.Player.MovementState;
 
 public class DuberantCollisionHandler implements ICollisionHandler {    
 
@@ -94,8 +95,9 @@ public class DuberantCollisionHandler implements ICollisionHandler {
             if(resultPush.isFinite() && collisionResponse.isCollides() && player.getPlayerData().isJumping() &&
                 collisionResponse.getCollidedEntityColliderPart() == player.getComponent(Collider.class).getBaseCollider() &&
                 collisionWithGround(collisionResponse)) {
-
-                player.getPlayerData().setJumping(false);
+                
+                //Make player not jumping anymore
+                player.getPlayerData().setState(MovementState.STOP);
             }
         }
     }

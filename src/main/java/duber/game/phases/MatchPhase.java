@@ -72,6 +72,7 @@ public abstract class MatchPhase {
             match.listenInputs();
             match.receivePackets();
             match.sendPackets();
+            match.getMatchSounds().playSounds();
         }
 
         public HUD getHud() {

@@ -14,20 +14,20 @@ import duber.engine.utilities.Utils;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class SoundBuffer {
-    private final int bufferId;
+    private final int id;
     private ShortBuffer pulseCodedModulation;
 
     public SoundBuffer(String file) throws IOException {
-        bufferId = alGenBuffers();
+        id = alGenBuffers();
         try(STBVorbisInfo info = STBVorbisInfo.malloc()){
             pulseCodedModulation = readVorbis(file, 32 * 1024, info);
-            alBufferData(bufferId, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, 
+            alBufferData(id, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, 
                 pulseCodedModulation, info.sample_rate());
         }
     }
 
-    public int getBufferId(){
-        return bufferId;
+    public int getId(){
+        return id;
     }
 
     private ShortBuffer readVorbis(String file, int bufferSize, STBVorbisInfo info) throws IOException {
@@ -55,7 +55,7 @@ public class SoundBuffer {
     }
 
     public void cleanup(){
-        alDeleteBuffers(bufferId);
+        alDeleteBuffers(id);
         if(pulseCodedModulation != null){
             MemoryUtil.memFree(pulseCodedModulation);
         }

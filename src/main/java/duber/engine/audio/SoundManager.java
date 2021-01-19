@@ -2,9 +2,7 @@ package duber.engine.audio;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -23,20 +21,20 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 
 public class SoundManager implements Cleansable {
-    private long deviceHandle;
+    private final long deviceHandle;
     
-    private long context;
+    private final long context;
 
     private SoundListener listener;
 
-    List<SoundBuffer> soundBuffers;
+    Map<String, SoundBuffer> soundBuffers;
 
     Map<String, SoundSource> soundSources;
 
     private final Matrix4f listenerMatrix;
 
     public SoundManager(){
-        soundBuffers = new ArrayList<>();
+        soundBuffers = new HashMap<>();
         soundSources = new HashMap<>();
         listenerMatrix = new Matrix4f();
 
@@ -63,6 +61,10 @@ public class SoundManager implements Cleansable {
         return soundSources.get(name);
     }
 
+    public boolean hasSoundSource(String name) {
+        return soundSources.containsKey(name);
+    }
+
     public void playSoundSource(String name){
         SoundSource soundSource = soundSources.get(name);
         if(soundSource != null && !soundSource.isPlaying()){
@@ -74,8 +76,16 @@ public class SoundManager implements Cleansable {
         soundSources.remove(name);
     }
 
-    public void addSoundBuffer(SoundBuffer soundBuffer){
-        soundBuffers.add(soundBuffer);
+    public void addSoundBuffer(String name, SoundBuffer soundBuffer){
+        soundBuffers.put(name, soundBuffer);
+    }
+
+    public SoundBuffer getSoundBuffer(String name) {
+        return soundBuffers.get(name);
+    }
+
+    public int getSoundBufferId(String name) {
+        return soundBuffers.get(name).getId();
     }
 
     public SoundListener getListener(){
@@ -112,7 +122,7 @@ public class SoundManager implements Cleansable {
         }
         soundSources.clear();
 
-        for(SoundBuffer soundBuffer: soundBuffers){
+        for(SoundBuffer soundBuffer: soundBuffers.values()){
             soundBuffer.cleanup();
         }
         soundBuffers.clear();

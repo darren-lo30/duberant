@@ -7,10 +7,15 @@ public class KeyboardInput {
     private boolean[] keyPressed = new boolean[501];
 
     public void setKeyPressed(int keyCode, boolean pressed) {
-        keyPressed[keyCode] = pressed;
+        if(keyCode >= 0) {
+            keyPressed[keyCode] = pressed;
+        }
     }
 
     public boolean isKeyPressed(int keyCode) {
-        return keyPressed[keyCode];
+        if(keyCode >= 0) {
+            return keyPressed[keyCode];
+        }
+        return false;
     }
 }

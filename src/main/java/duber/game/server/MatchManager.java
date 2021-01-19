@@ -29,8 +29,9 @@ import duber.game.gameobjects.GameMap;
 import duber.game.gameobjects.GunBuilder;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
+import duber.game.gameobjects.Player.MovementState;
 import duber.game.gameobjects.Player.PlayerData;
-import duber.game.gameobjects.Player.WeaponsInventory;
+import duber.game.gameobjects.WeaponsInventory;
 import duber.game.User;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.MatchPhasePacket;
@@ -48,13 +49,11 @@ public class MatchManager implements Runnable, MatchPhaseManager {
     private boolean isOver = false;
     private ServerNetwork serverNetwork;
 
-    private GameMap gameMap;
-    private Map<User, Player> players = new HashMap<>();
-
-    private DuberantWorld gameWorld;
-
     private MatchPhase currMatchPhase;
 
+    private GameMap gameMap;
+    private Map<User, Player> players = new HashMap<>();
+    private DuberantWorld gameWorld;
     private Scoreboard scoreboard;
 
     public MatchManager(ServerNetwork serverNetwork, List<User> users) throws LWJGLException {
@@ -275,7 +274,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         };
 
         Vector3f[] bluePositions = new Vector3f[] {
-            new Vector3f(70, 0, 0)
+            new Vector3f(100, 0, 0)
         };
         
         gameMap = new GameMap(map, skyBox, gameLighting, redPositions, bluePositions);   
@@ -283,16 +282,28 @@ public class MatchManager implements Runnable, MatchPhaseManager {
 
     public void startRound() {
         for(Player player : getPlayers()) {
+            //Reset players data
             player.getPlayerData().setHealth(PlayerData.DEFAULT_HEALTH);
-            player.getPlayerData().addMoney(1000);
             player.getWeaponsInventory().resetGuns();
-            
             player.getComponent(MeshBody.class).setVisible(true);
             gameWorld.addDynamicEntity(player);
+
+            //Give player money
+            player.getPlayerData().addMoney(1000);            
         } 
 
+        resetPlayerStates();
+
+        //Reset player positions
         gameMap.setPlayerInitialPositions(MatchData.RED_TEAM, getPlayersByTeam(MatchData.RED_TEAM));
         gameMap.setPlayerInitialPositions(MatchData.BLUE_TEAM, getPlayersByTeam(MatchData.BLUE_TEAM));
+    }
+
+    public void resetPlayerStates() {
+        for(Player player : getPlayers()) {
+            player.getPlayerData().setState(MovementState.STOP);
+            player.getPlayerData().setShooting(false);
+        }
     }
 
     /**
@@ -310,15 +321,16 @@ public class MatchManager implements Runnable, MatchPhaseManager {
                     processPacket(user, (UserInputPacket) packet);
                 }
             }
+
         }
     }
 
     private void processPacket(User user, UserInputPacket userInput) {
         if(currMatchPhase.playerCanMove()) {
-            Player player = getUsersPlayer(user);
-            Controls.updatePlayer(this, player, userInput.mouseInput, userInput.keyboardInput);
+            Controls.updatePlayer(this, getUsersPlayer(user), userInput.mouseInput, userInput.keyboardInput);
         }
     }
+
     
     /**
      * Update the match state and send updates out to users
