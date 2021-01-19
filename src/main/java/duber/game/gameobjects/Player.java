@@ -67,11 +67,7 @@ public class Player extends Entity {
     }
 
     public void shoot() {
-        Gun equippedGunIdx = getWeaponsInventory().getEquippedGun();
-        if(equippedGunIdx != null) {
-            getPlayerData().setShooting(true);
-            equippedGunIdx.fire();
-        }
+        getWeaponsInventory().getEquippedGun().fire();
     }
 
     public void equipPrimaryGun() {
@@ -125,7 +121,6 @@ public class Player extends Entity {
         
         private int team = 0;
         private MovementState playerMovement = MovementState.STOP;
-        private boolean shooting = false;
         private float runningSpeed = 1.3f;
         private float walkingSpeed = 0.7f;
         private float jumpingSpeed = 3.0f;
@@ -134,21 +129,12 @@ public class Player extends Entity {
 
         public void set(PlayerData playerData) {
             team = playerData.team;
-            shooting = playerData.shooting;
             playerMovement = playerData.playerMovement;
             runningSpeed = playerData.runningSpeed;
             walkingSpeed = playerData.walkingSpeed;
             jumpingSpeed = playerData.jumpingSpeed;
             health = playerData.health;
             money = playerData.money;
-        }
-
-        public boolean isShooting() {
-            return shooting;
-        }
-
-        public void setShooting(boolean shooting) {
-            this.shooting = shooting;
         }
 
         public MovementState getPlayerMovement() {

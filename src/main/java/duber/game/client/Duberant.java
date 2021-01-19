@@ -1,6 +1,5 @@
 package duber.game.client;
 
-import org.lwjgl.openal.AL11;
 
 import duber.engine.GameEngine;
 import duber.engine.GameLogic;
@@ -37,7 +36,6 @@ public class Duberant extends GameLogic {
         window.applyOptions();
 
         soundManager = new SoundManager();
-        soundManager.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);    
         soundManager.setListener(new SoundListener(new Vector3f()));
         
         try {

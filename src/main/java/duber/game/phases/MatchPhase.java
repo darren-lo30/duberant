@@ -70,9 +70,12 @@ public abstract class MatchPhase {
         @Override
         public void update() {
             match.listenInputs();
+
             match.receivePackets();
+            match.getMatchSounds().updateSoundSources();
             match.sendPackets();
-            match.getMatchSounds().playSounds();
+
+            match.getMatchSounds().playMovementSounds();
         }
 
         public HUD getHud() {
@@ -107,8 +110,11 @@ public abstract class MatchPhase {
 
             tryChangeMatchPhase();
 
+            match.resetPlayerStates();
             match.receivePackets();
             match.getGameWorld().update();
+
+
             match.sendPackets();
         }
 

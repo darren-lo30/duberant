@@ -24,6 +24,7 @@ import duber.game.phases.MatchPhaseManager;
 import duber.game.client.GameState;
 import duber.game.client.GameStateKeyListener;
 import duber.game.client.GameStateManager.GameStateOption;
+import duber.game.networking.GunFirePacket;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.MatchPhasePacket;
 import duber.game.networking.PlayerUpdatePacket;
@@ -44,7 +45,6 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     private Scoreboard scoreboard;
     private MatchPhase currMatchPhase;
-
     private MatchSounds matchSounds;
 
     private GameStateKeyListener shopListener;
@@ -62,7 +62,6 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         gameScene = new Scene();
 
         matchSounds = new MatchSounds(this, getGame().getSoundManager());
-
         shopListener = new GameStateKeyListener(GLFW_KEY_B, GameStateOption.SHOP_MENU);
         scoreboardListener = new GameStateKeyListener(GLFW_KEY_TAB, GameStateOption.SCOREBOARD_DISPLAY);
     }
@@ -79,7 +78,9 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     public void enter() {
         //Disable cursor
         getWindow().setOption(Window.Options.SHOW_CURSOR, false);
-        getWindow().applyOptions();        
+        getWindow().applyOptions();  
+        
+        matchSounds.configureSettings();
     }
 
     @Override
@@ -170,6 +171,8 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
                 processPacket((MatchPhasePacket) packet);
             } else if(packet instanceof PlayerUpdatePacket) {
                 processPacket((PlayerUpdatePacket) packet);
+            } else if(packet instanceof GunFirePacket) {
+                processPacket((GunFirePacket) packet);
             }
         }
     }
@@ -238,6 +241,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     private void processPacket(MatchPhasePacket matchPhasePacket) {
         changeMatchPhase(matchPhasePacket.currMatchPhase);
+    }
+
+    private void processPacket(GunFirePacket gunFirePacket) {
+        matchSounds.playGunSounds(getPlayerById(gunFirePacket.shooterId));
     }
 
     public void leave() {

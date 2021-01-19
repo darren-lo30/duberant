@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joml.Vector3f;
+import org.lwjgl.openal.AL10;
+import org.lwjgl.openal.AL11;
 
 import duber.engine.audio.SoundManager;
 import duber.engine.audio.SoundSource;
@@ -31,16 +33,28 @@ public class MatchSounds  {
             addPlayer(player);
         }
     }
+
+    public void configureSettings() {
+        soundManager.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);    
+    }
     
     private void addPlayer(Player player) {        
-        SoundSource playerSoundSource = new SoundSource(true, false);
+        SoundSource playerSoundSource = createMatchSoundSource(true, false);
         addSoundSource(getPlayerSoundSourceName(player), playerSoundSource);
 
-        SoundSource gunSoundSource = new SoundSource(false, false);
+        SoundSource gunSoundSource = createMatchSoundSource(false, false);
         addSoundSource(getGunSoundSourceName(player), gunSoundSource);
     }
 
-    public void playSounds() {
+    private SoundSource createMatchSoundSource(boolean looping, boolean relative) {
+        SoundSource soundSource = new SoundSource(looping, relative);
+
+        AL10.alSourcef(soundSource.getId(), AL10.AL_REFERENCE_DISTANCE, 40.0f);
+        //AL10.alSourcef(soundSource.getId(), AL10.AL_MAX_DISTANCE, 200.0f);
+        return soundSource;
+    }
+
+    public void updateSoundSources() {
         //Update main player listener
         Transform mainPlayerTransform = match.getMainPlayer().getComponent(Transform.class);
         soundManager.updateListenerPosition(mainPlayerTransform);
@@ -54,20 +68,24 @@ public class MatchSounds  {
             Vector3f playerPosition = player.getComponent(Transform.class).getPosition();
             playerSoundSource.setPosition(playerPosition);
             gunSoundSource.setPosition(playerPosition);
+        }
+    }
+
+    public void playMovementSounds() {
+        for(Player player : match.getPlayers()) {
+            SoundSource playerSoundSource = getPlayerSoundSource(player);
             
-            //Play moving sound effects
             MovementState playerMovement = player.getPlayerData().getPlayerMovement();
             if(playerMovement != MovementState.RUNNING) {
                 playerSoundSource.stop();
             } else {
                 SoundData.playLoopSound(soundManager, playerSoundSource, SoundFiles.RUNNING);
             }
-
-            //Play gun sound effects
-            if(player.getPlayerData().isShooting()) {
-                playGunSoundEffect(gunSoundSource, player.getWeaponsInventory().getEquippedGun());
-            }
         }
+    }
+
+    public void playGunSounds(Player player) {
+        playGunSoundEffect(getGunSoundSource(player), player.getWeaponsInventory().getEquippedGun());
     }
 
     public void playGunSoundEffect(SoundSource gunSoundSource, Gun gun) {
@@ -91,7 +109,6 @@ public class MatchSounds  {
         }
     }
 
-
     public String getPlayerSoundSourceName(Player player) {
         return "Player" + player.getId();
     }
@@ -101,7 +118,7 @@ public class MatchSounds  {
     }
 
     public String getGunSoundSourceName(Player player) {
-        return "Player Gun" + player.getId();
+        return "PlayerGun" + player.getId();
     }
 
     public SoundSource getGunSoundSource(Player player) {

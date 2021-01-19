@@ -18,6 +18,10 @@ public class SoundSource {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
     public void setProperty(int property, float value){
         alSourcef(id, property, value);
     }

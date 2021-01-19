@@ -10,6 +10,7 @@ import duber.engine.entities.components.Transform;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Player.MovementState;
 import duber.game.gameobjects.Player.PlayerData;
+import duber.game.networking.GunFirePacket;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -76,13 +77,6 @@ public class Controls {
 
     public static void updatePlayer(MatchManager match, Player player, MouseInput mouseInput, KeyboardInput keyboardInput) {
         PlayerData playerData = player.getPlayerData();
-    
-        if(mouseInput == null || keyboardInput == null) {
-            playerData.setShooting(false);
-            playerData.setState(MovementState.STOP);
-            return;
-        }
-
 
         //Update player position
         Vector3f controlVelocity = calculateControlVelocity(playerData, keyboardInput);
@@ -97,8 +91,9 @@ public class Controls {
         //Make player shoot
         if(mouseInput.leftButtonIsPressed() && player.canShoot()) {
             match.getGameWorld().simulateShot(player);
-        } else {
-            playerData.setShooting(false);
+            GunFirePacket gunFirePacket = new GunFirePacket(player.getId());
+
+            match.sendAllTCP(gunFirePacket);
         }
         
         //Set player movement state
