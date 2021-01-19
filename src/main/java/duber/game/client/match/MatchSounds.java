@@ -35,12 +35,14 @@ public class MatchSounds  {
     }
 
     public void configureSettings() {
-        soundManager.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);    
+        soundManager.setAttenuationModel(AL11.AL_LINEAR_DISTANCE);    
     }
     
     private void addPlayer(Player player) {        
         SoundSource playerSoundSource = createMatchSoundSource(true, false);
         addSoundSource(getPlayerSoundSourceName(player), playerSoundSource);
+        
+        SoundData.setSourceSound(soundManager, playerSoundSource, SoundFiles.RUNNING);
 
         SoundSource gunSoundSource = createMatchSoundSource(false, false);
         addSoundSource(getGunSoundSourceName(player), gunSoundSource);
@@ -50,6 +52,8 @@ public class MatchSounds  {
         SoundSource soundSource = new SoundSource(looping, relative);
 
         AL10.alSourcef(soundSource.getId(), AL10.AL_REFERENCE_DISTANCE, 40.0f);
+        AL10.alSourcef(soundSource.getId(), AL10.AL_MAX_DISTANCE, 200.0f);
+
         //AL10.alSourcef(soundSource.getId(), AL10.AL_MAX_DISTANCE, 200.0f);
         return soundSource;
     }
@@ -77,9 +81,11 @@ public class MatchSounds  {
             
             MovementState playerMovement = player.getPlayerData().getPlayerMovement();
             if(playerMovement != MovementState.RUNNING) {
-                playerSoundSource.stop();
+                playerSoundSource.pause();
             } else {
-                SoundData.playLoopSound(soundManager, playerSoundSource, SoundFiles.RUNNING);
+                if(!playerSoundSource.isPlaying()) {
+                    playerSoundSource.play();
+                }
             }
         }
     }
@@ -92,10 +98,12 @@ public class MatchSounds  {
         if(GunTypes.RIFLE.isGunType(gun)) {
 
         } else if(GunTypes.PISTOL.isGunType(gun)) {
-            SoundData.playSound(soundManager, gunSoundSource, SoundFiles.PISTOL);
+            SoundData.setSourceSound(soundManager, gunSoundSource, SoundFiles.PISTOL);
         } else if(GunTypes.LMG.isGunType(gun)) {
 
         }
+
+        gunSoundSource.play();
     }
 
     public void addSoundSource(String name, SoundSource soundSource) {

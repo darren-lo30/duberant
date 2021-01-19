@@ -39,14 +39,13 @@ public class SoundData {
         SoundBuffer soundBuffer = new SoundBuffer(fileName);
         soundManager.addSoundBuffer(bufferName, soundBuffer);
     }
-    
-    public static void playSound(SoundManager soundManager, SoundSource soundSource, SoundFiles soundFile) {
+
+    public static void setSourceSound(SoundManager soundManager, SoundSource soundSource, SoundFiles soundFile) {
         int newSoundBuffer = soundFile.getBufferId(soundManager);
         soundSource.setBuffer(newSoundBuffer);
-        soundSource.play();
-    }
+    } 
 
-    public static void playLoopSound(SoundManager soundManager, SoundSource soundSource, SoundFiles soundFile) {
+    public static void playLoopSourceSound(SoundManager soundManager, SoundSource soundSource, SoundFiles soundFile) {
         int newSoundBuffer = soundFile.getBufferId(soundManager);
 
         if(soundSource.getBuffer() != newSoundBuffer) {

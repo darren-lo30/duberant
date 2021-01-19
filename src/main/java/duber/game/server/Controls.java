@@ -88,12 +88,17 @@ public class Controls {
         player.getComponent(RigidBody.class).getAngularVelocity().add(
             controlRotation.y * mouseSensitivity, controlRotation.x * mouseSensitivity, 0.0f);
 
+        
         //Make player shoot
         if(mouseInput.leftButtonIsPressed() && player.canShoot()) {
             match.getGameWorld().simulateShot(player);
             GunFirePacket gunFirePacket = new GunFirePacket(player.getId());
 
             match.sendAllTCP(gunFirePacket);
+        }
+
+        if(keyboardInput.isKeyPressed(JUMP)) {
+            playerData.setState(MovementState.JUMPING);
         }
         
         //Set player movement state
@@ -107,8 +112,6 @@ public class Controls {
             }
         }
 
-        if(keyboardInput.isKeyPressed(JUMP)) {
-            playerData.setState(MovementState.JUMPING);
-        }
+        
     }
 }

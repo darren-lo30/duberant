@@ -109,12 +109,9 @@ public abstract class MatchPhase {
             }
 
             tryChangeMatchPhase();
-
-            match.resetPlayerStates();
+            
             match.receivePackets();
             match.getGameWorld().update();
-
-
             match.sendPackets();
         }
 
