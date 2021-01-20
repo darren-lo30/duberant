@@ -1,11 +1,18 @@
 package duber.game.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.lwjgl.system.CallbackI;
+
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 
 public abstract class GameState {
     private Duberant game;
     private GameStateManager manager;
+
+    private final List<CallbackI> callbacks = new ArrayList<>();
 
     private boolean updateInBackground = false;
     private boolean opened = false;
@@ -21,6 +28,10 @@ public abstract class GameState {
 
     public GameStateManager getManager() {
         return manager;
+    }
+
+    public List<CallbackI> getCallbacks() {
+        return callbacks;
     }
 
     public void setShouldClose(boolean shouldClose) {
@@ -39,16 +50,16 @@ public abstract class GameState {
         this.updateInBackground = updateInBackground;
     }
 
-    public boolean isFocused() {
-        return manager.stateIsFocused(this);
-    }
-
     public boolean isOpened() {
         return opened;
     }
 
     public void setOpened(boolean opened) {
         this.opened = opened;
+    }
+
+    public boolean isFocused() {
+        return manager.stateIsFocused(this);
     }
 
     public void popSelf() {
@@ -69,10 +80,26 @@ public abstract class GameState {
         init();
     }
 
+    public void enableCallbacks() {
+        for(CallbackI callback : callbacks) {
+            getWindow().addCallback(callback);
+        }
+    }
+
+    public void disableCallbacks() {
+        for(CallbackI callback : callbacks) {
+            getWindow().removeCallback(callback);
+        }
+    }
+
     protected abstract void init() throws LWJGLException;
 
     public abstract void startup();
+
     public abstract void enter();
+
+    public abstract void exit();
+
     public abstract void close();
     
     public abstract void update();

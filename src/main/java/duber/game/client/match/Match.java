@@ -6,7 +6,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.glfw.GLFWCursorPosCallbackI;
+import org.lwjgl.glfw.GLFWKeyCallbackI;
+import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
+import org.lwjgl.system.CallbackI;
+
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+
+
 import duber.engine.Cleansable;
+import duber.engine.KeyboardInput;
+import duber.engine.MouseInput;
 import duber.engine.Window;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
@@ -22,7 +35,6 @@ import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.phases.MatchPhaseManager;
 import duber.game.client.GameState;
-import duber.game.client.GameStateKeyListener;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.networking.GunFirePacket;
 import duber.game.networking.MatchInitializePacket;
@@ -47,9 +59,65 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     private MatchPhase currMatchPhase;
     private MatchSounds matchSounds;
 
-    private GameStateKeyListener shopListener;
-    private GameStateKeyListener scoreboardListener;
+    private MouseInput mouseInput;
+    private KeyboardInput keyboardInput;
     
+    
+    private void configureMouseCallbacks() {
+        List<CallbackI> callbacks = getCallbacks();
+        
+        //Cursor position callback
+        GLFWCursorPosCallbackI mouseCursorCallback = (window, xPos, yPos) -> {
+            if(isFocused()) {
+                mouseInput.setCurrentPos(xPos, yPos);
+            }
+        };
+        callbacks.add(mouseCursorCallback);
+
+        //Mouse click callback
+        GLFWMouseButtonCallbackI mouseButtonCallback = (window, button, action, mode) -> {
+            if(isFocused()) {
+                mouseInput.setLeftButtonIsPressed(button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS);
+                mouseInput.setRightButtonIsPressed(button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS);
+            }
+        };
+        callbacks.add(mouseButtonCallback);
+    }
+
+    private void configureKeyboardCallbacks() {
+        List<CallbackI> callbacks = getCallbacks();
+
+        GLFWKeyCallbackI keyboardCallback = (window, keyCode, scanCode, action, mods) -> {
+            if(isFocused()) {
+                if(action == GLFW_PRESS) {
+                    keyboardInput.setKeyPressed(keyCode, true);
+                } else if(action == GLFW_RELEASE) {
+                    keyboardInput.setKeyPressed(keyCode, false);
+                }
+            }
+
+            //Shop menu
+            if(isInitialized() && currMatchPhase.playerCanBuy() && keyCode == GLFW_KEY_B && action == GLFW_RELEASE) {
+                GameState shopMenu = GameStateOption.SHOP_MENU.getGameState();
+                if(shopMenu.isOpened()) {
+                    shopMenu.setShouldClose(true);
+                } else {
+                    shopMenu.pushSelf();
+                }
+            }
+
+            if(isInitialized() && keyCode == GLFW_KEY_TAB && action == GLFW_RELEASE) {
+                GameState scoreboardDisplay = GameStateOption.SCOREBOARD_DISPLAY.getGameState();
+                if(scoreboardDisplay.isOpened()) {
+                    scoreboardDisplay.setShouldClose(true);
+                } else {
+                    scoreboardDisplay.pushSelf();
+                }
+            }
+        };
+        callbacks.add(keyboardCallback);
+    }
+
     @Override
     public void init() {
         try {
@@ -62,8 +130,12 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         gameScene = new Scene();
 
         matchSounds = new MatchSounds(this, getGame().getSoundManager());
-        shopListener = new GameStateKeyListener(GLFW_KEY_B, GameStateOption.SHOP_MENU);
-        scoreboardListener = new GameStateKeyListener(GLFW_KEY_TAB, GameStateOption.SCOREBOARD_DISPLAY);
+        
+        mouseInput = new MouseInput();
+        keyboardInput = new KeyboardInput();
+        
+        configureMouseCallbacks();
+        configureKeyboardCallbacks();
     }
 
     @Override
@@ -72,25 +144,45 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         playersById.clear();
         gameScene.clear();
         currMatchPhase = null;
+
+        for(CallbackI callback : getCallbacks()) {
+            getWindow().addCallback(callback);
+        }
     }
 
-    @Override
-    public void enter() {
-        //Disable cursor
-        getWindow().setOption(Window.Options.SHOW_CURSOR, false);
-        getWindow().applyOptions();  
-        
-        matchSounds.configureSettings();
-    }
 
     @Override
     public void close() {
         matchSounds.clear();
+        for(CallbackI callback : getCallbacks()) {
+            getWindow().removeCallback(callback);
+        }
     }
 
     @Override
-    public void update() {        
+    public void enter() {
+        matchSounds.configureSettings();
+        getWindow().restoreState();
+
+        //Disable cursor
+        getWindow().setOption(Window.Options.SHOW_CURSOR, false);
+        getWindow().applyOptions();  
+    }
+
+    @Override
+    public void exit() {
+        mouseInput.clear();
+        keyboardInput.clear();
+    }
+
+    @Override
+    public void update() {       
+        mouseInput.updateCursorDisplacement(); 
+        
         if(currMatchPhase != null) {
+            if(!currMatchPhase.playerCanBuy() && GameStateOption.SHOP_MENU.getGameState().isOpened()) {
+                GameStateOption.SHOP_MENU.getGameState().setShouldClose(true);
+            }
             currMatchPhase.update();
         } else {
             receivePackets();
@@ -131,23 +223,9 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         return mainPlayer != null && currMatchPhase != null;
     }
 
-    public void listenInputs() {
-        Window window = getWindow();
-
-        if(currMatchPhase.playerCanBuy()) {
-            shopListener.listenToActivate(window.getKeyboardInput());
-        } else {
-            shopListener.getActivatedGameState().setShouldClose(true);
-        }
-
-        scoreboardListener.listenToActivate(window.getKeyboardInput());
-    }
-
     public void sendPackets() {
-        Window window = getWindow();
-
-        if(isFocused() && isInitialized() && currMatchPhase.playerCanMove()) {
-            UserInputPacket matchCommands = new UserInputPacket(window.getKeyboardInput(), window.getMouseInput());
+        if(isInitialized() && currMatchPhase.playerCanMove()) {
+            UserInputPacket matchCommands = new UserInputPacket(keyboardInput, mouseInput);
             getGame().getUser().getConnection().sendUDP(matchCommands);
         }
     }

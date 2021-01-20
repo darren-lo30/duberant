@@ -2,7 +2,7 @@ package duber.game.server;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-
-
+import java.util.concurrent.ConcurrentHashMap;
 
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.utilities.Timer;
 import duber.game.MatchData;
 import duber.game.User;
 import duber.game.networking.LoginPacket;
+import duber.game.networking.MatchQueuePacket;
 import duber.game.networking.LoginConfirmationPacket;
 
 import com.esotericsoftware.kryonet.Connection;
@@ -30,9 +30,9 @@ public class DuberantServer {
     private volatile boolean running;
     private ServerNetwork serverNetwork;
 
-    private Set<User> usersSearchingForMatch = new LinkedHashSet<>();
+    private Set<User> usersSearchingForMatch = new HashSet<>();
     private Set<User> usersInMatch = new HashSet<>();
-    private Map<Connection, User> connectedUsers = new HashMap<>();
+    private Map<Connection, User> connectedUsers = new ConcurrentHashMap<>();
     
     public DuberantServer() throws IOException {
         serverNetwork = new ServerNetwork(5000);
@@ -47,6 +47,7 @@ public class DuberantServer {
             @Override
             public void disconnected(Connection connection) {
                 connectedUsers.remove(connection);
+                usersSearchingForMatch.remove(getUser(connection));
             }
         });
 
@@ -60,7 +61,6 @@ public class DuberantServer {
             serverNetwork.stop();
             running = false;
         }
-
     }
 
     public void stop() {
@@ -80,7 +80,7 @@ public class DuberantServer {
             for(Connection connection : serverNetwork.getConnections()) {                
                 Queue<Object> packets = serverNetwork.getPackets(connection);
                 
-                if(packets != null && !usersInMatch.contains(connectedUsers.get(connection))) {
+                if(packets != null && !usersInMatch.contains(getUser(connection))) {
                     processAllPackets(connection, packets);
                 }
             }
@@ -125,7 +125,16 @@ public class DuberantServer {
             if(packet instanceof LoginPacket) {
                 processPacket(connection, (LoginPacket) packet);
             } 
+
+            User connectedUser = getUser(connection);
+            if(connectedUser != null && packet instanceof MatchQueuePacket) {
+                processPacket(connectedUser, (MatchQueuePacket) packet);
+            }
         }
+    }
+
+    private User getUser(Connection connection) {
+        return connectedUsers.get(connection);
     }
 
     private void processPacket(Connection connection, LoginPacket userConnectPacket) {
@@ -142,6 +151,11 @@ public class DuberantServer {
         connectedUsers.put(connection, registeredUser);
         usersSearchingForMatch.add(registeredUser);
     }
+
+    private void processPacket(User user, MatchQueuePacket matchQueuePacket) {
+        //Process packet
+    }
+
 
     public static void main(String[] args) {
         try {

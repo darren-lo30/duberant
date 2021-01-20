@@ -98,14 +98,6 @@ public class Player extends Entity {
         return getPlayerData().getHealth() > 0;
     }
 
-    public void addKill() {
-        getScore().setKills(getScore().getKills() + 1);
-    }
-
-    public void addDeath() {
-        getScore().setDeaths(getScore().getDeaths() + 1);
-    }
-
     public enum MovementState {
         STOP,
         RUNNING, 

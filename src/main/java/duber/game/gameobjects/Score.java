@@ -21,12 +21,20 @@ public class Score extends Component {
         return kills;
     }
 
+    public void addKill() {
+        kills++;
+    }
+
     public void setKills(int kills) {
         this.kills = kills;
     }
 
     public int getDeaths() {
         return deaths;
+    }
+
+    public void addDeath() {
+        deaths++;
     }
 
     public void setDeaths(int deaths) {

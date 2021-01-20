@@ -52,7 +52,7 @@ public class MainMenu extends GUI {
             // Send in login request to server
             try {
                 if (!getGame().isConnected()) {
-                    getGame().getClientNetwork().connect(100);
+                    getGame().getClientNetwork().connect(1000);
                 }
 
                 //Send user login packet with username
@@ -68,13 +68,10 @@ public class MainMenu extends GUI {
                 Thread.currentThread().interrupt();
             } finally {
                 loggingIn = false;
-            }
-
-            
+            }            
         }
 
         private void waitForLoginResponse() throws InterruptedException {
-            
             BlockingQueue<Object> receivedPackets = getGame().getClientNetwork().getPackets();
             Object packet = receivedPackets.take();
             if(packet instanceof LoginConfirmationPacket) {
@@ -90,4 +87,6 @@ public class MainMenu extends GUI {
             }            
         }
     }
+
+
 }

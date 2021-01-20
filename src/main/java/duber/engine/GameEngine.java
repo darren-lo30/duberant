@@ -73,7 +73,6 @@ public final class GameEngine implements Runnable, Cleansable {
 
             //Calculate updates in the scene
             while(accumulator >= interval) {
-                input();
                 update();
                 accumulator -= interval;
             }
@@ -100,10 +99,6 @@ public final class GameEngine implements Runnable, Cleansable {
         }
     }
 
-    private void input() {
-        window.getMouseInput().updateCursorDisplacement();
-    }
-
     public void update() {
         gameLogic.update();
     }
@@ -120,8 +115,7 @@ public final class GameEngine implements Runnable, Cleansable {
     }
 
     public void render() {
-        window.clear();
-        
+        window.clear();        
         calculateAndDisplayFps();        
         gameLogic.render();
         window.update();

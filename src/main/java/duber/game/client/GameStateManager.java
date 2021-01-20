@@ -12,7 +12,6 @@ import duber.game.client.gui.ScoreboardDisplay;
 import duber.game.client.gui.ShopMenu;
 import duber.game.client.match.Match;
 
-
 public class GameStateManager implements Cleansable {
     public enum GameStateOption {
         MAIN_MENU           (new MainMenu()), 
@@ -59,19 +58,23 @@ public class GameStateManager implements Cleansable {
             throw new IllegalStateException("The game state is already open");
         }
 
+        if(!gameStates.empty()) {
+            gameStates.peek().exit();
+        }
+
         gameState.setOpened(true);
         gameState.setShouldClose(false);
         gameState.startup();
         gameState.enter();
 
         gameStates.push(gameState);
-
     }
 
     private GameState popStateLogic() {
         GameState poppedState = gameStates.pop();
         poppedState.setOpened(false);
         poppedState.setShouldClose(false);
+        poppedState.exit();
         poppedState.close();
 
         return poppedState;
@@ -102,7 +105,7 @@ public class GameStateManager implements Cleansable {
     }
 
     public GameState getFocusedState() {
-        return gameStates.peek();
+        return gameStates.isEmpty() ? null : gameStates.peek();
     }
 
     public boolean stateIsFocused(GameState gameState) {
@@ -114,24 +117,27 @@ public class GameStateManager implements Cleansable {
     }
     
     public void update() {
+        while(getFocusedState() != null && getFocusedState().shouldClose()) {
+            popStateLogic();
+        }
+
+        if(!gameStates.isEmpty()) {
+            gameStates.peek().enter();
+        }
+        
         List<GameState> gameStatesList = new ArrayList<>(gameStates);
-
-
+        
         //Iterate the list backwards to simulate the stack order
-        for(int i = gameStatesList.size() -1; i >= 0; i--) {
+        for(int i = gameStatesList.size()-1; i >= 0; i--) {
             GameState gameState = gameStatesList.get(i);
             
-            if(!gameState.shouldClose() && (gameState == getFocusedState() || gameState.isUpdateInBackground())) {
+            if(!gameState.shouldClose() && (stateIsFocused(gameState) || gameState.isUpdateInBackground())) {
                 gameState.update();
             }
         }
     }
 
     public void render() {
-        while(getFocusedState().shouldClose()) {
-            popState();
-        }
-
         if(getFocusedState() != null) {
             getFocusedState().render();
         }

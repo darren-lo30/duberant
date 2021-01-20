@@ -310,7 +310,6 @@ public class MatchManager implements Runnable, MatchPhaseManager {
      */
     public void receivePackets() {
         for(User user: getUsers()) {            
-            boolean receivedInputPacket = false;
             //Get any packets from the users connection
             Queue<Object> receivedPackets = serverNetwork.getPackets(user.getConnection());
                 
@@ -318,26 +317,16 @@ public class MatchManager implements Runnable, MatchPhaseManager {
             while(!receivedPackets.isEmpty()) {
                 Object packet = receivedPackets.poll();
                 if(packet instanceof UserInputPacket) {
-                    receivedInputPacket = true;
                     processPacket(user, (UserInputPacket) packet);
-                }
-            }
-            
-            //If the user did not send an input packet, then make the user stop if they are not jumping
-            //If they are jumping, it will be resolved to a stop by the duberant world on its own
-            if(!receivedInputPacket) {
-                Player player = getUsersPlayer(user);
-                if(!player.getPlayerData().isJumping()) {
-                    player.getPlayerData().setState(MovementState.STOP);
                 }
             }
 
         }
     }
 
-    private void processPacket(User user, UserInputPacket userInput) {
+    private void processPacket(User user, UserInputPacket userInputPacket) {
         if(currMatchPhase.playerCanMove()) {
-            Controls.updatePlayer(this, getUsersPlayer(user), userInput.mouseInput, userInput.keyboardInput);
+            Controls.updatePlayer(this, getUsersPlayer(user), userInputPacket.mouseInput, userInputPacket.keyboardInput);
         }
     }
 

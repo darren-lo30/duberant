@@ -76,11 +76,10 @@ public class DuberantWorld extends PhysicsWorld {
                     Bullet shotBullet = shootingPlayer.getWeaponsInventory().getEquippedGun().getGunData().getGunBullets();
                     hitPlayer.takeShot(shotBullet);                        
                     
-
                     //Update the player's scores if it was a kill
                     if(!hitPlayer.isAlive()) {
-                        shootingPlayer.addKill();
-                        hitPlayer.addDeath();
+                        shootingPlayer.getScore().addKill();
+                        hitPlayer.getScore().addDeath();
                     }
                 }
             }

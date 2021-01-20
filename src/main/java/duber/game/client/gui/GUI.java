@@ -17,6 +17,11 @@ public abstract class GUI extends GameState {
     }
 
     @Override
+    public void exit() {
+        //Nothing to do on exit
+    }
+
+    @Override
     public void close() {
         //Nothing to do on close
     }

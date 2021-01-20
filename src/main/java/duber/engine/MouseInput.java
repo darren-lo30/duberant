@@ -44,4 +44,9 @@ public class MouseInput {
     public boolean rightButtonIsPressed() {
         return rightButtonIsPressed;
     }
+
+    public void clear() {
+        updateCursorDisplacement();
+        cursorDisplacement.set(0, 0);
+    }
 }

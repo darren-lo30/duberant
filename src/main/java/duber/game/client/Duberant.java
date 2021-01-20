@@ -1,6 +1,5 @@
 package duber.game.client;
 
-
 import duber.engine.GameEngine;
 import duber.engine.GameLogic;
 import duber.engine.Window;
@@ -12,10 +11,12 @@ import duber.game.User;
 import duber.game.client.GameStateManager.GameStateOption;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 import java.io.IOException;
 
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFWKeyCallbackI;
 
 
 public class Duberant extends GameLogic {
@@ -24,7 +25,6 @@ public class Duberant extends GameLogic {
     private ClientNetwork clientNetwork;
     private GameStateManager gameStateManager;
     private SoundManager soundManager;
-    private GameStateKeyListener optionsListener;
     
     public Duberant() {
         clientNetwork = new ClientNetwork();
@@ -46,9 +46,8 @@ public class Duberant extends GameLogic {
 
         gameStateManager = new GameStateManager(this);
         gameStateManager.pushState(GameStateOption.MAIN_MENU);
-
-        optionsListener = new GameStateKeyListener(GLFW_KEY_ESCAPE, GameStateOption.OPTIONS_MENU);
-
+        
+        configureOptionsMenuCallback();
     }
 
     public Window getWindow() {
@@ -86,7 +85,6 @@ public class Duberant extends GameLogic {
     @Override
     public void update() {
         gameStateManager.update();
-        optionsListener.listenToActivate(window.getKeyboardInput());
     }
 
     @Override
@@ -99,6 +97,21 @@ public class Duberant extends GameLogic {
         clientNetwork.close();
         gameStateManager.cleanup();
         soundManager.cleanup();
+    }
+
+    private void configureOptionsMenuCallback() {
+        GLFWKeyCallbackI optionsCallback = (windowHandle, keyCode, scanCode, action, mods) -> {
+            GameState optionMenu = GameStateOption.OPTIONS_MENU.getGameState();
+            if(keyCode == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+                if(optionMenu.isOpened()) {
+                    optionMenu.setShouldClose(true);
+                } else {
+                    optionMenu.pushSelf();
+                }
+            }
+        };
+
+        window.addCallback(optionsCallback);
     }
 
     public static void main(String[] args) {

@@ -40,11 +40,15 @@ public abstract class MatchPhase {
     public abstract void makeServerLogic(MatchManager match);
 
     public void render() {
-        phaseLogic.render();
+        if(phaseLogic != null) {
+            phaseLogic.render();
+        }
     }
 
     public void update() {
-        phaseLogic.update();
+        if(phaseLogic != null) {
+            phaseLogic.update();
+        }
     }
 
     private interface MatchPhaseLogic {
@@ -69,8 +73,6 @@ public abstract class MatchPhase {
 
         @Override
         public void update() {
-            match.listenInputs();
-
             match.receivePackets();
             match.getMatchSounds().updateSoundSources();
             match.sendPackets();

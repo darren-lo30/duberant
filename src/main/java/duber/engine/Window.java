@@ -6,7 +6,12 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 
 import org.lwjgl.opengl.GL;
+import org.lwjgl.system.CallbackI;
+import org.lwjgl.glfw.GLFWCursorPosCallbackI;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWFramebufferSizeCallbackI;
+import org.lwjgl.glfw.GLFWKeyCallbackI;
+import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
@@ -34,31 +39,31 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 
+import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.joml.Matrix4f;
+import org.liquidengine.cbchain.IChainCallback;
+import org.liquidengine.legui.DefaultInitializer;
+import org.liquidengine.legui.component.Frame;
+import org.liquidengine.legui.system.context.CallbackKeeper;
 
 
 public class Window {
     private long windowHandle;
     
 	private String title;
-    
     private int width;
-
     private int height;
 
-    private boolean resized;
-    
     private Matrix4f projectionMatrix;
-
     private Options options;
 
-    private final MouseInput mouseInput;
-    private final KeyboardInput keyboardInput;
-
+    //Used for LEGUI
+    private DefaultInitializer defaultInitializer;
+    
     public Window(String title, int width, int height) {
         this.title = title;
         this.width = width;
@@ -68,9 +73,6 @@ public class Window {
         options = new Options();
 
         init();
-
-        mouseInput = new MouseInput();
-        keyboardInput = new KeyboardInput();
     }
 
     private void init() {
@@ -93,56 +95,86 @@ public class Window {
 
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
+        //windowHandle = glfwCreateWindow(vidmode.width(), vidmode.height(), title, NULL, NULL);
         if(windowHandle == NULL) {
             throw new IllegalStateException("Could not start the window");
         }
-
-        //Callback for resizing the window
-        glfwSetFramebufferSizeCallback(windowHandle, (window, windowWidth, windowHeight) -> {
-            Window.this.width = windowWidth;
-            Window.this.height = windowHeight;
-            Window.this.resized = true;
-        });
-
-        //Call back to close window on key press
-        glfwSetKeyCallback(windowHandle, (window, keyCode, scancode, action, mods) -> {
-            if(keyCode == GLFW_KEY_F11 && action == GLFW_RELEASE) {
-                if(isFullScreen()) {
-                    glfwSetWindowMonitor(windowHandle, NULL, 0, 0, width, height, GLFW_DONT_CARE);
-                } else {
-                    long monitor = glfwGetPrimaryMonitor();
-                    glfwSetWindowMonitor(windowHandle, monitor, 0, 0, vidmode.width(), vidmode.height(), vidmode.refreshRate());
-                }
-            }
-
-            if(action == GLFW_PRESS) {
-                keyboardInput.setKeyPressed(keyCode, true);
-            }            
-
-            if(action == GLFW_RELEASE) {
-                keyboardInput.setKeyPressed(keyCode, false);
-            }
-        });
-
-        //Mouse calalbacks
-        glfwSetCursorPos(windowHandle, 0, 0);
-        glfwSetCursorPosCallback(windowHandle, (window, xPos, yPos) -> {
-            mouseInput.setCurrentPos(xPos, yPos);
-        });
-
-        glfwSetMouseButtonCallback(windowHandle, (window, button, action, mode) -> {
-            mouseInput.setLeftButtonIsPressed(button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS);
-            mouseInput.setRightButtonIsPressed(button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS);
-        });
-
+        
         glfwMakeContextCurrent(windowHandle);
-
         //Display window
         glfwShowWindow(windowHandle);
         GL.createCapabilities();
-
+        
         restoreState();
+        
+        defaultInitializer = new DefaultInitializer(windowHandle, new Frame(width, height));
+        defaultInitializer.getRenderer().initialize();
+        defaultInitializer.getContext().updateGlfwWindow();
+
+        configureDefaultKeyCallbacks();
+        configureDefaultFrameBufferSizeCallback();
     }
+
+    public DefaultInitializer getDefaultInitializer() {
+        return defaultInitializer;
+    }
+
+    private void configureDefaultKeyCallbacks() {
+        GLFWKeyCallbackI defaultKeyCallbacks = (window, keyCode, scanCode, action, mods) -> {
+            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+            //Full screen callback
+            if(keyCode == GLFW_KEY_F11 && action == GLFW_RELEASE) {
+                if(isFullScreen()) {
+                    glfwSetWindowMonitor(window, NULL, 0, 0, width, height, GLFW_DONT_CARE);
+                } else {
+                    long monitor = glfwGetPrimaryMonitor();
+                    glfwSetWindowMonitor(window, monitor, 0, 0, vidmode.width(), vidmode.height(), vidmode.refreshRate());
+                }
+            }
+        };
+
+        addCallback(defaultKeyCallbacks);
+    }
+
+
+    private void configureDefaultFrameBufferSizeCallback() {
+        GLFWFramebufferSizeCallbackI defaultFrameBufferSizeCallback = (window, newWidth, newHeight) -> {
+            width = newWidth;
+            height = newHeight;
+        };
+
+        addCallback(defaultFrameBufferSizeCallback);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends CallbackI> IChainCallback<T> getChainCallback(T callback) {
+        CallbackKeeper callbackKeeper = defaultInitializer.getCallbackKeeper();
+
+        if(callback instanceof GLFWCursorPosCallbackI) {
+            return (IChainCallback<T>) callbackKeeper.getChainCursorPosCallback();
+        } else if(callback instanceof GLFWMouseButtonCallbackI) {
+            return (IChainCallback<T>) callbackKeeper.getChainMouseButtonCallback();
+        } else if(callback instanceof GLFWFramebufferSizeCallbackI) {
+            return (IChainCallback<T>) callbackKeeper.getChainFramebufferSizeCallback();
+        } else if(callback instanceof GLFWKeyCallbackI) {
+            return (IChainCallback<T>) callbackKeeper.getChainKeyCallback();
+        } else {
+            throw new IllegalArgumentException("The callback is not valid. Register it before adding it");
+        }
+    }
+
+    public <T extends CallbackI> void addCallback(T callback) {
+        getChainCallback(callback).add(callback);
+    }
+
+    public <T extends CallbackI> void removeCallback(T callback) {
+        IChainCallback<T> chainCallback = getChainCallback(callback);
+        if(chainCallback.contains(callback)) {
+            chainCallback.remove(callback);
+        }
+    }
+
 
     public void restoreState() {
         glClearColor(0.f, 0.f, 0.f, 0.f);
@@ -150,7 +182,6 @@ public class Window {
         glEnable(GL_STENCIL_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
         applyOptions();
     }
 
@@ -175,21 +206,8 @@ public class Window {
         return title;
     }
 
-
-    public boolean isResized() {
-        return resized;
-    }
-
     public boolean shouldClose() {
         return glfwWindowShouldClose(windowHandle);
-    }
-
-    public MouseInput getMouseInput() {
-        return mouseInput;
-    }
-
-    public KeyboardInput getKeyboardInput() {
-        return keyboardInput;
     }
 
     public final Matrix4f getProjectionMatrix() {
@@ -238,6 +256,9 @@ public class Window {
     }
 
     public void update() {
+        defaultInitializer.getContext().updateGlfwWindow();
+        defaultInitializer.getFrame().setSize(width, height);
+        glViewport(0, 0, width, height);
         glfwPollEvents();
         glfwSwapBuffers(windowHandle);
     }

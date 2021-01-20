@@ -1,5 +1,7 @@
 package duber.engine;
 
+import java.util.Arrays;
+
 /**
  * KeyboardInput
  */
@@ -17,5 +19,9 @@ public class KeyboardInput {
             return keyPressed[keyCode];
         }
         return false;
+    }
+
+    public void clear() {
+        Arrays.fill(keyPressed, false);
     }
 }

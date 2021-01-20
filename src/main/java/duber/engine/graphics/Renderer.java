@@ -10,9 +10,7 @@ import duber.engine.Cleansable;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 
-import static org.lwjgl.opengl.GL30.*;
 
-import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.io.IOException;
 import java.util.List;
@@ -93,11 +91,6 @@ public class Renderer implements Cleansable {
     public void render(Window window, Camera camera, Scene scene) {        
         //Update camera view matrix
         camera.updateViewMatrix();
-
-        //Resize the window
-        if(window.isResized()) {
-            glViewport(0, 0, window.getWidth(), window.getHeight());
-        }
 
         window.updateProjectionMatrix(FOV, Z_NEAR, Z_FAR);
         
