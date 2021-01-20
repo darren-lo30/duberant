@@ -98,6 +98,19 @@ public class Player extends Entity {
         return getPlayerData().getHealth() > 0;
     }
 
+    public void purchaseGun(Gun gun) {
+        int gunCost = gun.getComponent(Buyable.class).getCost();
+        if(gunCost <= getPlayerData().getMoney()) {
+            if(gun instanceof PrimaryGun) {
+                getWeaponsInventory().setPrimaryGun(gun);
+            } else if(gun instanceof SecondaryGun) {
+                getWeaponsInventory().setSecondaryGun(gun);
+            }
+
+            getPlayerData().addMoney(-gunCost);
+        }
+    }
+
     public enum MovementState {
         STOP,
         RUNNING, 

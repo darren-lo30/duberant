@@ -26,6 +26,7 @@ import duber.engine.loaders.MeshLoader;
 import duber.engine.utilities.Timer;
 import duber.game.MatchData;
 import duber.game.gameobjects.GameMap;
+import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.GunBuilder;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
@@ -33,6 +34,7 @@ import duber.game.gameobjects.Player.MovementState;
 import duber.game.gameobjects.Player.PlayerData;
 import duber.game.gameobjects.WeaponsInventory;
 import duber.game.User;
+import duber.game.networking.GunPurchasePacket;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.MatchPhasePacket;
 import duber.game.networking.Packet;
@@ -71,7 +73,6 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         }
 
         scoreboard = new Scoreboard(getPlayers());
-        
         changeMatchPhase(new LoadingPhase());
     }
 
@@ -173,18 +174,14 @@ public class MatchManager implements Runnable, MatchPhaseManager {
 
         if(redWin && blueWin) {
             double choice = Math.random();
-            if(choice > 0.5) {
-                return MatchData.RED_TEAM;
-            } else {
-                return MatchData.BLUE_TEAM;
-            }
+            return choice > 0.5 ? MatchData.RED_TEAM : MatchData.BLUE_TEAM;
         } else if(redWin) {
             return MatchData.RED_TEAM;
         } else if(blueWin) {
             return MatchData.BLUE_TEAM;
-        } else {
-            return MatchData.NULL_TEAM;
-        }
+        } 
+
+        return MatchData.NULL_TEAM;
     }
 
     public List<Player> getPlayersByTeam(int team) {
@@ -322,7 +319,11 @@ public class MatchManager implements Runnable, MatchPhaseManager {
                 Object packet = receivedPackets.poll();
                 if(packet instanceof UserInputPacket) {
                     processPacket(user, (UserInputPacket) packet);
+                } else if(packet instanceof GunPurchasePacket) {
+                    processPacket(user, (GunPurchasePacket) packet);
                 }
+
+                
             }
 
         }
@@ -335,7 +336,9 @@ public class MatchManager implements Runnable, MatchPhaseManager {
     }
 
     private void processPacket(User user, GunPurchasePacket gunPurchasePacket) {
-        
+        Player player = getUsersPlayer(user);
+        Gun purchasedGun = GunBuilder.getInstance().buildGun(gunPurchasePacket.gunType);
+        player.purchaseGun(purchasedGun);
     }
 
     

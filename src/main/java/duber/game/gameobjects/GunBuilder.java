@@ -1,6 +1,9 @@
 package duber.game.gameobjects;
 
 import duber.engine.entities.components.Named;
+import duber.engine.exceptions.LWJGLException;
+import duber.engine.loaders.MeshLoader;
+import duber.engine.loaders.MeshResource;
 import duber.engine.entities.components.MeshBody;
 import duber.game.gameobjects.Gun.GunData;
 
@@ -24,7 +27,6 @@ public class GunBuilder {
         setLmg();
         setPistol();
     }
-
 
     private void setRifle() {
         String name = GunType.RIFLE.toString();
@@ -90,6 +92,11 @@ public class GunBuilder {
         }
 
         return null;
+    }
+
+    public void loadGunMesh(Gun gun) throws LWJGLException {
+        MeshResource gunMeshResource = GunType.getGunType(gun).getGunMeshResource();
+        gun.addComponent(new MeshBody(MeshLoader.load(gunMeshResource)));
     }
 
     public PrimaryGun buildRifle() { 
