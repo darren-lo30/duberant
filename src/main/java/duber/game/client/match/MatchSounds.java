@@ -11,10 +11,10 @@ import duber.engine.audio.SoundManager;
 import duber.engine.audio.SoundSource;
 import duber.engine.entities.components.Transform;
 import duber.game.SoundData;
-import duber.game.SoundData.SoundFiles;
+import duber.game.SoundData.SoundFile;
 import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.Player;
-import duber.game.gameobjects.GunBuilder.GunTypes;
+import duber.game.gameobjects.GunType;
 import duber.game.gameobjects.Player.MovementState;
 
 public class MatchSounds  {
@@ -42,7 +42,7 @@ public class MatchSounds  {
         SoundSource playerSoundSource = createMatchSoundSource(true, false);
         addSoundSource(getPlayerSoundSourceName(player), playerSoundSource);
         
-        SoundData.setSourceSound(soundManager, playerSoundSource, SoundFiles.RUNNING);
+        SoundData.setSourceSound(soundManager, playerSoundSource, SoundFile.RUNNING);
 
         SoundSource gunSoundSource = createMatchSoundSource(false, false);
         addSoundSource(getGunSoundSourceName(player), gunSoundSource);
@@ -95,11 +95,11 @@ public class MatchSounds  {
     }
 
     public void playGunSoundEffect(SoundSource gunSoundSource, Gun gun) {
-        if(GunTypes.RIFLE.isGunType(gun)) {
+        if(GunType.RIFLE.isGunType(gun)) {
 
-        } else if(GunTypes.PISTOL.isGunType(gun)) {
-            SoundData.setSourceSound(soundManager, gunSoundSource, SoundFiles.PISTOL);
-        } else if(GunTypes.LMG.isGunType(gun)) {
+        } else if(GunType.PISTOL.isGunType(gun)) {
+            SoundData.setSourceSound(soundManager, gunSoundSource, SoundFile.PISTOL);
+        } else if(GunType.LMG.isGunType(gun)) {
 
         }
 

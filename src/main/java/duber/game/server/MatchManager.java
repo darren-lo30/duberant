@@ -81,6 +81,10 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         currMatchPhase.makeServerLogic(this);
         sendAllTCP(new MatchPhasePacket(currMatchPhase));
     }
+    
+    public boolean isRunning() {
+        return running;
+    }
 
     public GameMap getGameMap() {
         return gameMap;
@@ -328,6 +332,10 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         if(currMatchPhase.playerCanMove()) {
             Controls.updatePlayer(this, getUsersPlayer(user), userInputPacket.mouseInput, userInputPacket.keyboardInput);
         }
+    }
+
+    private void processPacket(User user, GunPurchasePacket gunPurchasePacket) {
+        
     }
 
     

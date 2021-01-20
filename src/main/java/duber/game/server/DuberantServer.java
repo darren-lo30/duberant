@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -30,9 +31,10 @@ public class DuberantServer {
     private volatile boolean running;
     private ServerNetwork serverNetwork;
 
-    private Set<User> usersSearchingForMatch = new HashSet<>();
+    private Set<User> usersSearchingForMatch = new LinkedHashSet<>();
     private Set<User> usersInMatch = new HashSet<>();
     private Map<Connection, User> connectedUsers = new ConcurrentHashMap<>();
+    private Set<MatchManager> matchManagers = new HashSet<>();
     
     public DuberantServer() throws IOException {
         serverNetwork = new ServerNetwork(5000);
@@ -75,6 +77,7 @@ public class DuberantServer {
         
         while(running && serverNetwork.isRunning()) {
             initializeMatches();
+            cleanupMatches();
 
             //Handle connections
             for(Connection connection : serverNetwork.getConnections()) {                
@@ -85,6 +88,7 @@ public class DuberantServer {
                 }
             }
 
+
             //Ensure that a maximum of 10 updates per second happens
             //It is fine if less than 10 updates per second happens
             elapsedTime = serverLoopTimer.getElapsedTimeAndUpdate();
@@ -94,7 +98,22 @@ public class DuberantServer {
         } 
     }
 
+    private User getUser(Connection connection) {
+        return connectedUsers.get(connection);
+    }
+
+
+    private void cleanUsersSearchingMatches() {
+        for(Iterator<User> i = usersSearchingForMatch.iterator(); i.hasNext();) {
+            User user = i.next();
+            if(!user.isLoggedIn()) {
+                i.remove();
+            }
+        }
+    }
+
     private void initializeMatches() {
+        cleanUsersSearchingMatches();
         Iterator<User> userIterator = usersSearchingForMatch.iterator();
         while(usersSearchingForMatch.size() >= MatchData.NUM_PLAYERS_IN_MATCH) {
             System.out.println("Initializing a match");
@@ -103,17 +122,33 @@ public class DuberantServer {
             for(int i = 0; i<MatchData.NUM_PLAYERS_IN_MATCH; i++) {
                 User nextUser = userIterator.next();
                 usersInMatch.add(nextUser);
-                userIterator.remove();
                 newMatchUsers.add(nextUser);
+                
+                userIterator.remove();
             }
 
             try {
                 MatchManager matchManager = new MatchManager(serverNetwork, newMatchUsers);
+                matchManagers.add(matchManager);
                 //Start a new thread with the match manager
                 new Thread(matchManager).start();
             } catch (LWJGLException le) {
                 System.out.println("Error while starting match");
                 le.printStackTrace();
+            }
+        }
+    }
+
+    private void cleanupMatches() {
+        for(Iterator<MatchManager> i = matchManagers.iterator(); i.hasNext();) {
+            MatchManager match = i.next();
+            if(!match.isRunning()) {
+                System.out.println("Match ended");
+                i.remove();
+
+                for(User user : match.getUsers()) {
+                    usersInMatch.remove(user);
+                }
             }
         }
     }
@@ -133,10 +168,6 @@ public class DuberantServer {
         }
     }
 
-    private User getUser(Connection connection) {
-        return connectedUsers.get(connection);
-    }
-
     private void processPacket(Connection connection, LoginPacket userConnectPacket) {
         String username = userConnectPacket.username;
         System.out.println("Connected with username: " + username);
@@ -153,7 +184,13 @@ public class DuberantServer {
     }
 
     private void processPacket(User user, MatchQueuePacket matchQueuePacket) {
-        //Process packet
+        if(matchQueuePacket.joinQueue) {
+            //Join match queue
+            usersSearchingForMatch.add(user);
+        } else {
+            //Leave match queue
+            usersSearchingForMatch.remove(user);
+        }
     }
 
 

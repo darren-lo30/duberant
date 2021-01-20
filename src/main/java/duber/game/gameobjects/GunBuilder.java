@@ -11,31 +11,6 @@ public class GunBuilder {
 
     private static GunBuilder instance;
 
-    public enum GunTypes {
-        RIFLE {
-            @Override
-            public String toString() {
-                return "Rifle";
-            }
-        }, 
-        LMG {
-            @Override
-            public String toString() {
-                return "Light Machine Gun";
-            }
-        }, 
-        PISTOL {
-            @Override
-            public String toString() {
-                return "Pistol";
-            }
-        };
-
-        public boolean isGunType(Gun gun) {
-            return gun.getComponent(Named.class).getName().equals(this.toString());
-        }
-    }
-
     public static GunBuilder getInstance() {
         if(instance == null) {
             instance = new GunBuilder();
@@ -50,8 +25,9 @@ public class GunBuilder {
         setPistol();
     }
 
+
     private void setRifle() {
-        String name = GunTypes.RIFLE.toString();
+        String name = GunType.RIFLE.toString();
         
         int totalBullets = 90;
         float bulletsPerSecond = 10;
@@ -65,7 +41,7 @@ public class GunBuilder {
     }
 
     private void setLmg() {
-        String name = GunTypes.LMG.toString();
+        String name = GunType.LMG.toString();
         
         int totalBullets = 50;
         float bulletsPerSecond = 14;
@@ -79,7 +55,7 @@ public class GunBuilder {
     }
 
     private void setPistol() {
-        String name = GunTypes.PISTOL.toString();
+        String name = GunType.PISTOL.toString();
         
         int totalBullets = 20;
         float bulletsPerSecond = 3.3f;
@@ -92,6 +68,7 @@ public class GunBuilder {
         pistol = new SecondaryGun(name, gunData, 500);
     }
 
+
     public <T extends Gun> T buildGunInstance(T gun, T gunInstance) {
         String name = gun.getComponent(Named.class).getName();
 
@@ -102,7 +79,18 @@ public class GunBuilder {
 
         return gunInstance;
     }
-    
+
+    public Gun buildGun(GunType gunType) {
+        if(gunType == GunType.PISTOL) {
+            return buildPistol();
+        } else if(gunType == GunType.RIFLE) {
+            return buildRifle();
+        } else if(gunType == GunType.LMG) {
+            return buildLmg();
+        }
+
+        return null;
+    }
 
     public PrimaryGun buildRifle() { 
         return buildGunInstance(rifle, new PrimaryGun());
