@@ -48,5 +48,9 @@ public class MouseInput {
     public void clear() {
         updateCursorDisplacement();
         cursorDisplacement.set(0, 0);
+        previousPos.set(0, 0);
+        currentPos.set(0, 0);
+        leftButtonIsPressed = false;
+        rightButtonIsPressed = false;
     }
 }

@@ -117,14 +117,16 @@ public class GameStateManager implements Cleansable {
     }
     
     public void update() {
+        boolean popped = false;
         while(getFocusedState() != null && getFocusedState().shouldClose()) {
             popStateLogic();
+            popped = true;
         }
 
-        if(!gameStates.isEmpty()) {
+        if(popped && !gameStates.isEmpty()) {
             gameStates.peek().enter();
         }
-        
+
         List<GameState> gameStatesList = new ArrayList<>(gameStates);
         
         //Iterate the list backwards to simulate the stack order

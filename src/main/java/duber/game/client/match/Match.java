@@ -43,6 +43,7 @@ import duber.game.networking.PlayerUpdatePacket;
 import duber.game.networking.UserInputPacket;
 import duber.game.phases.MatchPhase;
 
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_B;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 
@@ -161,6 +162,8 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     @Override
     public void enter() {
+        glfwSetCursorPos(getWindow().getWindowHandle(), 0, 0);
+
         matchSounds.configureSettings();
         getWindow().restoreState();
 
