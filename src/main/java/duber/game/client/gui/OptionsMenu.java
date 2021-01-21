@@ -43,30 +43,10 @@ public class OptionsMenu extends GUI {
 
     @Override
     public void render() {
-         // Also we can do it in one line
-         //context.updateGlfwWindow();
-
-         //Vector2i windowSize = context.getFramebufferSize();
-
-        // Set viewport size
-        //glViewport(0, 0, windowSize.x, windowSize.y);
+         
         renderer = getWindow().getDefaultInitializer().getRenderer();
         renderer.render(frame, context);
-        /*
-         // render frame
-
-         // poll events to callbacks
-
-         // Now we need to process events. Firstly we need to process system events.
-         
-         // When system events are translated to GUI events we need to process them.
-         // This event processor calls listeners added to ui components
-         
-         // When everything done we need to relayout components.
-         
-         systemEventProcessor.processEvents(frame, context);
-         // Run animations. Should be also called cause some components use animations for updating state.
-         */
+        
         getWindow().getDefaultInitializer().getSystemEventProcessor().processEvents(frame, getWindow().getDefaultInitializer().getContext());
         EventProcessorProvider.getInstance().processEvents();
         LayoutManager.getInstance().layout(frame);
@@ -78,18 +58,13 @@ public class OptionsMenu extends GUI {
         frame.getContainer().getStyle().getBackground().setColor(ColorConstants.lightBlue());
         frame.getContainer().setFocusable(false);
 
-        Button button = new Button("Add components", 20, 20, 160, 30);
+        Button button = new Button("SMG", 20, 20, 160, 30);
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
         button.getStyle().setBorder(border);
 
         boolean[] added = {false};
         button.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if (!added[0]) {
-                added[0] = true;
-                for (Component c : generateOnFly()) {
-                    frame.getContainer().add(c);
-                }
-            }
+            //Command
         });
 
         button.getListenerMap().addListener(CursorEnterEvent.class, System.out::println);
@@ -97,26 +72,7 @@ public class OptionsMenu extends GUI {
         frame.getContainer().add(button);
     }
 
-    private static List<Component> generateOnFly() {
-        List<Component> list = new ArrayList<>();
-
-        Label label = new Label(20, 60, 200, 20);
-        label.getTextState().setText("Generated on fly label");
-        label.getStyle().setTextColor(ColorConstants.red());
-
-        RadioButtonGroup group = new RadioButtonGroup();
-        RadioButton radioButtonFirst = new RadioButton("First", 20, 90, 200, 20);
-        RadioButton radioButtonSecond = new RadioButton("Second", 20, 110, 200, 20);
-
-        radioButtonFirst.setRadioButtonGroup(group);
-        radioButtonSecond.setRadioButtonGroup(group);
-
-        list.add(label);
-        list.add(radioButtonFirst);
-        list.add(radioButtonSecond);
-
-        return list;
-    }
+    
 
 
     
