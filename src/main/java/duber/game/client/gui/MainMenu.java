@@ -77,17 +77,10 @@ public class MainMenu extends GUI {
 
         frame.getContainer().add(button);
     }
+
     @Override
     public void render() {
-        getWindow().getDefaultInitializer().getContext().updateGlfwWindow();
-        Vector2i windowSize = getWindow().getDefaultInitializer().getContext().getFramebufferSize();
-        glClearColor(1, 1, 1, 1);
-        glViewport(0, 0, windowSize.x, windowSize.y);
-        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         getWindow().getDefaultInitializer().getRenderer().render(getWindow().getDefaultInitializer().getFrame(),getWindow().getDefaultInitializer().getContext());
-        glfwPollEvents();
-        glfwSwapBuffers(getWindow().getDefaultInitializer().getWindow());
-
         getWindow().getDefaultInitializer().getSystemEventProcessor().processEvents(getWindow().getDefaultInitializer().getFrame(),getWindow().getDefaultInitializer().getContext());
         EventProcessorProvider.getInstance().processEvents();
         LayoutManager.getInstance().layout(getWindow().getDefaultInitializer().getFrame());
@@ -125,8 +118,6 @@ public class MainMenu extends GUI {
             } finally {
                 loggingIn = false;
             }
-
-            
         }
 
         private void waitForLoginResponse() throws InterruptedException {
