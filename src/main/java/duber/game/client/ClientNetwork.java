@@ -53,7 +53,6 @@ public class ClientNetwork extends Listener {
 
     @Override
     public void connected(Connection connection) {
-        System.out.println("Connected!");
         this.connection = connection;
     }
 

@@ -98,16 +98,16 @@ public class HUD implements Cleansable {
         }
         
         String gunText = "Gun: " + gunType;
-        displayTextWithBackground(gunText, 0.9f, 0.8f, true, LABEL_FONT, 10f, TRANSLUCENT_BLACK);
+        displayTextWithBackground(gunText, 0.1f, 0.8f, true, LABEL_FONT, 10f, TRANSLUCENT_BLACK);
         String bulletCounterText = "Bullets remaining: " + bulletsRemaining;
-        displayTextWithBackground(bulletCounterText, 0.9f, 0.85f, true, LABEL_FONT, 10f, TRANSLUCENT_BLACK);
+        displayTextWithBackground(bulletCounterText, 0.1f, 0.85f, true, LABEL_FONT, 10f, TRANSLUCENT_BLACK);
     }
 
     private void displayPlayerData(PlayerData playerData) {
         String healthText = "HP: " + playerData.getHealth();
         String moneyText = "$" + playerData.getMoney();
-        displayTextWithBackground(healthText, 0.9f, 0.9f, true, LABEL_FONT, 10f, TRANSLUCENT_BLACK);
-        displayTextWithBackground(moneyText, 0.9f, 0.95f, true, LABEL_FONT, 10f, TRANSLUCENT_BLACK);
+        displayTextWithBackground(healthText, 0.1f, 0.9f, true, LABEL_FONT, 10f, TRANSLUCENT_BLACK);
+        displayTextWithBackground(moneyText, 0.1f, 0.95f, true, LABEL_FONT, 10f, TRANSLUCENT_BLACK);
     }
 
     private void displayInit() {

@@ -222,6 +222,7 @@ public class ShaderProgram implements Cleansable {
         glUseProgram(0);
     }
 
+    @Override
     public void cleanup() {
         unbind();
         if(programId != 0) {

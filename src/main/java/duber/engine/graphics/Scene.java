@@ -61,8 +61,8 @@ public class Scene implements Cleansable {
             //Make the mesh renderable
             renderableMesh.makeRenderable();
             
-            List<Entity> associatedRenderableEntities = meshMap.computeIfAbsent(renderableMesh, list -> new ArrayList<>());
-            associatedRenderableEntities.add(renderableEntity);
+            List<Entity> associatedEntities = meshMap.computeIfAbsent(renderableMesh, list -> new ArrayList<>());
+            associatedEntities.add(renderableEntity);
         }
     }
 
@@ -85,6 +85,7 @@ public class Scene implements Cleansable {
         skyBox = null;
     }
 
+    @Override
     public void cleanup() {
         for(Mesh renderableMesh: meshMap.keySet()) {
             renderableMesh.cleanup();

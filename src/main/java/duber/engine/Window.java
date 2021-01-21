@@ -93,9 +93,9 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-        GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
+        //GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         //windowHandle = glfwCreateWindow(vidmode.width(), vidmode.height(), title, NULL, NULL);
+        windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
         if(windowHandle == NULL) {
             throw new IllegalStateException("Could not start the window");
         }

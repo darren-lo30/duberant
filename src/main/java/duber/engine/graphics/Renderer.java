@@ -86,8 +86,6 @@ public class Renderer implements Cleansable {
         skyBoxShaderProgram.createUniform("colour");
     }
 
-
-
     public void render(Window window, Camera camera, Scene scene) {        
         //Update camera view matrix
         camera.updateViewMatrix();
