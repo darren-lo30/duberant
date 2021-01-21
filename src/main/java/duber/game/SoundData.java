@@ -9,7 +9,9 @@ import duber.engine.audio.SoundSource;
 public class SoundData {
     public enum SoundFile {
         RUNNING ("/sounds/running.ogg"),
-        PISTOL  ("/sounds/pistol.ogg");
+        PISTOL  ("/sounds/pistol.ogg"),
+        RIFLE   ("/sounds/rifle.ogg"),
+        LMG     ("/sounds/lmg.ogg");
 
         private String fileName;
         private SoundFile(String fileName) {

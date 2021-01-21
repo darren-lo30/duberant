@@ -66,6 +66,10 @@ public class MeshBody extends Component {
         }
     }
 
+    public boolean isInitialized() {
+        return meshes != null;
+    }
+
     public boolean isVisible() {
         return visible;
     }
