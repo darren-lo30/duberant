@@ -3,19 +3,34 @@ package duber.game.client.gui;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 import duber.game.User;
 import duber.game.client.Duberant;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.networking.LoginPacket;
 import duber.game.networking.LoginConfirmationPacket;
+import org.liquidengine.legui.animation.AnimatorProvider;
+import org.liquidengine.legui.component.*;
+import org.liquidengine.legui.event.CursorEnterEvent;
+import org.liquidengine.legui.event.MouseClickEvent;
+import org.liquidengine.legui.listener.CursorEnterEventListener;
+import org.liquidengine.legui.listener.MouseClickEventListener;
+import org.liquidengine.legui.listener.processor.EventProcessorProvider;
+import org.liquidengine.legui.style.border.SimpleLineBorder;
+import org.liquidengine.legui.style.color.ColorConstants;
+
+import org.liquidengine.legui.system.layout.LayoutManager;
+
+
 
 public class MainMenu extends GUI {
     private volatile boolean loggingIn = false;
-
     @Override
     public void init() throws LWJGLException {
-        // Nothing to init
+        createGui(getWindow().getDefaultInitializer().getFrame());
+        getWindow().getDefaultInitializer().getRenderer().initialize();
+       
     }
 
     @Override
@@ -33,9 +48,28 @@ public class MainMenu extends GUI {
         }
     }
 
+    public void createGui(Frame frame){
+        frame.getContainer().getStyle().getBackground().setColor(ColorConstants.lightBlue());
+        frame.getContainer().setFocusable(false);
+        Button button = new Button("Add components", 20, 20, 160, 30);
+        SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
+        button.getStyle().setBorder(border);
+        button.getListenerMap().addListener(MouseClickEvent.class, (MouseClickEventListener) event -> {
+            
+        });
+        button.getListenerMap().addListener(CursorEnterEvent.class, (CursorEnterEventListener) System.out::println);
+
+        frame.getContainer().add(button);
+    }
     @Override
     public void render() {
-        // Nothing to render currently
+        getWindow().getDefaultInitializer().getRenderer().render(getWindow().getDefaultInitializer().getFrame(),getWindow().getDefaultInitializer().getContext());
+
+
+        getWindow().getDefaultInitializer().getSystemEventProcessor().processEvents(getWindow().getDefaultInitializer().getFrame(),getWindow().getDefaultInitializer().getContext());
+        EventProcessorProvider.getInstance().processEvents();
+        LayoutManager.getInstance().layout(getWindow().getDefaultInitializer().getFrame());
+        AnimatorProvider.getAnimator().runAnimations();
     }
 
     private class LoginRequest implements Runnable {
@@ -68,10 +102,13 @@ public class MainMenu extends GUI {
                 Thread.currentThread().interrupt();
             } finally {
                 loggingIn = false;
-            }            
+            }
+
+            
         }
 
         private void waitForLoginResponse() throws InterruptedException {
+            
             BlockingQueue<Object> receivedPackets = getGame().getClientNetwork().getPackets();
             Object packet = receivedPackets.take();
             if(packet instanceof LoginConfirmationPacket) {
@@ -87,6 +124,4 @@ public class MainMenu extends GUI {
             }            
         }
     }
-
-
 }
