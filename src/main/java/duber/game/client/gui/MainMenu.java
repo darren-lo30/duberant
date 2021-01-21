@@ -2,7 +2,6 @@ package duber.game.client.gui;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
-
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
 import duber.game.User;
