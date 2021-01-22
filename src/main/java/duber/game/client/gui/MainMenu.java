@@ -13,10 +13,18 @@ import org.liquidengine.legui.event.MouseClickEvent;
 import org.liquidengine.legui.event.MouseClickEvent.MouseClickAction;
 import org.liquidengine.legui.component.Button;
 import org.liquidengine.legui.component.TextArea;
+import org.liquidengine.legui.component.Panel;
+import org.liquidengine.legui.component.*;
 import org.liquidengine.legui.style.border.SimpleLineBorder;
 import org.liquidengine.legui.style.color.ColorConstants;
 import static org.liquidengine.legui.component.optional.align.HorizontalAlign.CENTER;
 import static org.liquidengine.legui.component.optional.align.VerticalAlign.BOTTOM;
+import org.liquidengine.legui.style.Style.DisplayType;
+import org.liquidengine.legui.style.Style.PositionType;
+import org.liquidengine.legui.style.flex.FlexStyle.*;
+import org.liquidengine.legui.style.length.LengthType;
+
+
 public class MainMenu extends GUI {
     private volatile boolean loggingIn = false;
     private volatile boolean inMatchQueue = false;
@@ -47,33 +55,58 @@ public class MainMenu extends GUI {
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
+        getFrame().getContainer().getStyle().setDisplay(DisplayType.FLEX);
 
-        Button loginButton = new Button("Login", 20, 20, 160, 30);
+
+        Component frameContainer = getFrame().getContainer();
+        frameContainer.getStyle().getBackground().setColor(ColorConstants.gray());
+        frameContainer.getStyle().setPadding(10);
+        frameContainer.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
+        frameContainer.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
+        frameContainer.getStyle().setDisplay(DisplayType.FLEX);
+
+        Panel mainPanel= new Panel();
+        mainPanel.getStyle().getBackground().setColor(ColorConstants.lightGray());
+        mainPanel.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
+        mainPanel.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
+        mainPanel.getStyle().setDisplay(DisplayType.FLEX);
+        mainPanel.getStyle().setWidth(LengthType.percent(100));
+        mainPanel.getStyle().setHeight(LengthType.percent(100));
+        frameContainer.add(mainPanel);
+
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
-        loginButton.getStyle().setBorder(border);
 
+        Button loginButton = new Button("Login");
+        loginButton.getStyle().setMinWidth(160f);
+        loginButton.getStyle().setMinHeight(30f);
+        loginButton.getStyle().setBorder(border);
+        loginButton.getStyle().setMarginRight(20f);
+        loginButton.getStyle().setPosition(PositionType.RELATIVE);
+
+        Button matchButton = new Button("Find Match");
+        matchButton.getStyle().setMinWidth(480f);
+        matchButton.getStyle().setMinHeight(90f);
+        matchButton.getStyle().setBorder(border);
+        matchButton.getStyle().setPosition(PositionType.RELATIVE);
         loginButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE && !loggingIn && !getGame().isLoggedIn()) {
                 loggingIn = true;
                 new Thread(new LoginRequest("Darren")).start();
             }
         });
-
         
-        Button matchButton = new Button("Find Match", getWindow().getWidth()/2-240, getWindow().getHeight()/2-45, 480 , 90);
-        matchButton.getStyle().setFontSize(60f);
-        matchButton.getStyle().setBorder(border);
         matchButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(getGame().isLoggedIn() && event.getAction() == MouseClickAction.RELEASE) {
                 inMatchQueue = !inMatchQueue;
                 getGame().getClientNetwork().getConnection().sendTCP(new MatchQueuePacket(inMatchQueue));
             }
         });
-
-        getFrame().getContainer().add(loginButton);
-        getFrame().getContainer().add(matchButton);
+        mainPanel.add(matchButton);
+        mainPanel.add(loginButton);
+        getFrame().getContainer().add(mainPanel);
+       
         
-        
+    
     }   
 
 
