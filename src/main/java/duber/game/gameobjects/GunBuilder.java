@@ -75,9 +75,8 @@ public class GunBuilder {
         String name = gun.getComponent(Named.class).getName();
 
         //Copy important gun's fields over while leaving others untouched
-        gunInstance.addComponent(new Named(name));
-        gunInstance.addComponent(new GunData(gun.getGunData()));
-        gunInstance.addComponent(new MeshBody(gun.getComponent(MeshBody.class)));
+        gunInstance.getComponent(Named.class).setName(name);
+        gunInstance.getComponent(GunData.class).set(gun.getGunData());
 
         return gunInstance;
     }
@@ -96,7 +95,10 @@ public class GunBuilder {
 
     public void loadGunMesh(Gun gun) throws LWJGLException {
         MeshResource gunMeshResource = GunType.getGunType(gun).getGunMeshResource();
-        gun.addComponent(new MeshBody(MeshLoader.load(gunMeshResource)));
+        MeshBody gunMesh = new MeshBody(MeshLoader.load(gunMeshResource));
+        gunMesh.setVisible(true);
+
+        gun.addComponent(gunMesh);
     }
 
     public PrimaryGun buildRifle() { 

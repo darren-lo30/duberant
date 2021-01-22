@@ -1,23 +1,32 @@
 package duber.game.client.gui;
 
-import duber.engine.exceptions.LWJGLException;
+import duber.game.client.GameStateManager.GameStateOption;
+import duber.game.client.match.Match;
 
 public class ShopMenu extends GUI {
+    private Match match;
 
     @Override
-    protected void init() throws LWJGLException {
-        // TODO Auto-generated method stub
-
+    public void init() {
+        super.init();
+        match = (Match) GameStateOption.MATCH.getGameState();
     }
 
     @Override
     public void update() {
+        if(!match.getCurrMatchPhase().playerCanBuy()) {
+            setShouldClose(true);
+        }
+    }
+
+    @Override
+    public void render() {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void render() {
+    public void createGuiElements() {
         // TODO Auto-generated method stub
 
     }

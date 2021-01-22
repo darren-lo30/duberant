@@ -153,6 +153,12 @@ public class MatchManager implements Runnable, MatchPhaseManager {
                 new MatchInitializePacket(getPlayers(), usersPlayer.getId(), gameMap);
             user.getConnection().sendTCP(matchInitializePacket);
         }
+
+        for(Player player : getPlayers()) {
+            WeaponsInventory playerInventory = player.getWeaponsInventory();
+            playerInventory.setSecondaryGun(GunBuilder.getInstance().buildPistol());
+            playerInventory.equipSecondaryGun();
+        }
     }
 
     public Set<User> getUsers() {
@@ -236,14 +242,8 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         playerTransform.setScale(5.0f);
         
         //Add player camera
-        Vision playerVision = new Vision(new Vector3f(0, 30, 30));
+        Vision playerVision = new Vision(new Vector3f(0, 30, 0));
         player.addComponent(playerVision);
-
-        //Add gun
-        WeaponsInventory playerInventory = player.getWeaponsInventory();
-        playerInventory.setSecondaryGun(GunBuilder.getInstance().buildPistol());
-        playerInventory.equipSecondaryGun();
-        
         return player;
     }
     

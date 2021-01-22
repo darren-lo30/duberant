@@ -16,6 +16,7 @@ import duber.engine.utilities.Timer;
 import duber.game.MatchData;
 import duber.game.User;
 import duber.game.networking.LoginPacket;
+import duber.game.networking.MatchFoundPacket;
 import duber.game.networking.MatchQueuePacket;
 import duber.game.networking.LoginConfirmationPacket;
 
@@ -47,7 +48,6 @@ public class DuberantServer {
             @Override
             public void disconnected(Connection connection) {
                 connectedUsers.remove(connection);
-                usersSearchingForMatch.remove(getUser(connection));
             }
         });
 
@@ -119,10 +119,12 @@ public class DuberantServer {
             List<User> newMatchUsers = new ArrayList<>(MatchData.NUM_PLAYERS_IN_MATCH);
             for(int i = 0; i<MatchData.NUM_PLAYERS_IN_MATCH; i++) {
                 User nextUser = userIterator.next();
+                nextUser.getConnection().sendTCP(new MatchFoundPacket());
+
                 usersInMatch.add(nextUser);
                 newMatchUsers.add(nextUser);
-                
                 userIterator.remove();
+
             }
 
             try {
@@ -161,6 +163,7 @@ public class DuberantServer {
 
             User connectedUser = getUser(connection);
             if(connectedUser != null && packet instanceof MatchQueuePacket) {
+                System.out.println("Received match queeu packet");
                 processPacket(connectedUser, (MatchQueuePacket) packet);
             }
         }
@@ -178,7 +181,6 @@ public class DuberantServer {
         
         //Add user
         connectedUsers.put(connection, registeredUser);
-        usersSearchingForMatch.add(registeredUser);
     }
 
     private void processPacket(User user, MatchQueuePacket matchQueuePacket) {

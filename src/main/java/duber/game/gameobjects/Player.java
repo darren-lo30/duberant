@@ -1,5 +1,7 @@
 package duber.game.gameobjects;
 
+import org.joml.Vector3f;
+
 import duber.engine.entities.Camera;
 import duber.engine.entities.Entity;
 import duber.engine.entities.components.Collider;
@@ -10,6 +12,7 @@ import duber.engine.entities.components.Named;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Vision;
 import duber.engine.entities.components.RigidBody;
+import duber.engine.entities.components.Transform;
 
 /**
  * Player
@@ -108,6 +111,31 @@ public class Player extends Entity {
             }
 
             getPlayerData().addMoney(-gunCost);
+        }
+    }
+
+    /**
+     * Update the guns position relative to the player
+     */
+    public void updateEquippedGun() {
+        final float distanceFromPlayer = 10.0f;
+
+        Transform playerTransform = getComponent(Transform.class);
+        Gun equippedGun = getWeaponsInventory().getEquippedGun();
+        
+        if(equippedGun != null) {
+            //Rotate the gun relative to the player
+            Transform gunTransform = equippedGun.getComponent(Transform.class);
+            gunTransform.getRotation().set(playerTransform.getRotation());
+            
+            
+            //Rotate the gun around the players position
+            gunTransform.getPosition().set(playerTransform.getPosition());
+            
+            float yRotation = playerTransform.getRotation().y();
+            Vector3f offset = new Vector3f();
+            offset.z = (float) -Math.cos(yRotation) * distanceFromPlayer;
+            offset.x = (float) Math.sin(yRotation) * distanceFromPlayer;
         }
     }
 

@@ -96,11 +96,11 @@ public class MatchSounds  {
 
     public void playGunSoundEffect(SoundSource gunSoundSource, Gun gun) {
         if(GunType.RIFLE.isGunType(gun)) {
-
+            SoundData.setSourceSound(soundManager, gunSoundSource, SoundFile.RIFLE);
         } else if(GunType.PISTOL.isGunType(gun)) {
             SoundData.setSourceSound(soundManager, gunSoundSource, SoundFile.PISTOL);
         } else if(GunType.LMG.isGunType(gun)) {
-
+            SoundData.setSourceSound(soundManager, gunSoundSource, SoundFile.LMG);
         }
 
         gunSoundSource.play();

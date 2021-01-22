@@ -16,7 +16,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
-
 import duber.engine.Cleansable;
 import duber.engine.KeyboardInput;
 import duber.engine.MouseInput;
@@ -31,8 +30,11 @@ import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Renderer;
 import duber.engine.graphics.Scene;
 import duber.engine.loaders.MeshLoader;
+import duber.game.gameobjects.Gun;
+import duber.game.gameobjects.GunBuilder;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
+import duber.game.gameobjects.WeaponsInventory;
 import duber.game.phases.MatchPhaseManager;
 import duber.game.client.GameState;
 import duber.game.client.GameStateManager.GameStateOption;
@@ -63,7 +65,26 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     private MouseInput mouseInput;
     private KeyboardInput keyboardInput;
     
-    
+    @Override
+    public void init() {
+        try {
+            renderer = new Renderer();
+            hud = new HUD(getWindow());
+        } catch (IOException | LWJGLException e) {
+            leave();
+        }
+
+        gameScene = new Scene();
+
+        matchSounds = new MatchSounds(this, getGame().getSoundManager());
+        
+        mouseInput = new MouseInput();
+        keyboardInput = new KeyboardInput();
+        
+        configureMouseCallbacks();
+        configureKeyboardCallbacks();
+    }
+
     private void configureMouseCallbacks() {
         List<CallbackI> callbacks = getCallbacks();
         
@@ -117,26 +138,6 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
             }
         };
         callbacks.add(keyboardCallback);
-    }
-
-    @Override
-    public void init() {
-        try {
-            renderer = new Renderer();
-            hud = new HUD(getWindow());
-        } catch (IOException | LWJGLException e) {
-            leave();
-        }
-
-        gameScene = new Scene();
-
-        matchSounds = new MatchSounds(this, getGame().getSoundManager());
-        
-        mouseInput = new MouseInput();
-        keyboardInput = new KeyboardInput();
-        
-        configureMouseCallbacks();
-        configureKeyboardCallbacks();
     }
 
     @Override
@@ -197,7 +198,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         if(currMatchPhase != null) {
             currMatchPhase.render();
         } else {
-            String matchSearchingMessage = "Finding a match...";
+            String matchSearchingMessage = "Waiting for server...";
             hud.displayText(matchSearchingMessage, 0.5f, 0.5f, true, HUD.TITLE_FONT);
         }
     }
@@ -212,6 +213,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     public Collection<Player> getPlayers() {
         return playersById.values();
+    }
+
+    public MatchPhase getCurrMatchPhase() {
+        return currMatchPhase;
     }
 
     public Player getMainPlayer() {
@@ -317,9 +322,44 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         //Update other player information
         modifiedPlayer.getScore().set(playerUpdatePacket.playerScore);
         modifiedPlayer.getPlayerData().set(playerUpdatePacket.playerData);
-        modifiedPlayer.getWeaponsInventory().updateData(playerUpdatePacket.playerInventory);
+
+        updateWeapons(modifiedPlayer.getWeaponsInventory(), playerUpdatePacket.playerInventory);
     }
 
+    private void updateWeapons(WeaponsInventory weaponsInventory, WeaponsInventory updatedInventory) {
+        Gun oldPrimaryGun = weaponsInventory.getPrimaryGun();
+        Gun oldSecondaryGun = weaponsInventory.getSecondaryGun();
+
+        weaponsInventory.updateData(updatedInventory);
+        
+        Gun newPrimaryGun = weaponsInventory.getPrimaryGun();
+        Gun newSecondaryGun = weaponsInventory.getSecondaryGun();
+
+        try {
+            if(newPrimaryGun != oldPrimaryGun) {
+                if(oldPrimaryGun != null) {
+                    gameScene.removeRenderableEntity(oldPrimaryGun);
+                }
+                if(newPrimaryGun != null) {
+                    GunBuilder.getInstance().loadGunMesh(newPrimaryGun);
+                    gameScene.addRenderableEntity(newPrimaryGun);
+                }
+            }
+    
+            if(newSecondaryGun != oldSecondaryGun) {
+                if(oldSecondaryGun != null) {
+                    gameScene.removeRenderableEntity(oldSecondaryGun);
+                }
+                if(newSecondaryGun != null) {
+                    GunBuilder.getInstance().loadGunMesh(newSecondaryGun);
+                    gameScene.addRenderableEntity(newSecondaryGun);
+                }
+            }
+        } catch (LWJGLException le) {
+            System.err.println("Unable to load gun mesh");
+        }
+    }
+    
     private void processPacket(MatchPhasePacket matchPhasePacket) {
         changeMatchPhase(matchPhasePacket.currMatchPhase);
     }

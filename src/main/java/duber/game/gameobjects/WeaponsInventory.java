@@ -1,6 +1,7 @@
 package duber.game.gameobjects;
 
 import duber.engine.entities.components.Component;
+import duber.engine.entities.components.Named;
 
 public class WeaponsInventory extends Component {
     private static final int PRIMARY_GUN_IDX = 0;
@@ -9,13 +10,33 @@ public class WeaponsInventory extends Component {
     Gun[] guns = new Gun[2];
     private int equippedGunIdx = 0;
 
-    public void updateData(WeaponsInventory weaponsInventory) {
-        setPrimaryGun(weaponsInventory.getPrimaryGun());
-        setSecondaryGun(weaponsInventory.getSecondaryGun());
+    public void updateData(WeaponsInventory updatedInventory) {
+        if(!updateGunData(getPrimaryGun(), updatedInventory.getPrimaryGun())) {
+            setPrimaryGun(updatedInventory.getPrimaryGun());
+        }
+
+        if(!updateGunData(getSecondaryGun(), updatedInventory.getSecondaryGun())) {
+            setSecondaryGun(updatedInventory.getSecondaryGun());
+        }
 
         //Update equipped index
-        equippedGunIdx = weaponsInventory.getEquippedGunIdx();
+        equippedGunIdx = updatedInventory.getEquippedGunIdx();
     }    
+
+    private boolean updateGunData(Gun gun, Gun newGun) {
+        if(gun == null || newGun == null) {
+            return false;
+        }
+        
+        String gunType = gun.getComponent(Named.class).getName();
+        String newGunType = newGun.getComponent(Named.class).getName();
+        if(!gunType.equals(newGunType)) {
+            return false;
+        } 
+        
+        gun.getGunData().set(newGun.getGunData());
+        return true;
+    }
     
     public void clear() {
         guns[0] = null;

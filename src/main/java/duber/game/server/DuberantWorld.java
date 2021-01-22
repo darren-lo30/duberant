@@ -101,6 +101,13 @@ public class DuberantWorld extends PhysicsWorld {
 
     @Override
     public void update() {
-        dynamicEntities.forEach(entity -> updateEntityPhysics(entity));
+        for(Entity entity : dynamicEntities) {
+            updateEntityPhysics(entity);
+
+            if(entity instanceof Player) {
+                //Player player = (Player) entity;
+                //player.updateEquippedGun();
+            }
+        }
     }
 }

@@ -52,7 +52,6 @@ public class GameMap {
 
         for(int i = 0; i<MatchData.NUM_PLAYERS_PER_TEAM; i++) {
             Player currPlayer = players.get(i);
-            System.out.println("Initial pos: " + initialPositions[i]);
             currPlayer.getComponent(Transform.class).getPosition().set(initialPositions[i]);
         }
     }

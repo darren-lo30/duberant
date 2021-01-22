@@ -1,16 +1,10 @@
 package duber.game.client.gui;
 
-import duber.engine.exceptions.LWJGLException;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.client.match.Match;
 import duber.game.gameobjects.Scoreboard;
 
 public class ScoreboardDisplay extends GUI {
-    @Override
-    protected void init() throws LWJGLException {
-        // TODO Auto-generated method stub
-    }
-
     @Override
     public void enter() {
         super.enter();
@@ -34,6 +28,12 @@ public class ScoreboardDisplay extends GUI {
 
     private Scoreboard getMatchScoreboard() {
         return ((Match) getManager().getState(GameStateOption.MATCH)).getScoreboard();
+    }
+
+    @Override
+    public void createGuiElements() {
+        // TODO Auto-generated method stub
+
     }
     
 }

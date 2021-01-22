@@ -43,8 +43,7 @@ public abstract class Gun extends Entity {
         gunData.setLastFiredTime(System.currentTimeMillis());   
     }
 
-    public static class GunData extends Component {        
-        
+    public static class GunData extends Component {                
         private int totalBullets;
         private int remainingBullets;
         private float bulletsPerSecond;
@@ -67,6 +66,14 @@ public abstract class Gun extends Entity {
             lastFiredTime = System.currentTimeMillis();
 
             this.gunBullets = gunBullets;
+        }
+
+        public void set(GunData gunData) {
+            totalBullets = gunData.totalBullets;
+            remainingBullets = gunData.remainingBullets;
+            bulletsPerSecond = gunData.bulletsPerSecond;
+            lastFiredTime = gunData.lastFiredTime;
+            gunBullets = gunData.gunBullets;
         }
 
         public int getTotalBullets() {
