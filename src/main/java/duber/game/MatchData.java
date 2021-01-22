@@ -16,7 +16,7 @@ public class MatchData {
     public static final int NUM_ROUNDS_TO_WIN = (int) Math.ceil(NUM_ROUNDS/2.0);
 
     //Match models
-    public static final MeshResource playerModel = new MeshResource("models/cube/cube.obj", "models/cube");
+    public static final MeshResource playerModel = new MeshResource("models/player/player.obj", "models/player");
     public static final MeshResource mapModel = new MeshResource("models/map/map.obj", "models/map");
     public static final MeshResource skyBoxModel = new MeshResource("models/skybox/skybox.obj", "models/skybox");
     

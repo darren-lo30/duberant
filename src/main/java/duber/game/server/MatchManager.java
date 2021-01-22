@@ -292,17 +292,19 @@ public class MatchManager implements Runnable, MatchPhaseManager {
             gameWorld.addDynamicEntity(player);
 
             //Give player money
-            player.getPlayerData().addMoney(1000);            
+            player.getPlayerData().addMoney(1000); 
+            player.getPlayerData().setMovementState(MovementState.STOP);
+           
         } 
 
-        resetPlayerStates();
+        resetPlayerMovement();
 
         //Reset player positions
         gameMap.setPlayerInitialPositions(MatchData.RED_TEAM, getPlayersByTeam(MatchData.RED_TEAM));
         gameMap.setPlayerInitialPositions(MatchData.BLUE_TEAM, getPlayersByTeam(MatchData.BLUE_TEAM));
     }
 
-    public void resetPlayerStates() {
+    public void resetPlayerMovement() {
         for(Player player : getPlayers()) {
             player.getPlayerData().setMovementState(MovementState.STOP);
         }

@@ -198,8 +198,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         if(isInitialized()) {
             currMatchPhase.render();
         } else {
-            String matchSearchingMessage = "Waiting for server...";
-            hud.displayText(matchSearchingMessage, 0.5f, 0.5f, true, HUD.TITLE_FONT);
+            hud.displayText("Waiting for server...", 0.5f, 0.5f, true, HUD.TITLE_FONT);
         }
     }
 
@@ -278,6 +277,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
             for(Player player : getPlayers()) {
                 MeshBody playerMeshBody = new MeshBody(playerMeshes, true);
                 player.addComponent(playerMeshBody);
+
+                if(player == mainPlayer) {
+                    playerMeshBody.setVisible(false);
+                }
             }
     
             //Set mainMap meshes
@@ -317,7 +320,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         //Update the player position and camera
         modifiedPlayer.getComponent(Transform.class).set(playerUpdatePacket.playerTransform);
         modifiedPlayer.getView().getComponent(Transform.class).set(playerUpdatePacket.cameraTransform);
-        modifiedPlayer.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
+        
+        if(modifiedPlayer != mainPlayer) {
+            modifiedPlayer.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
+        }
 
         //Update other player information
         modifiedPlayer.getScore().set(playerUpdatePacket.playerScore);

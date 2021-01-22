@@ -76,7 +76,20 @@ public class Controls {
         return controlVelocity;
     }
 
+    private static void updatePlayerRotation(Player player, MouseInput mouseInput) {
+        //Update player rotation
+        Vector2f controlRotation = mouseInput.getCursorDisplacement();
+        player.getComponent(RigidBody.class).getAngularVelocity().add(
+            0.0f, controlRotation.x * mouseSensitivity, 0.0f);
 
+        Vector3f playerRotation = player.getComponent(Transform.class).getRotation();
+        Transform cameraTransform = player.getView().getComponent(Transform.class);
+        cameraTransform.getRotation().y = playerRotation.y;
+        cameraTransform.getRotation().z = playerRotation.z;
+        cameraTransform.rotate(controlRotation.y * mouseSensitivity, 0, 0);
+    }
+
+    
     public static void updatePlayer(MatchManager match, Player player, MouseInput mouseInput, KeyboardInput keyboardInput) {
         PlayerData playerData = player.getPlayerData();
 
@@ -85,11 +98,7 @@ public class Controls {
         Vector3f playerVelocity = player.getComponent(RigidBody.class).getVelocity();
         addControlVelocity(playerVelocity, player.getComponent(Transform.class).getRotation(), controlVelocity);
         
-        //Update player rotation
-        Vector2f controlRotation = mouseInput.getCursorDisplacement();
-        player.getComponent(RigidBody.class).getAngularVelocity().add(
-            controlRotation.y * mouseSensitivity, controlRotation.x * mouseSensitivity, 0.0f);
-
+        updatePlayerRotation(player, mouseInput);
         
         //Make player shoot
         if(mouseInput.leftButtonIsPressed() && player.canShoot()) {
