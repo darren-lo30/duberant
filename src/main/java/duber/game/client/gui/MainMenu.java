@@ -35,6 +35,7 @@ public class MainMenu extends GUI {
                 connectedUser.setConnection(getGame().getClientNetwork().getConnection());
                 getGame().setUser(connectedUser);
             } else if(getGame().isLoggedIn() && packet instanceof MatchFoundPacket) {
+                inMatchQueue = false;
                 getManager().pushState(GameStateOption.MATCH);
             }
         }
@@ -45,11 +46,11 @@ public class MainMenu extends GUI {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.lightBlue());
         getFrame().getContainer().setFocusable(false);
 
-        Button logginButton = new Button("Login", 20, 20, 160, 30);
+        Button loginButton = new Button("Login", 20, 20, 160, 30);
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
-        logginButton.getStyle().setBorder(border);
+        loginButton.getStyle().setBorder(border);
 
-        logginButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
+        loginButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE && !loggingIn && !getGame().isLoggedIn()) {
                 loggingIn = true;
                 new Thread(new LoginRequest("Darren")).start();
@@ -66,7 +67,7 @@ public class MainMenu extends GUI {
             }
         });
 
-        getFrame().getContainer().add(logginButton);
+        getFrame().getContainer().add(loginButton);
         getFrame().getContainer().add(matchButton);
     }
 
@@ -76,7 +77,6 @@ public class MainMenu extends GUI {
         public LoginRequest(String username) {
             this.username = username;
         }
-
 
         @Override
         public void run() {
