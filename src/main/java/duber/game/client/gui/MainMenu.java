@@ -12,9 +12,11 @@ import duber.game.networking.LoginConfirmationPacket;
 import org.liquidengine.legui.event.MouseClickEvent;
 import org.liquidengine.legui.event.MouseClickEvent.MouseClickAction;
 import org.liquidengine.legui.component.Button;
+import org.liquidengine.legui.component.TextArea;
 import org.liquidengine.legui.style.border.SimpleLineBorder;
 import org.liquidengine.legui.style.color.ColorConstants;
-
+import static org.liquidengine.legui.component.optional.align.HorizontalAlign.CENTER;
+import static org.liquidengine.legui.component.optional.align.VerticalAlign.BOTTOM;
 public class MainMenu extends GUI {
     private volatile boolean loggingIn = false;
     private volatile boolean inMatchQueue = false;
@@ -42,8 +44,10 @@ public class MainMenu extends GUI {
 
     @Override
     public void createGuiElements() {
-        getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.lightBlue());
+        getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
+
+        
 
         Button logginButton = new Button("Login", 20, 20, 160, 30);
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
@@ -57,7 +61,8 @@ public class MainMenu extends GUI {
         });
 
         
-        Button matchButton = new Button("Find Match", 20, 100, 160, 30);
+        Button matchButton = new Button("Find Match", getWindow().getWidth()/2-240, getWindow().getHeight()/2-45, 480 , 90);
+        matchButton.getStyle().setFontSize(60f);
         matchButton.getStyle().setBorder(border);
         matchButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(getGame().isLoggedIn() && event.getAction() == MouseClickAction.RELEASE) {
@@ -68,7 +73,10 @@ public class MainMenu extends GUI {
 
         getFrame().getContainer().add(logginButton);
         getFrame().getContainer().add(matchButton);
-    }
+        
+        
+    }   
+
 
     private class LoginRequest implements Runnable {
         private String username;
