@@ -28,6 +28,7 @@ import duber.game.MatchData;
 import duber.game.gameobjects.GameMap;
 import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.GunBuilder;
+import duber.game.gameobjects.GunType;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.gameobjects.Player.MovementState;
@@ -156,8 +157,8 @@ public class MatchManager implements Runnable, MatchPhaseManager {
 
         for(Player player : getPlayers()) {
             WeaponsInventory playerInventory = player.getWeaponsInventory();
-            playerInventory.setPrimaryGun(GunBuilder.getInstance().buildRifle());
-            playerInventory.setSecondaryGun(GunBuilder.getInstance().buildPistol());
+            playerInventory.setPrimaryGun(GunBuilder.getInstance().buildGun(GunType.RIFLE));
+            playerInventory.setSecondaryGun(GunBuilder.getInstance().buildGun(GunType.PISTOL));
             playerInventory.equipPrimaryGun();
         }
     }

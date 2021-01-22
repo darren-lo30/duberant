@@ -4,13 +4,19 @@ import duber.engine.entities.components.Named;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.loaders.MeshLoader;
 import duber.engine.loaders.MeshResource;
+
+import java.util.EnumMap;
+import java.util.Map;
+
 import duber.engine.entities.components.MeshBody;
 import duber.game.gameobjects.Gun.GunData;
 
+import static duber.game.gameobjects.Gun.GunData.PRIMARY_GUN;
+import static duber.game.gameobjects.Gun.GunData.SECONDARY_GUN;;
+
 public class GunBuilder {
-    private PrimaryGun rifle;
-    private PrimaryGun lmg;
-    private SecondaryGun pistol;
+    private Map<GunType, Gun> guns;
+    private Map<GunType, MeshBody> gunMeshes;
 
     private static GunBuilder instance;
 
@@ -18,11 +24,13 @@ public class GunBuilder {
         if(instance == null) {
             instance = new GunBuilder();
         }
-
         return instance;
     }
     
     private GunBuilder() {
+        guns = new EnumMap<>(GunType.class);
+        gunMeshes = new EnumMap<>(GunType.class);
+        
         setRifle();
         setLmg();
         setPistol();
@@ -37,9 +45,10 @@ public class GunBuilder {
         int damagePerBullet = 40;
 
         Bullet bullet = new Bullet(damagePerBullet);
-        GunData gunData = new GunData(totalBullets, bulletsPerSecond, bullet);
+        GunData gunData = new GunData(PRIMARY_GUN, totalBullets, bulletsPerSecond, bullet);
 
-        rifle = new PrimaryGun(name, gunData, 2500);
+        Gun rifle = new Gun(name, gunData, 2500);
+        guns.put(GunType.RIFLE, rifle);
     }
 
     private void setLmg() {
@@ -51,9 +60,10 @@ public class GunBuilder {
         int damagePerBullet = 22;
 
         Bullet bullet = new Bullet(damagePerBullet);
-        GunData gunData = new GunData(totalBullets, bulletsPerSecond, bullet);
+        GunData gunData = new GunData(PRIMARY_GUN, totalBullets, bulletsPerSecond, bullet);
 
-        lmg = new PrimaryGun(name, gunData, 2000);
+        Gun lmg = new Gun(name, gunData, 2000);
+        guns.put(GunType.LMG, lmg);
     }
 
     private void setPistol() {
@@ -65,11 +75,11 @@ public class GunBuilder {
         int damagePerBullet = 20;
 
         Bullet bullet = new Bullet(damagePerBullet);
-        GunData gunData = new GunData(totalBullets, bulletsPerSecond, bullet);
+        GunData gunData = new GunData(SECONDARY_GUN, totalBullets, bulletsPerSecond, bullet);
 
-        pistol = new SecondaryGun(name, gunData, 500);
+        Gun pistol = new Gun(name, gunData, 500);
+        guns.put(GunType.PISTOL, pistol);
     }
-
 
     public <T extends Gun> T buildGunInstance(T gun, T gunInstance) {
         String name = gun.getComponent(Named.class).getName();
@@ -77,40 +87,34 @@ public class GunBuilder {
         //Copy important gun's fields over while leaving others untouched
         gunInstance.getComponent(Named.class).setName(name);
         gunInstance.getComponent(GunData.class).set(gun.getGunData());
+        gunInstance.getComponent(MeshBody.class).set(gun.getComponent(MeshBody.class));
 
         return gunInstance;
     }
 
     public Gun buildGun(GunType gunType) {
-        if(gunType == GunType.PISTOL) {
-            return buildPistol();
-        } else if(gunType == GunType.RIFLE) {
-            return buildRifle();
-        } else if(gunType == GunType.LMG) {
-            return buildLmg();
-        }
-
-        return null;
+        return buildGunInstance(guns.get(gunType), new Gun());
     }
 
     public void loadGunMesh(Gun gun) throws LWJGLException {
-        MeshResource gunMeshResource = GunType.getGunType(gun).getGunMeshResource();
-        MeshBody gunMesh = new MeshBody(MeshLoader.load(gunMeshResource));
+        if(gun == null) {
+            return;
+        }
+        
+        GunType gunType = GunType.getGunType(gun);
+        if(gunType == null) {
+            throw new IllegalArgumentException("The gun is not registered with a mesh");
+        }
+
+        if(!gunMeshes.containsKey(gunType)) {
+            MeshResource gunMeshResource = gunType.getGunMeshResource();
+            gunMeshes.put(gunType, new MeshBody(MeshLoader.load(gunMeshResource)));
+        }
+        
+        MeshBody gunMesh = new MeshBody(gunMeshes.get(gunType));
         gunMesh.setVisible(true);
 
         gun.addComponent(gunMesh);
-    }
-
-    public PrimaryGun buildRifle() { 
-        return buildGunInstance(rifle, new PrimaryGun());
-    }
-
-    public PrimaryGun buildLmg() {
-        return buildGunInstance(lmg, new PrimaryGun());
-    }
-
-    public SecondaryGun buildPistol() {
-        return buildGunInstance(pistol, new SecondaryGun());
     }
 
 }

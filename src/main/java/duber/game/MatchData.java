@@ -7,6 +7,7 @@ public class MatchData {
     public static final int NUM_PLAYERS_PER_TEAM = 1;
     public static final int NUM_PLAYERS_IN_MATCH = NUM_PLAYERS_PER_TEAM * 2;
     
+    //DO NOT CHANGE
     public static final int NULL_TEAM = -1;
     public static final int RED_TEAM = 0;
     public static final int BLUE_TEAM = 1;
@@ -18,10 +19,6 @@ public class MatchData {
     public static final MeshResource playerModel = new MeshResource("models/cube/cube.obj", "models/cube");
     public static final MeshResource mapModel = new MeshResource("models/map/map.obj", "models/map");
     public static final MeshResource skyBoxModel = new MeshResource("models/skybox/skybox.obj", "models/skybox");
-
-    public static final MeshResource rifleModel = null;
-    public static final MeshResource pistolModel = null;
-    public static final MeshResource lmgModel = null;
     
     private MatchData() {}
 

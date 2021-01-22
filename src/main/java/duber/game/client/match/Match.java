@@ -183,7 +183,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     public void update() {       
         mouseInput.updateCursorDisplacement(); 
         
-        if(currMatchPhase != null) {
+        if(isInitialized()) {
             if(!currMatchPhase.playerCanBuy() && GameStateOption.SHOP_MENU.getGameState().isOpened()) {
                 GameStateOption.SHOP_MENU.getGameState().setShouldClose(true);
             }
@@ -195,7 +195,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     @Override
     public void render() {
-        if(currMatchPhase != null) {
+        if(isInitialized()) {
             currMatchPhase.render();
         } else {
             String matchSearchingMessage = "Waiting for server...";
@@ -323,10 +323,11 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         modifiedPlayer.getScore().set(playerUpdatePacket.playerScore);
         modifiedPlayer.getPlayerData().set(playerUpdatePacket.playerData);
 
-        updateWeapons(modifiedPlayer.getWeaponsInventory(), playerUpdatePacket.playerInventory);
-        Gun equippedGun = modifiedPlayer.getWeaponsInventory().getEquippedGun();
+        updatePlayerWeapons(modifiedPlayer.getWeaponsInventory(), playerUpdatePacket.playerInventory);
         
         if(modifiedPlayer == mainPlayer) {
+            Gun equippedGun = modifiedPlayer.getWeaponsInventory().getEquippedGun();
+
             if(equippedGun != null) {
                 equippedGun.getComponent(Transform.class).setRelativeView(false);
                 equippedGun.getComponent(Transform.class).getPosition().set(5.5f, -5, -7);
@@ -334,50 +335,22 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         }
     }
 
-    private void updateWeapons(WeaponsInventory weaponsInventory, WeaponsInventory updatedInventory) {
-        Gun oldPrimaryGun = weaponsInventory.getPrimaryGun();
-        Gun oldSecondaryGun = weaponsInventory.getSecondaryGun();
+    private void updatePlayerWeapons(WeaponsInventory weaponsInventory, WeaponsInventory updatedWeaponsInventory) {
+        gameScene.removeRenderableEntity(weaponsInventory.getPrimaryGun());
+        gameScene.removeRenderableEntity(weaponsInventory.getSecondaryGun());
 
-        weaponsInventory.updateData(updatedInventory);
-        
-        Gun newPrimaryGun = weaponsInventory.getPrimaryGun();
-        Gun newSecondaryGun = weaponsInventory.getSecondaryGun();
+        weaponsInventory.set(updatedWeaponsInventory);
 
         try {
-            if(newPrimaryGun != oldPrimaryGun) {
-                if(oldPrimaryGun != null) {
-                    gameScene.removeRenderableEntity(oldPrimaryGun);
-                }
-                if(newPrimaryGun != null) {
-                    GunBuilder.getInstance().loadGunMesh(newPrimaryGun);
-                    gameScene.addRenderableEntity(newPrimaryGun);
-                }
-            }
-    
-            if(newSecondaryGun != oldSecondaryGun) {
-                if(oldSecondaryGun != null) {
-                    gameScene.removeRenderableEntity(oldSecondaryGun);
-                }
-                if(newSecondaryGun != null) {
-                    GunBuilder.getInstance().loadGunMesh(newSecondaryGun);
-                    gameScene.addRenderableEntity(newSecondaryGun);
-                }
-            }
+            GunBuilder.getInstance().loadGunMesh(weaponsInventory.getPrimaryGun());
+            GunBuilder.getInstance().loadGunMesh(weaponsInventory.getSecondaryGun());
         } catch (LWJGLException le) {
-            System.err.println("Unable to load gun mesh");
-        }
-        
-        if(newPrimaryGun != null) {
-            newPrimaryGun.getComponent(MeshBody.class).setVisible(false);
-        }
-        if(newSecondaryGun != null) {
-            newSecondaryGun.getComponent(MeshBody.class).setVisible(false);
+            System.err.println("Could not load gun meshes");
         }
 
-        if(weaponsInventory.getEquippedGun() != null) {
-            weaponsInventory.getEquippedGun().getComponent(MeshBody.class).setVisible(true);
-        }
-    }
+        gameScene.addRenderableEntity(weaponsInventory.getEquippedGun());
+    } 
+
     
     private void processPacket(MatchPhasePacket matchPhasePacket) {
         changeMatchPhase(matchPhasePacket.currMatchPhase);
