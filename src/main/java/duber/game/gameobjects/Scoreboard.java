@@ -7,69 +7,52 @@ import java.util.List;
 import duber.game.MatchData;
 
 public class Scoreboard {
-    private int redWins;
-    private int blueWins;
 
-    private List<Score> redTeamScores = new ArrayList<>();
-    private List<Score> blueTeamScores = new ArrayList<>();
+    private int[] teamWins = new int[2];
+    private List<List<Score>> teamScores = new ArrayList<>(2);
 
     public Scoreboard(Collection<Player> players) {
+        for(int i = 0; i<2; i++) {
+            teamScores.add(new ArrayList<>());
+        }
+
         for(Player player: players) {
             addPlayer(player);
         }
     }
     
     public int getWins(int team) {
-        if(team == MatchData.RED_TEAM) {
-            return redWins;
-        } else if(team == MatchData.BLUE_TEAM) {
-            return blueWins;
-        }
-
-        return 0;
+        return teamWins[team];
     }
     
     public int getTotalRounds() {
-        return redWins + blueWins;
+        return teamWins[MatchData.RED_TEAM] + teamWins[MatchData.BLUE_TEAM];
     }
 
     public void addPlayer(Player player) {
         int team = player.getPlayerData().getTeam();
         Score playerScore = player.getScore();
 
-        if(team == MatchData.RED_TEAM) {
-            redTeamScores.add(playerScore);
-        } else if (team == MatchData.BLUE_TEAM) {
-            blueTeamScores.add(playerScore);
-        }
+        teamScores.get(team).add(playerScore);
     }
 
     public void addWin(int team) {
-        if(team == MatchData.RED_TEAM) {
-            redWins++;
-        } else if(team == MatchData.BLUE_TEAM) {
-            blueWins++;
-        }
+        teamWins[team]++;
     }
 
     List<Score> getScores(int team) {
-        if(team == MatchData.RED_TEAM) {
-            return redTeamScores;
-        } else {
-            return blueTeamScores;
-        }
+        return teamScores.get(team);
     }
 
     public void updateScoreboard() {
-        reorderScores(redTeamScores);
-        reorderScores(blueTeamScores);
+        reorderScores(getScores(MatchData.RED_TEAM));
+        reorderScores(getScores(MatchData.BLUE_TEAM));
     }
-
     
     public int getWinner() {
-        if(redWins >= MatchData.NUM_ROUNDS_TO_WIN) {
+        if(teamWins[MatchData.RED_TEAM] >= MatchData.NUM_ROUNDS_TO_WIN) {
             return MatchData.RED_TEAM;
-        } else if(blueWins >= MatchData.NUM_ROUNDS_TO_WIN) {
+        } else if(teamWins[MatchData.BLUE_TEAM] >= MatchData.NUM_ROUNDS_TO_WIN) {
             return MatchData.BLUE_TEAM;
         }
 

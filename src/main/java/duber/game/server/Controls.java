@@ -19,9 +19,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 
-
-
-
 public class Controls {
     private static float mouseSensitivity = 0.0006f;
 
@@ -98,20 +95,18 @@ public class Controls {
         }
 
         if(keyboardInput.isKeyPressed(JUMP)) {
-            playerData.setState(MovementState.JUMPING);
+            playerData.setMovementState(MovementState.JUMPING);
         }
         
         //Set player movement state
         if(!playerData.isJumping()) {
             if(controlVelocity.equals(0, 0, 0)) {
-                playerData.setState(MovementState.STOP);
+                playerData.setMovementState(MovementState.STOP);
             } else if(keyboardInput.isKeyPressed(WALK)) {
-                playerData.setState(MovementState.WALKING);
+                playerData.setMovementState(MovementState.WALKING);
             } else {
-                playerData.setState(MovementState.RUNNING);
+                playerData.setMovementState(MovementState.RUNNING);
             }
-        }
-
-        
+        }   
     }
 }

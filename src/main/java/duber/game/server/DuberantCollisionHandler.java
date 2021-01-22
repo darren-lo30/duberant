@@ -97,7 +97,7 @@ public class DuberantCollisionHandler implements ICollisionHandler {
                 collisionWithGround(collisionResponse)) {
                 
                 //Make player not jumping anymore
-                player.getPlayerData().setState(MovementState.STOP);
+                player.getPlayerData().setMovementState(MovementState.STOP);
             }
         }
     }

@@ -302,7 +302,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
 
     public void resetPlayerStates() {
         for(Player player : getPlayers()) {
-            player.getPlayerData().setState(MovementState.STOP);
+            player.getPlayerData().setMovementState(MovementState.STOP);
         }
     }
 

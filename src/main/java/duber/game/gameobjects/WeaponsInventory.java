@@ -2,6 +2,7 @@ package duber.game.gameobjects;
 
 import duber.engine.entities.components.Component;
 import duber.engine.entities.components.Named;
+import duber.engine.entities.components.Transform;
 
 public class WeaponsInventory extends Component {
     private static final int PRIMARY_GUN_IDX = 0;
@@ -34,6 +35,7 @@ public class WeaponsInventory extends Component {
             return false;
         } 
         
+        gun.getComponent(Transform.class).set(newGun.getComponent(Transform.class));
         gun.getGunData().set(newGun.getGunData());
         return true;
     }

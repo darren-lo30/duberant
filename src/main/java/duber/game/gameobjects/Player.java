@@ -118,26 +118,34 @@ public class Player extends Entity {
      * Update the guns position relative to the player
      */
     public void updateEquippedGun() {
-        final float distanceFromPlayer = 10.0f;
-
-        Transform playerTransform = getComponent(Transform.class);
+        Transform cameraTransform = getView().getComponent(Transform.class);
         Gun equippedGun = getWeaponsInventory().getEquippedGun();
         
         if(equippedGun != null) {
             //Rotate the gun relative to the player
             Transform gunTransform = equippedGun.getComponent(Transform.class);
-            gunTransform.getRotation().set(playerTransform.getRotation());
+
+            Vector3f cameraRotation = cameraTransform.getRotation();
+            Vector3f cameraPosition = cameraTransform.getPosition();
+            /*
+            gunTransform.getRotation().set(cameraRotation.x(), cameraRotation.y() - Math.PI, cameraRotation.z());
+
+            gunTransform.getPosition().set(
+                cameraPosition.x() - Math.sin(cameraRotation.y() + Math.PI/6) * 0.6f,
+                cameraPosition.y() - 0.5f,
+                cameraPosition.z() + Math.cos(cameraRotation.y() + Math.PI/6) * 0.6f;
+            )*/
             
-            
-            //Rotate the gun around the players position
-            gunTransform.getPosition().set(playerTransform.getPosition());
-            
-            float yRotation = playerTransform.getRotation().y();
-            Vector3f offset = new Vector3f();
-            offset.z = (float) -Math.cos(yRotation) * distanceFromPlayer;
-            offset.x = (float) Math.sin(yRotation) * distanceFromPlayer;
+            gunTransform.getPosition().set(
+                cameraPosition.x() + 5*Math.sin(cameraRotation.y() + Math.PI/6),
+                cameraPosition.y() - 7,
+                cameraPosition.z() - 5*Math.cos(cameraRotation.y() + Math.PI/6)
+            );
+
+            gunTransform.getRotation().set(cameraRotation.x(), cameraRotation.y(), cameraRotation.z());
         }
     }
+
 
     public enum MovementState {
         STOP,
@@ -153,7 +161,7 @@ public class Player extends Entity {
         public static final int DEFAULT_HEALTH = 150;
         
         private int team = 0;
-        private MovementState playerMovement = MovementState.STOP;
+        private MovementState movementState = MovementState.STOP;
         private float runningSpeed = 1.3f;
         private float walkingSpeed = 0.7f;
         private float jumpingSpeed = 3.0f;
@@ -162,7 +170,7 @@ public class Player extends Entity {
 
         public void set(PlayerData playerData) {
             team = playerData.team;
-            playerMovement = playerData.playerMovement;
+            movementState = playerData.movementState;
             runningSpeed = playerData.runningSpeed;
             walkingSpeed = playerData.walkingSpeed;
             jumpingSpeed = playerData.jumpingSpeed;
@@ -171,11 +179,11 @@ public class Player extends Entity {
         }
 
         public MovementState getPlayerMovement() {
-            return playerMovement;
+            return movementState;
         }
 
-        public void setState(MovementState playerMovement) {
-            this.playerMovement = playerMovement;
+        public void setMovementState(MovementState movementState) {
+            this.movementState = movementState;
         }
         
         public void setTeam(int team) {
@@ -199,7 +207,7 @@ public class Player extends Entity {
         }
     
         public boolean isJumping() {
-            return playerMovement == MovementState.JUMPING;
+            return movementState == MovementState.JUMPING;
         }
     
         public int getHealth() {

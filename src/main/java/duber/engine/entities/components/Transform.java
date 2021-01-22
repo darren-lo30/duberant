@@ -49,6 +49,10 @@ public class Transform extends Component {
                 (float) Math.toRadians(rotationZ));
     }
 
+    public void limitXRotation(float lowerBound, float upperBound) {
+        rotation.x = Math.max(Math.min(rotation.x, upperBound), lowerBound);
+    }
+
     public float getScale() {
         return scale;
     }
