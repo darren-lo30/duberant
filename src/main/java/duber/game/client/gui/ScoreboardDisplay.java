@@ -37,7 +37,6 @@ public class ScoreboardDisplay extends GUI {
 
     @Override
     public void createGuiElements() {
-        int team=0;
         TextArea namesText= new TextArea(420,280,100,250);
         TextArea killsText= new TextArea(520,280,100,250);
         TextArea deathsText=new TextArea(620,280,100,250);
@@ -59,20 +58,24 @@ public class ScoreboardDisplay extends GUI {
         String currName="Name\n";
         String currKills="Kills\n";
         String currDeaths="Deaths\n";
-        for(int i=0; i<10; i++){
-            if(i==5){
-                team =1;
-                currName=currName+"\n";
-                currKills=currKills+"\n";
-                currDeaths=currDeaths+"\n";
+
+        Scoreboard scoreboard = getMatchScoreboard();
+
+        for(int team = 0; team < 2; team++) {
+            for(int player = 0; player < scoreboard.getScores(team).size(); player++) {
+                int kills= scoreboard.getScores(team).get(player).getKills();
+                int deaths= scoreboard.getScores(team).get(player).getDeaths();
+                String name= scoreboard.getScores(team).get(player).getEntity().getComponent(Named.class).getName();
+
+                currName=currName+name+"\n";
+                currKills= currKills+Integer.toString(kills)+"\n";
+                currDeaths= currDeaths+Integer.toString(deaths)+"\n";
             }
-            int kills= getMatchScoreboard().getScores(team).get(i).getKills();
-            int deaths= getMatchScoreboard().getScores(team).get(i).getDeaths();
-            String name= getMatchScoreboard().getScores(team).get(i).getEntity().getComponent(Named.class).getName();
-            currName=currName+name+"\n";
-            currKills= currKills+Integer.toString(kills)+"\n";
-            currDeaths= currDeaths+Integer.toString(deaths)+"\n";
         }
+
+        System.out.println(currName);
+        System.out.println(currKills);
+
         namesText.getTextState().setText(currName);
         killsText.getTextState().setText(currKills);
         deathsText.getTextState().setText(currDeaths);
@@ -89,7 +92,6 @@ public class ScoreboardDisplay extends GUI {
         getFrame().getContainer().add(killsText);
         getFrame().getContainer().add(deathsText);
         getFrame().getContainer().add(scoreboardText);
-
     }
     
 }

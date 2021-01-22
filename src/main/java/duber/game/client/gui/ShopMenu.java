@@ -33,19 +33,12 @@ public class ShopMenu extends GUI {
     }
 
     @Override
-    public void render() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
-
         
 
-        Button smgButton = new Button("SMG", 20, 20, 160, 30);
+        Button smgButton = new Button("Pistol", 20, 20, 160, 30);
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
         smgButton.getStyle().setBorder(border);
 

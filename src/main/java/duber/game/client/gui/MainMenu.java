@@ -12,11 +12,9 @@ import duber.game.networking.LoginConfirmationPacket;
 import org.liquidengine.legui.event.MouseClickEvent;
 import org.liquidengine.legui.event.MouseClickEvent.MouseClickAction;
 import org.liquidengine.legui.component.Button;
-import org.liquidengine.legui.component.TextArea;
 import org.liquidengine.legui.style.border.SimpleLineBorder;
 import org.liquidengine.legui.style.color.ColorConstants;
-import static org.liquidengine.legui.component.optional.align.HorizontalAlign.CENTER;
-import static org.liquidengine.legui.component.optional.align.VerticalAlign.BOTTOM;
+
 public class MainMenu extends GUI {
     private volatile boolean loggingIn = false;
     private volatile boolean inMatchQueue = false;
