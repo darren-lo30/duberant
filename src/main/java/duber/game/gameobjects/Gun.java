@@ -5,12 +5,12 @@ import duber.engine.entities.components.Component;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Named;
 
-public abstract class Gun extends Entity {    
-    protected Gun(){
+public class Gun extends Entity {    
+    public Gun(){
         this(null, new GunData(), 0);
     }
 
-    protected Gun(String name, GunData gunData, int cost) {
+    public Gun(String name, GunData gunData, int cost) {
         if(gunData == null) {
             throw new IllegalArgumentException("Gun must have gun data");
         }
@@ -43,7 +43,20 @@ public abstract class Gun extends Entity {
         gunData.setLastFiredTime(System.currentTimeMillis());   
     }
 
-    public static class GunData extends Component {                
+    public boolean isPrimaryGun() {
+        return getGunData().getCategory() == GunData.PRIMARY_GUN;
+    }
+
+    public boolean isSecondaryGun() {
+        return getGunData().getCategory() == GunData.SECONDARY_GUN;
+    }
+
+    public static class GunData extends Component {          
+        public static final int NO_CATEGORY = 0;
+        public static final int PRIMARY_GUN = 1;
+        public static final int SECONDARY_GUN = 2;
+
+        private int category;      
         private int totalBullets;
         private int remainingBullets;
         private float bulletsPerSecond;
@@ -51,14 +64,15 @@ public abstract class Gun extends Entity {
         private Bullet gunBullets;
 
         public GunData() {
-            this(0, 0, new Bullet());
+            this(NO_CATEGORY, 0, 0, new Bullet());
         }
 
         public GunData(GunData gunData) {
-            this(gunData.getTotalBullets(), gunData.getBulletsPerSecond(), new Bullet(gunData.getGunBullets()));
+            this(gunData.getCategory(), gunData.getTotalBullets(), gunData.getBulletsPerSecond(), new Bullet(gunData.getGunBullets()));
         }
 
-        public GunData(int totalBullets, float bulletsPerSecond, Bullet gunBullets) {
+        public GunData(int category, int totalBullets, float bulletsPerSecond, Bullet gunBullets) {
+            this.category = category;
             this.totalBullets = totalBullets;
             remainingBullets = totalBullets;
 
@@ -69,11 +83,16 @@ public abstract class Gun extends Entity {
         }
 
         public void set(GunData gunData) {
+            category = gunData.category;
             totalBullets = gunData.totalBullets;
             remainingBullets = gunData.remainingBullets;
             bulletsPerSecond = gunData.bulletsPerSecond;
             lastFiredTime = gunData.lastFiredTime;
             gunBullets = gunData.gunBullets;
+        }
+
+        public int getCategory() {
+            return category;
         }
 
         public int getTotalBullets() {

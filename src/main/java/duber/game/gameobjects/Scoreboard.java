@@ -40,7 +40,7 @@ public class Scoreboard {
         teamWins[team]++;
     }
 
-    List<Score> getScores(int team) {
+    public List<Score> getScores(int team) {
         return teamScores.get(team);
     }
 

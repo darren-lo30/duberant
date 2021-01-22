@@ -42,7 +42,8 @@ public class Transform extends Component {
     
 
     public Vector3f rotate(float rotationX, float rotationY, float rotationZ) {
-        return rotation.set((rotation.x() + rotationX) % (float) Math.toRadians(360.0f),
+        return rotation.set(
+                (rotation.x() + rotationX) % (float) Math.toRadians(360.0f),
                 (rotation.y() + rotationY) % (float) Math.toRadians(360.0f),
                 (rotation.z() + rotationZ) % (float) Math.toRadians(360.0f));
     }

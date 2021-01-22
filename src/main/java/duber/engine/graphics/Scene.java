@@ -2,8 +2,10 @@ package duber.engine.graphics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import duber.engine.graphics.lighting.SceneLighting;
 import duber.engine.Cleansable;
@@ -13,12 +15,14 @@ import duber.engine.entities.components.MeshBody;
 
 public class Scene implements Cleansable {
     private final Map<Mesh, List<Entity>> meshMap;
+    private final Set<Entity> entities;
 
     private SceneLighting sceneLighting;
     private SkyBox skyBox;
 
     public Scene() {
         meshMap = new HashMap<>();
+        entities = new HashSet<>();
     }
 
     public SceneLighting getSceneLighting() {
@@ -41,6 +45,16 @@ public class Scene implements Cleansable {
         return meshMap;
     }
 
+    public Set<Entity> getEntities() {
+        return entities;
+    }
+
+    private void checkRenderable(Entity entity) {
+        if(!entity.hasComponent(MeshBody.class) || !entity.getComponent(MeshBody.class).isInitialized()) {
+            throw new IllegalArgumentException("Mesh body for entity not valid");
+        }
+    }
+
     public void addRenderableEntities(Entity[] renderableEntities) {
         if(renderableEntities == null) {
             return;
@@ -52,10 +66,13 @@ public class Scene implements Cleansable {
     }
 
     public void addRenderableEntity(Entity renderableEntity) {
-        if(renderableEntity == null || !renderableEntity.hasComponent(MeshBody.class)) {
-            throw new IllegalArgumentException("Not nullable and add a mesh body to the entity before rendering");
+        if(renderableEntity == null){
+            return;
         }
-        
+
+        checkRenderable(renderableEntity);
+
+        entities.add(renderableEntity);
         Mesh[] renderableMeshes = renderableEntity.getComponent(MeshBody.class).getMeshes();
         for(Mesh renderableMesh: renderableMeshes) {
             //Make the mesh renderable
@@ -67,10 +84,13 @@ public class Scene implements Cleansable {
     }
 
     public void removeRenderableEntity(Entity renderableEntity) {
-        if(renderableEntity == null || !renderableEntity.hasComponent(MeshBody.class)) {
-            throw new IllegalArgumentException("Not nullable and renderable entity without mesh body does not exist");
+        if(renderableEntity == null) {
+            return;
         }
 
+        checkRenderable(renderableEntity);
+
+        entities.remove(renderableEntity);
         Mesh[] renderableMeshes = renderableEntity.getComponent(MeshBody.class).getMeshes();
         for(Mesh renderableMesh: renderableMeshes) {
             if(meshMap.containsKey(renderableMesh)) {
@@ -80,6 +100,7 @@ public class Scene implements Cleansable {
     }
 
     public void clear() {
+        entities.clear();
         meshMap.clear();
         sceneLighting = null;
         skyBox = null;

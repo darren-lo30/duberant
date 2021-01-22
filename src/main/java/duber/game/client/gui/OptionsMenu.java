@@ -1,13 +1,5 @@
 package duber.game.client.gui;
-import java.io.IOException;
-import java.util.Queue;
 
-import duber.game.User;
-import duber.game.client.GameStateManager.GameStateOption;
-import duber.game.networking.LoginPacket;
-import duber.game.networking.MatchFoundPacket;
-import duber.game.networking.MatchQueuePacket;
-import duber.game.networking.LoginConfirmationPacket;
 import org.liquidengine.legui.event.MouseClickEvent;
 import org.liquidengine.legui.event.MouseClickEvent.MouseClickAction;
 import org.liquidengine.legui.component.Button;
@@ -15,12 +7,6 @@ import org.liquidengine.legui.style.border.SimpleLineBorder;
 import org.liquidengine.legui.style.color.ColorConstants;
 
 public class OptionsMenu extends GUI {
-
-    @Override
-    public void update() {
-        // TODO Auto-generated method stub
-    }
-
 
 	@Override
 	public void createGuiElements() {
@@ -33,13 +19,18 @@ public class OptionsMenu extends GUI {
 
         quitButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE ) {
-                
+                getWindow().setShouldClose(true);
             }
         });
 
         getFrame().getContainer().add(quitButton);
 		
 	}
+
+    @Override
+    public void update() {
+        //Nothing to update
+    }
 
 
     

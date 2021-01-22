@@ -210,6 +210,10 @@ public class Window {
         return glfwWindowShouldClose(windowHandle);
     }
 
+    public void setShouldClose(boolean shouldClose) {
+        glfwSetWindowShouldClose(windowHandle, shouldClose);
+    }
+
     public final Matrix4f getProjectionMatrix() {
         return projectionMatrix;
     }

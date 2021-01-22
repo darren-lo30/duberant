@@ -24,7 +24,7 @@ public abstract class GUI extends GameState {
 
     @Override
     public void init() {
-        DefaultInitializer guiManager = getGame().getWindow().getDefaultInitializer();
+        DefaultInitializer guiManager = getWindow().getDefaultInitializer();
 
         frame = guiManager.getFrame();
         context = guiManager.getContext();
@@ -41,8 +41,8 @@ public abstract class GUI extends GameState {
 
     @Override
     public void enter() {
-        getGame().getWindow().setOption(Window.Options.SHOW_CURSOR, true);
-        getGame().getWindow().applyOptions();
+        getWindow().setOption(Window.Options.SHOW_CURSOR, true);
+        getWindow().applyOptions();
 
         frame.getContainer().clearChildComponents();
         createGuiElements();

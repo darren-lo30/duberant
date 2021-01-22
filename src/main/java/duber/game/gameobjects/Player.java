@@ -101,10 +101,10 @@ public class Player extends Entity {
     public void purchaseGun(Gun gun) {
         int gunCost = gun.getComponent(Buyable.class).getCost();
         if(gunCost <= getPlayerData().getMoney()) {
-            if(gun instanceof PrimaryGun) {
-                getWeaponsInventory().setPrimaryGun((PrimaryGun) gun);
-            } else if(gun instanceof SecondaryGun) {
-                getWeaponsInventory().setSecondaryGun((SecondaryGun) gun);
+            if(gun.isPrimaryGun()) {
+                getWeaponsInventory().setPrimaryGun(gun);
+            } else if(gun.isSecondaryGun()) {
+                getWeaponsInventory().setSecondaryGun(gun);
             }
 
             getPlayerData().addMoney(-gunCost);

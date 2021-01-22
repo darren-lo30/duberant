@@ -10,6 +10,7 @@ import duber.engine.entities.Entity;
 import duber.engine.entities.components.Collider;
 import duber.engine.entities.components.ColliderPart;
 import duber.engine.entities.components.Transform;
+import duber.engine.entities.components.Vision;
 import duber.engine.physics.PhysicsWorld;
 import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.Octree;
@@ -99,6 +100,14 @@ public class DuberantWorld extends PhysicsWorld {
         return false;
     }
 
+    private void updateVisionPosition(Vision entityVision, Entity entity) {
+        Transform entityTransform = entity.getComponent(Transform.class);
+        Transform cameraTransform = entityVision.getCamera().getComponent(Transform.class);
+
+        cameraTransform.getPosition().set(entityTransform.getPosition());
+        cameraTransform.getPosition().add(entityVision.getCameraOffset());
+    }
+
     @Override
     public void update() {
         for(Entity entity : dynamicEntities) {
@@ -107,6 +116,8 @@ public class DuberantWorld extends PhysicsWorld {
             if(entity instanceof Player) {
                 Player player = (Player) entity;
                 player.getComponent(Transform.class).limitXRotation((float) -Math.PI/2.0f, (float) Math.PI/2.0f);
+                
+                updateVisionPosition(player.getComponent(Vision.class), player);
             }
         }
     }

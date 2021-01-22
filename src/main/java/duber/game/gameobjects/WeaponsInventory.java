@@ -1,8 +1,9 @@
 package duber.game.gameobjects;
 
 import duber.engine.entities.components.Component;
-import duber.engine.entities.components.Named;
-import duber.engine.entities.components.Transform;
+
+import static duber.game.gameobjects.Gun.GunData.PRIMARY_GUN;
+import static duber.game.gameobjects.Gun.GunData.SECONDARY_GUN;;
 
 public class WeaponsInventory extends Component {
     private static final int PRIMARY_GUN_IDX = 0;
@@ -10,39 +11,17 @@ public class WeaponsInventory extends Component {
     
     Gun[] guns = new Gun[2];
     private int equippedGunIdx = 0;
-
-    public void updateData(WeaponsInventory updatedInventory) {
-        if(!updateGunData(getPrimaryGun(), updatedInventory.getPrimaryGun())) {
-            setPrimaryGun(updatedInventory.getPrimaryGun());
-        }
-
-        if(!updateGunData(getSecondaryGun(), updatedInventory.getSecondaryGun())) {
-            setSecondaryGun(updatedInventory.getSecondaryGun());
-        }
-
-        //Update equipped index
-        equippedGunIdx = updatedInventory.getEquippedGunIdx();
-    }    
-
-    private boolean updateGunData(Gun gun, Gun newGun) {
-        if(gun == null || newGun == null) {
-            return false;
-        }
-        
-        String gunType = gun.getComponent(Named.class).getName();
-        String newGunType = newGun.getComponent(Named.class).getName();
-        if(!gunType.equals(newGunType)) {
-            return false;
-        } 
-        
-        gun.getComponent(Transform.class).set(newGun.getComponent(Transform.class));
-        gun.getGunData().set(newGun.getGunData());
-        return true;
-    }
     
     public void clear() {
         guns[0] = null;
         guns[1] = null;
+    }
+
+    public void set(WeaponsInventory weaponsInventory) {
+        setPrimaryGun(weaponsInventory.getPrimaryGun());
+        setSecondaryGun(weaponsInventory.getSecondaryGun());
+
+        equippedGunIdx = weaponsInventory.getEquippedGunIdx();
     }
 
     public void resetGuns() {
@@ -67,19 +46,26 @@ public class WeaponsInventory extends Component {
         return guns[equippedGunIdx] != null;
     }
 
-    public PrimaryGun getPrimaryGun() {
-        return (PrimaryGun) guns[PRIMARY_GUN_IDX];
+    public Gun getPrimaryGun() {
+        return guns[PRIMARY_GUN_IDX];
     }
 
-    public void setPrimaryGun(PrimaryGun primaryGun) {
+    public void setPrimaryGun(Gun primaryGun) {
+        if(primaryGun != null  && primaryGun.getGunData().getCategory() != PRIMARY_GUN) {
+            throw new IllegalArgumentException("Gun must be primary gun");
+        }
         guns[PRIMARY_GUN_IDX] = primaryGun;
     }
 
-    public SecondaryGun getSecondaryGun() {
-        return (SecondaryGun) guns[SECONDARY_GUN_IDX];
+    public Gun getSecondaryGun() {
+        return guns[SECONDARY_GUN_IDX];
     }
 
-    public void setSecondaryGun(SecondaryGun secondaryGun) {
+    public void setSecondaryGun(Gun secondaryGun) {
+        if(secondaryGun != null && secondaryGun.getGunData().getCategory() != SECONDARY_GUN) {
+            throw new IllegalArgumentException("Gun must be secondary gun");
+        }
+
         guns[SECONDARY_GUN_IDX] = secondaryGun;
     }
 

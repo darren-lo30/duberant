@@ -53,6 +53,8 @@ public class GameMap {
         for(int i = 0; i<MatchData.NUM_PLAYERS_PER_TEAM; i++) {
             Player currPlayer = players.get(i);
             currPlayer.getComponent(Transform.class).getPosition().set(initialPositions[i]);
+            currPlayer.getComponent(Transform.class).getRotation().set(0, 0, 0);
+            currPlayer.getView().getComponent(Transform.class).getRotation().set(0, 0, 0);
         }
     }
 

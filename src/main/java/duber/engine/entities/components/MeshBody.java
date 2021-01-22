@@ -15,10 +15,7 @@ public class MeshBody extends Component {
     public MeshBody() {}
     
     public MeshBody(MeshBody meshBody) {
-        meshes = meshBody.getMeshes();
-        faces = meshBody.getFaces();
-        vertices = meshBody.getVertices();
-        visible = meshBody.isVisible();
+        set(meshBody);
     }
 
     public MeshBody(Mesh mesh) {
@@ -64,6 +61,13 @@ public class MeshBody extends Component {
                 faces[currIdx++] = face;
             }
         }
+    }
+
+    public void set(MeshBody meshBody) {
+        meshes = meshBody.getMeshes();
+        faces = meshBody.getFaces();
+        vertices = meshBody.getVertices();
+        visible = meshBody.isVisible();
     }
 
     public boolean isInitialized() {
