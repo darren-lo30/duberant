@@ -8,12 +8,6 @@ import org.liquidengine.legui.style.color.ColorConstants;
 
 public class OptionsMenu extends GUI {
 
-    @Override
-    public void update() {
-        // TODO Auto-generated method stub
-    }
-
-
 	@Override
 	public void createGuiElements() {
 		getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
@@ -25,13 +19,18 @@ public class OptionsMenu extends GUI {
 
         quitButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE ) {
-                
+                getWindow().setShouldClose(true);
             }
         });
 
         getFrame().getContainer().add(quitButton);
 		
 	}
+
+    @Override
+    public void update() {
+        //Nothing to update
+    }
 
 
     
