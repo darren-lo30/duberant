@@ -7,6 +7,17 @@ import org.liquidengine.legui.event.MouseClickEvent.MouseClickAction;
 import org.liquidengine.legui.component.Button;
 import org.liquidengine.legui.style.border.SimpleLineBorder;
 import org.liquidengine.legui.style.color.ColorConstants;
+import duber.game.User;
+import duber.game.networking.LoginPacket;
+import duber.game.networking.MatchFoundPacket;
+import duber.game.networking.MatchQueuePacket;
+import duber.game.networking.LoginConfirmationPacket;
+import org.liquidengine.legui.component.Panel;
+import org.liquidengine.legui.component.*;
+import org.liquidengine.legui.style.Style.DisplayType;
+import org.liquidengine.legui.style.Style.PositionType;
+import org.liquidengine.legui.style.flex.FlexStyle.*;
+import org.liquidengine.legui.style.length.LengthType;
 public class ShopMenu extends GUI {
     private Match match;
 
@@ -27,38 +38,67 @@ public class ShopMenu extends GUI {
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
-        
+        getFrame().getContainer().getStyle().setDisplay(DisplayType.FLEX);
 
-        Button smgButton = new Button("Pistol", 20, 20, 160, 30);
+
+        Component frameContainer = getFrame().getContainer();
+        frameContainer.getStyle().getBackground().setColor(ColorConstants.gray());
+        frameContainer.getStyle().setPadding(10);
+        frameContainer.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
+        frameContainer.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
+        frameContainer.getStyle().setDisplay(DisplayType.FLEX);
+
+        Panel mainPanel= new Panel();
+        mainPanel.getStyle().getBackground().setColor(ColorConstants.lightGray());
+        mainPanel.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
+        mainPanel.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
+        mainPanel.getStyle().setDisplay(DisplayType.FLEX);
+        mainPanel.getStyle().setWidth(LengthType.percent(100));
+        mainPanel.getStyle().setHeight(LengthType.percent(100));
+        frameContainer.add(mainPanel);
+
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
+
+        Button smgButton = new Button("Small Machine gun");
+        smgButton.getStyle().setMinWidth(160f);
+        smgButton.getStyle().setMinHeight(30f);
         smgButton.getStyle().setBorder(border);
+        smgButton.getStyle().setMarginRight(20f);
+        smgButton.getStyle().setPosition(PositionType.RELATIVE);
 
-        smgButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE ) {
-                
-            }
-        });
-        Button lmgButton = new Button("LMG", 100, 20, 160, 30);
-        smgButton.getStyle().setBorder(border);
-
-        smgButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE ) {
-                
-            }
-        });
-        Button arButton = new Button("AR", 180, 20, 160, 30);
-        smgButton.getStyle().setBorder(border);
-
-        smgButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE ) {
-                
-            }
-        });
-
+        Button lmgButton = new Button("Large Machine Gun");
+        lmgButton.getStyle().setMinWidth(480f);
+        lmgButton.getStyle().setMinHeight(90f);
+        lmgButton.getStyle().setBorder(border);
+        lmgButton.getStyle().setPosition(PositionType.RELATIVE);
         
-        getFrame().getContainer().add(smgButton);
-        getFrame().getContainer().add(arButton);
-        getFrame().getContainer().add(lmgButton);
+        Button arButton = new Button("Assault Rifle");
+        arButton.getStyle().setMinWidth(480f);
+        arButton.getStyle().setMinHeight(90f);
+        arButton.getStyle().setBorder(border);
+        arButton.getStyle().setPosition(PositionType.RELATIVE);
+        
+        arButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
+            if(event.getAction() == MouseClickAction.RELEASE) {
+              
+            }
+        });
+        lmgButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
+            if(event.getAction() == MouseClickAction.RELEASE) {
+              
+            }
+        });
+        
+        smgButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
+            if(event.getAction() == MouseClickAction.RELEASE) {
+
+            }
+        });
+
+        mainPanel.add(smgButton);
+        mainPanel.add(lmgButton);
+        mainPanel.add(arButton);
+        getFrame().getContainer().add(mainPanel);
         
 
     }
