@@ -1,7 +1,5 @@
 package duber.game.gameobjects;
 
-import org.joml.Vector3f;
-
 import duber.engine.entities.Camera;
 import duber.engine.entities.Entity;
 import duber.engine.entities.components.Collider;
@@ -12,7 +10,6 @@ import duber.engine.entities.components.Named;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Vision;
 import duber.engine.entities.components.RigidBody;
-import duber.engine.entities.components.Transform;
 
 /**
  * Player
@@ -105,21 +102,23 @@ public class Player extends Entity {
         int gunCost = gun.getComponent(Buyable.class).getCost();
         if(gunCost <= getPlayerData().getMoney()) {
             if(gun instanceof PrimaryGun) {
-                getWeaponsInventory().setPrimaryGun(gun);
+                getWeaponsInventory().setPrimaryGun((PrimaryGun) gun);
             } else if(gun instanceof SecondaryGun) {
-                getWeaponsInventory().setSecondaryGun(gun);
+                getWeaponsInventory().setSecondaryGun((SecondaryGun) gun);
             }
 
             getPlayerData().addMoney(-gunCost);
         }
     }
 
-    /**
-     * Update the guns position relative to the player
-     */
+    /*
     public void updateEquippedGun() {
+        Camera playerCamera = getView();
+        playerCamera.updateViewMatrix();
+        
         Transform cameraTransform = getView().getComponent(Transform.class);
         Gun equippedGun = getWeaponsInventory().getEquippedGun();
+
         
         if(equippedGun != null) {
             //Rotate the gun relative to the player
@@ -127,14 +126,13 @@ public class Player extends Entity {
 
             Vector3f cameraRotation = cameraTransform.getRotation();
             Vector3f cameraPosition = cameraTransform.getPosition();
-            /*
             gunTransform.getRotation().set(cameraRotation.x(), cameraRotation.y() - Math.PI, cameraRotation.z());
 
             gunTransform.getPosition().set(
                 cameraPosition.x() - Math.sin(cameraRotation.y() + Math.PI/6) * 0.6f,
                 cameraPosition.y() - 0.5f,
                 cameraPosition.z() + Math.cos(cameraRotation.y() + Math.PI/6) * 0.6f;
-            )*/
+            )
             
             gunTransform.getPosition().set(
                 cameraPosition.x() + 5*Math.sin(cameraRotation.y() + Math.PI/6),
@@ -142,9 +140,12 @@ public class Player extends Entity {
                 cameraPosition.z() - 5*Math.cos(cameraRotation.y() + Math.PI/6)
             );
 
-            gunTransform.getRotation().set(cameraRotation.x(), cameraRotation.y(), cameraRotation.z());
+            
+
+            gunTransform.getRotation().set(cameraRotation.x(), cameraRotation.y(), 0);
         }
     }
+    */
 
 
     public enum MovementState {

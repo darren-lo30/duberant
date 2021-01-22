@@ -67,19 +67,19 @@ public class WeaponsInventory extends Component {
         return guns[equippedGunIdx] != null;
     }
 
-    public Gun getPrimaryGun() {
-        return guns[PRIMARY_GUN_IDX];
+    public PrimaryGun getPrimaryGun() {
+        return (PrimaryGun) guns[PRIMARY_GUN_IDX];
     }
 
-    public void setPrimaryGun(Gun primaryGun) {
+    public void setPrimaryGun(PrimaryGun primaryGun) {
         guns[PRIMARY_GUN_IDX] = primaryGun;
     }
 
-    public Gun getSecondaryGun() {
-        return guns[SECONDARY_GUN_IDX];
+    public SecondaryGun getSecondaryGun() {
+        return (SecondaryGun) guns[SECONDARY_GUN_IDX];
     }
 
-    public void setSecondaryGun(Gun secondaryGun) {
+    public void setSecondaryGun(SecondaryGun secondaryGun) {
         guns[SECONDARY_GUN_IDX] = secondaryGun;
     }
 
