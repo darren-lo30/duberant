@@ -7,6 +7,8 @@ public class Transform extends Component {
     private final Vector3f rotation;
     private float scale;
 
+    private boolean relativeView = true;
+
     public Transform() {
         this(new Vector3f(), new Vector3f(), 1.0f);
     }
@@ -37,6 +39,7 @@ public class Transform extends Component {
     public Vector3f getRotation() {
         return rotation;
     }
+    
 
     public Vector3f rotate(float rotationX, float rotationY, float rotationZ) {
         return rotation.set((rotation.x() + rotationX) % (float) Math.toRadians(360.0f),
@@ -59,6 +62,14 @@ public class Transform extends Component {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public boolean isRelativeView() {
+        return relativeView;
+    }
+
+    public void setRelativeView(boolean relativeView) {
+        this.relativeView = relativeView;
     }
 
     public Transform lerp(Transform next, float factor) {

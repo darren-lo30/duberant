@@ -106,8 +106,6 @@ public class DuberantWorld extends PhysicsWorld {
 
             if(entity instanceof Player) {
                 Player player = (Player) entity;
-                player.updateEquippedGun();
-
                 player.getComponent(Transform.class).limitXRotation((float) -Math.PI/2.0f, (float) Math.PI/2.0f);
             }
         }

@@ -18,6 +18,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_2;
 
 public class Controls {
     private static float mouseSensitivity = 0.0006f;
@@ -28,6 +30,9 @@ public class Controls {
     private static final int STRAFE_RIGHT = GLFW_KEY_D;
     private static final int WALK = GLFW_KEY_LEFT_SHIFT;
     private static final int JUMP = GLFW_KEY_SPACE;
+
+    private static final int PRIMARY_WEAPON = GLFW_KEY_1;
+    private static final int SECONDARY_WEAPON = GLFW_KEY_2;
 
     private Controls() {}
     
@@ -108,5 +113,13 @@ public class Controls {
                 playerData.setMovementState(MovementState.RUNNING);
             }
         }   
+
+        //Switch weapons
+        if(keyboardInput.isKeyPressed(PRIMARY_WEAPON)) {
+            player.getWeaponsInventory().equipPrimaryGun();
+        } else if(keyboardInput.isKeyPressed(SECONDARY_WEAPON)) {
+            player.getWeaponsInventory().equipSecondaryGun();
+        }
+
     }
 }

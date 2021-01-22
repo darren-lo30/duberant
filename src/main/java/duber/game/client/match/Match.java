@@ -324,6 +324,14 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         modifiedPlayer.getPlayerData().set(playerUpdatePacket.playerData);
 
         updateWeapons(modifiedPlayer.getWeaponsInventory(), playerUpdatePacket.playerInventory);
+        Gun equippedGun = modifiedPlayer.getWeaponsInventory().getEquippedGun();
+        
+        if(modifiedPlayer == mainPlayer) {
+            if(equippedGun != null) {
+                equippedGun.getComponent(Transform.class).setRelativeView(false);
+                equippedGun.getComponent(Transform.class).getPosition().set(5.5f, -5, -7);
+            }
+        }
     }
 
     private void updateWeapons(WeaponsInventory weaponsInventory, WeaponsInventory updatedInventory) {
@@ -357,6 +365,17 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
             }
         } catch (LWJGLException le) {
             System.err.println("Unable to load gun mesh");
+        }
+        
+        if(newPrimaryGun != null) {
+            newPrimaryGun.getComponent(MeshBody.class).setVisible(false);
+        }
+        if(newSecondaryGun != null) {
+            newSecondaryGun.getComponent(MeshBody.class).setVisible(false);
+        }
+
+        if(weaponsInventory.getEquippedGun() != null) {
+            weaponsInventory.getEquippedGun().getComponent(MeshBody.class).setVisible(true);
         }
     }
     

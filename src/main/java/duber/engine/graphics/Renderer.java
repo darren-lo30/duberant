@@ -105,16 +105,20 @@ public class Renderer implements Cleansable {
                 sceneShaderProgram.setUniform("material", renderableMesh.getMaterial());
             }
 
-            renderableMesh.render(entities, (Entity entity) -> {
-                Matrix4f modelMatrix = matrixTransformer.buildModelMatrix(entity.getComponent(Transform.class));
-                
-                if(viewMatrix != null) {
-                    Matrix4f modelViewMatrix = matrixTransformer.buildModelViewMatrix(modelMatrix, viewMatrix);
-                    sceneShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+            renderableMesh.render(entities, (Entity entity) -> {    
+                Transform entityTransform = entity.getComponent(Transform.class);           
+
+                Matrix4f modelViewMatrix;
+                if(entityTransform.isRelativeView()) {
+                    modelViewMatrix = matrixTransformer.buildModelViewMatrix(entityTransform, viewMatrix);
+                } else {
+                    modelViewMatrix = matrixTransformer.buildModelMatrix(entityTransform);
                 }
+                sceneShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
             });
         }
     }
+
 
     private void renderScene(Window window, Camera camera, Scene scene) {
         sceneShaderProgram.bind();

@@ -34,7 +34,6 @@ public class HUD implements Cleansable {
     public static final Font TITLE_FONT = new Font(MAIN_FONT_ID, 50.0f, WHITE);
     public static final Font LABEL_FONT = new Font(MAIN_FONT_ID, 30.0f, WHITE);
 
-
     public static final int CENTER_ALIGN = NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE;
     
     private Window window;

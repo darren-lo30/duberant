@@ -156,8 +156,9 @@ public class MatchManager implements Runnable, MatchPhaseManager {
 
         for(Player player : getPlayers()) {
             WeaponsInventory playerInventory = player.getWeaponsInventory();
+            playerInventory.setPrimaryGun(GunBuilder.getInstance().buildRifle());
             playerInventory.setSecondaryGun(GunBuilder.getInstance().buildPistol());
-            playerInventory.equipSecondaryGun();
+            playerInventory.equipPrimaryGun();
         }
     }
 
@@ -322,10 +323,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
                 } else if(packet instanceof GunPurchasePacket) {
                     processPacket(user, (GunPurchasePacket) packet);
                 }
-
-                
             }
-
         }
     }
 
