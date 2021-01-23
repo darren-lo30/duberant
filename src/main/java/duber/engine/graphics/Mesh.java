@@ -37,6 +37,7 @@ import duber.engine.Cleansable;
 import duber.engine.entities.Entity;
 import duber.engine.entities.Face;
 import duber.engine.entities.components.MeshBody;
+import duber.engine.utilities.Utils;
 
 public class Mesh implements Cleansable {    
     public static final int MAX_WEIGHTS = 4;
@@ -59,8 +60,8 @@ public class Mesh implements Cleansable {
 
     public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
         this(positions, textureCoords, normals, indices, 
-            new int[MAX_WEIGHTS * positions.length / 3],
-            new float[MAX_WEIGHTS * positions.length / 3]);
+            Utils.buildIntArray(MAX_WEIGHTS * positions.length / 3, 0),
+            Utils.buildFloatArray(MAX_WEIGHTS * positions.length / 3, 0));
     }
 
     public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices, int[] jointIndices, float[] weights) {
@@ -288,6 +289,8 @@ public class Mesh implements Cleansable {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
+        glDisableVertexAttribArray(3);
+        glDisableVertexAttribArray(4);
 
         //Deletes VBOS
         glBindBuffer(GL_ARRAY_BUFFER, 0);

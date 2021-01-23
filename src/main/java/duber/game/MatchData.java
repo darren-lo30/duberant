@@ -1,5 +1,7 @@
 package duber.game;
 
+import org.joml.Vector4f;
+
 import duber.engine.loaders.MeshResource;
 
 public class MatchData {
@@ -15,10 +17,17 @@ public class MatchData {
     public static final int NUM_ROUNDS = 3;
     public static final int NUM_ROUNDS_TO_WIN = (int) Math.ceil(NUM_ROUNDS/2.0);
 
+    public static final int MONEY_PER_ROUND = 2000;
+
     //Match models
-    public static final MeshResource playerModel = new MeshResource("models/player/player.obj", "models/player");
+    public static final MeshResource redPlayerModel = new MeshResource("models/player/redPlayer.fbx", "");
+    public static final MeshResource bluePlayerModel = new MeshResource("models/player/bluePlayer.fbx", "");
+
     public static final MeshResource mapModel = new MeshResource("models/map/map.obj", "models/map");
     public static final MeshResource skyBoxModel = new MeshResource("models/skybox/skybox.obj", "models/skybox");
+
+    public static final Vector4f redPlayerColour = new Vector4f(1, 0, 0, 1);
+    public static final Vector4f bluePlayerColour = new Vector4f(0, 0, 1, 1);
     
     private MatchData() {}
 

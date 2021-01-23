@@ -28,12 +28,10 @@ import duber.game.MatchData;
 import duber.game.gameobjects.GameMap;
 import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.GunBuilder;
-import duber.game.gameobjects.GunType;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.gameobjects.Player.MovementState;
 import duber.game.gameobjects.Player.PlayerData;
-import duber.game.gameobjects.WeaponsInventory;
 import duber.game.User;
 import duber.game.networking.GunPurchasePacket;
 import duber.game.networking.MatchInitializePacket;
@@ -70,6 +68,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
             loadGameMap();
             loadPlayers(redTeam, blueTeam);
         } catch (LWJGLException le) {
+            le.printStackTrace();
             System.out.println("Error: Could not load match");
         }
 
@@ -154,13 +153,6 @@ public class MatchManager implements Runnable, MatchPhaseManager {
                 new MatchInitializePacket(getPlayers(), usersPlayer.getId(), gameMap);
             user.getConnection().sendTCP(matchInitializePacket);
         }
-
-        for(Player player : getPlayers()) {
-            WeaponsInventory playerInventory = player.getWeaponsInventory();
-            playerInventory.setPrimaryGun(GunBuilder.getInstance().buildGun(GunType.RIFLE));
-            playerInventory.setSecondaryGun(GunBuilder.getInstance().buildGun(GunType.PISTOL));
-            playerInventory.equipPrimaryGun();
-        }
     }
 
     public Set<User> getUsers() {
@@ -200,7 +192,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
     }
 
     public void loadPlayers(List<User> redTeam, List<User> blueTeam) throws LWJGLException {
-        Mesh[] playerMeshes = MeshLoader.load(MatchData.playerModel.getModelFile());
+        Mesh[] playerMeshes = MeshLoader.load(MatchData.redPlayerModel.getModelFile()).getMeshes();
 
         for(User user: redTeam) {
             Player redPlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, MatchData.RED_TEAM);
@@ -230,19 +222,21 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         
         //Set up player collider
         Collider playerCollider = new Collider();
-        SphereCollider sphereCollider1 = new SphereCollider(1.0f, new Vector3f(0, 1, 0));
-        SphereCollider sphereCollider2 = new SphereCollider(0.8f, new Vector3f(0, 1.5f, 0));
-        SphereCollider sphereCollider3 = new SphereCollider(0.8f, new Vector3f(0, 3.0f, 0));
+        SphereCollider sphereCollider1 = new SphereCollider(5.0f, new Vector3f(0, 5, 0));
+        SphereCollider sphereCollider2 = new SphereCollider(4.0f, new Vector3f(0, 10, 0));
+        SphereCollider sphereCollider3 = new SphereCollider(4.0f, new Vector3f(0, 16, 0));
+        SphereCollider sphereCollider4 = new SphereCollider(4.0f, new Vector3f(0, 22, 0));
+        SphereCollider sphereCollider5 = new SphereCollider(4.0f, new Vector3f(0, 28, 0));
+
 
         playerCollider.setBaseCollider(sphereCollider1);
         playerCollider.addColliderPart(sphereCollider2);
         playerCollider.addColliderPart(sphereCollider3);
+        playerCollider.addColliderPart(sphereCollider4);
+        playerCollider.addColliderPart(sphereCollider5);
+
         player.addComponent(playerCollider);
 
-        //Set transform
-        Transform playerTransform = player.getComponent(Transform.class);
-        playerTransform.setScale(5.0f);
-        
         //Add player camera
         Vision playerVision = new Vision(new Vector3f(0, 30, 0));
         player.addComponent(playerVision);
@@ -250,13 +244,13 @@ public class MatchManager implements Runnable, MatchPhaseManager {
     }
     
     public void loadGameMap() throws LWJGLException {        
-        Mesh[] mapMesh = MeshLoader.load(MatchData.mapModel.getModelFile());
+        Mesh[] mapMesh = MeshLoader.load(MatchData.mapModel.getModelFile()).getMeshes();
         Entity map = new Entity();
         map.addComponent(new MeshBody(mapMesh));
         map.getComponent(Transform.class).setScale(0.3f);
         gameWorld.addConstantEntity(map);         
         
-        Mesh[] skyBoxMesh = MeshLoader.load(MatchData.skyBoxModel.getModelFile());
+        Mesh[] skyBoxMesh = MeshLoader.load(MatchData.skyBoxModel.getModelFile()).getMeshes();
         SkyBox skyBox = new SkyBox(skyBoxMesh[0]);
         skyBox.getComponent(Transform.class).setScale(3000.0f);
         
@@ -267,8 +261,8 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         gameLighting.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
-        Vector3f lightDirection = new Vector3f(0, 1, 1);
-        DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, 0.3f);
+        Vector3f lightDirection = new Vector3f(0, 1, 0);
+        DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, 0.4f);
         gameLighting.setDirectionalLight(directionalLight);   
 
         Vector3f[] redPositions = new Vector3f[] {
@@ -293,9 +287,8 @@ public class MatchManager implements Runnable, MatchPhaseManager {
             gameWorld.addDynamicEntity(player);
 
             //Give player money
-            player.getPlayerData().addMoney(1000); 
-            player.getPlayerData().setMovementState(MovementState.STOP);
-           
+            player.getPlayerData().addMoney(MatchData.MONEY_PER_ROUND); 
+            player.getPlayerData().setMovementState(MovementState.STOP); 
         } 
 
         resetPlayerMovement();
@@ -339,10 +332,9 @@ public class MatchManager implements Runnable, MatchPhaseManager {
 
     private void processPacket(User user, GunPurchasePacket gunPurchasePacket) {
         Player player = getUsersPlayer(user);
-        Gun purchasedGun = GunBuilder.getInstance().buildGun(gunPurchasePacket.gunType);
+        Gun purchasedGun = GunBuilder.getInstance().buildGun(gunPurchasePacket.getGunType());
         player.purchaseGun(purchasedGun);
     }
-
     
     /**
      * Update the match state and send updates out to users

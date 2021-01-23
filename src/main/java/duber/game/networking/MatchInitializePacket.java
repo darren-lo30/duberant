@@ -13,7 +13,8 @@ public class MatchInitializePacket extends Packet {
     //Send List of player position and id
     public List<Player> players;
     public int mainPlayerId;
-    public MeshResource playerModel;    
+    public MeshResource redPlayerModel;    
+    public MeshResource bluePlayerModel;    
     
     public GameMap gameMap;
 
@@ -23,7 +24,8 @@ public class MatchInitializePacket extends Packet {
     public MatchInitializePacket(List<Player> players, int mainPlayerId, GameMap gameMap){
         this.players = players;
         this.mainPlayerId = mainPlayerId;
-        playerModel = MatchData.playerModel;
+        redPlayerModel = MatchData.redPlayerModel;
+        bluePlayerModel = MatchData.bluePlayerModel;
 
         this.gameMap = gameMap;
 

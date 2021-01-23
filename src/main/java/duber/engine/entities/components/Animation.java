@@ -1,6 +1,7 @@
 package duber.engine.entities.components;
 
 import java.util.Map;
+import java.util.Optional;
 
 import duber.engine.graphics.animations.AnimationData;
 
@@ -10,6 +11,9 @@ public class Animation extends Component {
 
     public Animation(Map<String, AnimationData> animations) {
         this.animations = animations;
+        Optional<AnimationData> firstAnimation = animations.values().stream().findFirst();
+
+        currentAnimation = firstAnimation.isPresent() ? firstAnimation.get() : null;
     }
 
     public AnimationData getAnimation(String name) {

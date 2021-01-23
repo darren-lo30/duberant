@@ -21,6 +21,12 @@ public class Gun extends Entity {
         addComponent(gunData);
     }
 
+    public Gun(Gun gun) {
+        this(gun.getComponent(Named.class).getName(), 
+             new GunData(gun.getGunData()), 
+             gun.getComponent(Buyable.class).getCost());
+    }
+
     public GunData getGunData() {
         return getComponent(GunData.class);
     }

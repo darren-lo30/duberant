@@ -23,6 +23,7 @@ import duber.engine.Window;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
 import duber.engine.entities.components.Vision;
+import duber.engine.entities.components.Animation;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.exceptions.LWJGLException;
@@ -30,15 +31,20 @@ import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Renderer;
 import duber.engine.graphics.Scene;
 import duber.engine.loaders.MeshLoader;
+import duber.engine.loaders.MeshLoader.MeshData;
 import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.GunBuilder;
+import duber.game.gameobjects.GunType;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.gameobjects.WeaponsInventory;
+import duber.game.gameobjects.Player.MovementState;
 import duber.game.phases.MatchPhaseManager;
+import duber.game.MatchData;
 import duber.game.client.GameState;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.networking.GunFirePacket;
+import duber.game.networking.GunPurchasePacket;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.MatchPhasePacket;
 import duber.game.networking.PlayerUpdatePacket;
@@ -192,6 +198,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
             receivePackets();
         }        
     }
+    
 
     @Override
     public void render() {
@@ -246,6 +253,15 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         return hud;
     }
 
+    public void updateAnimations() {
+        for(Player player: getPlayers()) {
+            MovementState playerMovement = player.getPlayerData().getPlayerMovement();
+            if(playerMovement == MovementState.RUNNING || playerMovement == MovementState.WALKING) {
+                player.getComponent(Animation.class).getCurrentAnimation().nextFrame();
+            }
+        }
+    }
+
     public void receivePackets() {
         while(!getGame().getClientNetwork().getPackets().isEmpty()){
             Object packet = getGame().getClientNetwork().getPackets().poll();
@@ -273,23 +289,30 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
         try {
             //Set player meshes
-            Mesh[] playerMeshes = MeshLoader.load(matchInitializePacket.playerModel);
             for(Player player : getPlayers()) {
-                MeshBody playerMeshBody = new MeshBody(playerMeshes, true);
-                player.addComponent(playerMeshBody);
+                MeshData playerMeshData;
+                if(player.getPlayerData().getTeam() == MatchData.RED_TEAM) {
+                    playerMeshData = MeshLoader.load(matchInitializePacket.redPlayerModel);
+                } else {
+                    playerMeshData = MeshLoader.load(matchInitializePacket.bluePlayerModel);
+                }
 
+                MeshBody playerMeshBody = new MeshBody(playerMeshData.getMeshes(), true);
                 if(player == mainPlayer) {
                     playerMeshBody.setVisible(false);
                 }
+
+                player.addComponent(playerMeshBody);
+                player.addComponent(new Animation(playerMeshData.getAnimationData()));
             }
     
             //Set mainMap meshes
-            Mesh[] mainMapMeshes = MeshLoader.load(matchInitializePacket.mapModel);
+            Mesh[] mainMapMeshes = MeshLoader.load(matchInitializePacket.mapModel).getMeshes();
             Entity mainMap = matchInitializePacket.gameMap.getMainMap();
             mainMap.addComponent(new MeshBody(mainMapMeshes, true));
     
             //Set skybox mesh
-            Mesh[] skyBoxMeshes = MeshLoader.load(matchInitializePacket.skyBoxModel);
+            Mesh[] skyBoxMeshes = MeshLoader.load(matchInitializePacket.skyBoxModel).getMeshes();
             SkyBox skyBox = matchInitializePacket.gameMap.getSkyBox();
             skyBox.addComponent(new MeshBody(skyBoxMeshes, true));
     
@@ -320,10 +343,6 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         //Update the player position and camera
         modifiedPlayer.getComponent(Transform.class).set(playerUpdatePacket.playerTransform);
         modifiedPlayer.getView().getComponent(Transform.class).set(playerUpdatePacket.cameraTransform);
-        
-        if(modifiedPlayer != mainPlayer) {
-            modifiedPlayer.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
-        }
 
         //Update other player information
         modifiedPlayer.getScore().set(playerUpdatePacket.playerScore);
@@ -331,13 +350,20 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
         updatePlayerWeapons(modifiedPlayer.getWeaponsInventory(), playerUpdatePacket.playerInventory);
         
-        if(modifiedPlayer == mainPlayer) {
-            Gun equippedGun = modifiedPlayer.getWeaponsInventory().getEquippedGun();
-
-            if(equippedGun != null) {
+        Gun equippedGun = modifiedPlayer.getWeaponsInventory().getEquippedGun();
+        if(equippedGun != null) {
+            if(modifiedPlayer == mainPlayer) {
                 equippedGun.getComponent(Transform.class).setRelativeView(false);
                 equippedGun.getComponent(Transform.class).getPosition().set(5.5f, -5, -7);
+                equippedGun.getComponent(Transform.class).getRotation().set(0, 0, 0);
+                equippedGun.getComponent(Transform.class).setScale(1.4f);
             }
+
+            equippedGun.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
+        }
+
+        if(modifiedPlayer != mainPlayer) {
+            modifiedPlayer.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
         }
     }
 
@@ -364,6 +390,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     private void processPacket(GunFirePacket gunFirePacket) {
         matchSounds.playGunSounds(getPlayerById(gunFirePacket.shooterId));
+    }
+
+    public void sendGunPurchaseRequest(GunType gunType) {
+        getGame().getUser().getConnection().sendTCP(new GunPurchasePacket(gunType));
     }
 
     public void leave() {

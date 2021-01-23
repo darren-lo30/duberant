@@ -15,6 +15,7 @@ import duber.engine.physics.PhysicsWorld;
 import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.Octree;
 import duber.game.gameobjects.Bullet;
+import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.Player;
 
 /**
@@ -51,14 +52,14 @@ public class DuberantWorld extends PhysicsWorld {
         shootingPlayer.shoot();
         
         Transform cameraTransform = shootingPlayer.getView().getComponent(Transform.class);
-        Vector3f cameraRotation = cameraTransform.getRotation();
+        Vector3f playerRotation = cameraTransform.getRotation();
 
 
         //Set up bullet ray origin and direction
         Vector3f bulletOrigin = cameraTransform.getPosition();
         Vector3f bulletDirection = new Vector3f(0, 0, -1);
-        bulletDirection.rotateX(-cameraRotation.x())
-                       .rotateY(-cameraRotation.y());
+        bulletDirection.rotateX(-playerRotation.x())
+                       .rotateY(-playerRotation.y());
         bulletDirection.normalize();
 
         //Create a ray for the bullet
@@ -108,6 +109,26 @@ public class DuberantWorld extends PhysicsWorld {
         cameraTransform.getPosition().add(entityVision.getCameraOffset());
     }
 
+    private void updatePlayerGunTransform(Player player) {
+        Gun equippedGun = player.getWeaponsInventory().getEquippedGun();
+        if(equippedGun != null) {
+            Transform gunTransform = equippedGun.getComponent(Transform.class);
+
+            Vector3f playerRotation = player.getComponent(Transform.class).getRotation();
+            Vector3f playerPosition = player.getComponent(Transform.class).getPosition();
+            gunTransform.getRotation().set(playerRotation.x(), playerRotation.y() - Math.PI, playerRotation.z());
+
+            gunTransform.getPosition().set(
+                playerPosition.x() + Math.sin(playerRotation.y() + Math.PI/6) * 5f,
+                playerPosition.y() + 25f,
+                playerPosition.z() - Math.cos(playerRotation.y() + Math.PI/6) * 5f
+            );            
+
+            gunTransform.getRotation().set(0, playerRotation.y(), 0);
+        }
+    }
+
+
     @Override
     public void update() {
         for(Entity entity : dynamicEntities) {
@@ -117,6 +138,7 @@ public class DuberantWorld extends PhysicsWorld {
                 Player player = (Player) entity;
                 player.getComponent(Transform.class).limitXRotation((float) -Math.PI/2.0f, (float) Math.PI/2.0f);
                 
+                updatePlayerGunTransform(player);
                 updateVisionPosition(player.getComponent(Vision.class), player);
             }
         }

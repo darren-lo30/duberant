@@ -7,7 +7,6 @@ import java.util.List;
 import duber.game.MatchData;
 
 public class Scoreboard {
-
     private int[] teamWins = new int[2];
     private List<List<Score>> teamScores = new ArrayList<>(2);
 
@@ -55,19 +54,35 @@ public class Scoreboard {
         } else if(teamWins[MatchData.BLUE_TEAM] >= MatchData.NUM_ROUNDS_TO_WIN) {
             return MatchData.BLUE_TEAM;
         }
-
         return MatchData.NULL_TEAM;
-     }
+    }
+
+    
+    private static boolean compareScores(Score left, Score right) {
+        if(left.getKills() == right.getKills()) {
+            //Sort deaths ascending
+            return left.getDeaths() > right.getKills();
+        }
+
+        //Sort descending kills
+        return left.getKills() < right.getKills();
+    }
 
     private static void reorderScores(List<Score> scoresList) {
-        scoresList.sort((Score left, Score right) -> {
-            if(left.getKills() == right.getKills()) {
-                //Sort by deaths ascending
-                return left.getDeaths() - right.getDeaths();    
+        //Bubble sort
+        boolean sortEnded = false;
+        while(!sortEnded) {
+            sortEnded = true;
+            for(int i = 0; i<scoresList.size()-1; i++) {
+                Score leftScore = scoresList.get(i);
+                Score rightScore = scoresList.get(i+1);
+                if(compareScores(leftScore, rightScore)) {
+                    sortEnded = false;
+                    scoresList.set(i+1, leftScore);
+                    scoresList.set(i, rightScore);                    
+                }
             }
 
-            //Sort by kills descending
-            return right.getKills() - left.getKills();
-        });
+        }
     }
 }

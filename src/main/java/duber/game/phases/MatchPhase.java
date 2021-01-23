@@ -76,7 +76,8 @@ public abstract class MatchPhase {
             match.receivePackets();
             match.getMatchSounds().updateSoundSources();
             match.sendPackets();
-
+            
+            match.updateAnimations();
             match.getMatchSounds().playMovementSounds();
         }
 

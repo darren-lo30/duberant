@@ -133,8 +133,10 @@ public class MainMenu extends GUI {
                 }
 
                 //Send user login packet with username
-                getGame().getClientNetwork().getClient().sendTCP(new LoginPacket(username));       
-                System.out.println("Connected lol");
+                if(!getGame().isLoggedIn()) { 
+                    getGame().getClientNetwork().getClient().sendTCP(new LoginPacket(username));       
+                    System.out.println("Connected lol");
+                }
             } catch (IOException ioe) {
                 //Failed to connect
                 System.out.println("Failed to connect to server!");

@@ -8,7 +8,6 @@ import org.liquidengine.legui.style.color.ColorConstants;
 import org.liquidengine.legui.component.TextArea;
 import org.liquidengine.legui.style.Style.DisplayType;
 import static org.liquidengine.legui.component.optional.align.HorizontalAlign.CENTER;
-import static org.liquidengine.legui.component.optional.align.VerticalAlign.BOTTOM;
 public class ScoreboardDisplay extends GUI {
     @Override
     public void enter() {
@@ -22,13 +21,7 @@ public class ScoreboardDisplay extends GUI {
 
     @Override
     public void update() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void render() {
-        // TODO Auto-generated method stub
+        //Nothing to update
     }
 
     private Scoreboard getMatchScoreboard() {
@@ -76,8 +69,6 @@ public class ScoreboardDisplay extends GUI {
             }
         }
 
-        System.out.println(currName);
-        System.out.println(currKills);
 
         namesText.getTextState().setText(currName);
         killsText.getTextState().setText(currKills);

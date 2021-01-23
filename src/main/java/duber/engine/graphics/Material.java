@@ -3,7 +3,7 @@ package duber.engine.graphics;
 import org.joml.Vector4f;
 
 public class Material {
-    public static final Vector4f DEFAULT_COLOUR = new Vector4f(0.5f, 0.5f, 1.0f, 1.0f);
+    public static final Vector4f DEFAULT_COLOUR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
     
     private Vector4f ambientColour;
     private Vector4f diffuseColour;
@@ -54,6 +54,12 @@ public class Material {
 
     public Material(Texture texture) {
         this(texture, 0.0f);
+    }
+
+    public void setColour(Vector4f colour) {
+        ambientColour = colour;
+        diffuseColour = colour;
+        specularColour = colour;
     }
 
     public Vector4f getAmbientColour() {
