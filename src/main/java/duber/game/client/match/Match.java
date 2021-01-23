@@ -256,9 +256,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     public void updateAnimations() {
         for(Player player: getPlayers()) {
             MovementState playerMovement = player.getPlayerData().getPlayerMovement();
-            if(playerMovement == MovementState.STOP || playerMovement == MovementState.JUMPING) {
-                player.getComponent(Animation.class).getCurrentAnimation().resetFrame();
-            } else {
+            if(playerMovement == MovementState.RUNNING || playerMovement == MovementState.WALKING) {
                 player.getComponent(Animation.class).getCurrentAnimation().nextFrame();
             }
         }

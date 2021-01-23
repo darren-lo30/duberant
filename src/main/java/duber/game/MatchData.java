@@ -17,6 +17,8 @@ public class MatchData {
     public static final int NUM_ROUNDS = 3;
     public static final int NUM_ROUNDS_TO_WIN = (int) Math.ceil(NUM_ROUNDS/2.0);
 
+    public static final int MONEY_PER_ROUND = 2000;
+
     //Match models
     public static final MeshResource redPlayerModel = new MeshResource("models/player/redPlayer.fbx", "");
     public static final MeshResource bluePlayerModel = new MeshResource("models/player/bluePlayer.fbx", "");

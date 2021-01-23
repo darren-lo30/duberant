@@ -287,7 +287,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
             gameWorld.addDynamicEntity(player);
 
             //Give player money
-            player.getPlayerData().addMoney(1000); 
+            player.getPlayerData().addMoney(MatchData.MONEY_PER_ROUND); 
             player.getPlayerData().setMovementState(MovementState.STOP); 
         } 
 
