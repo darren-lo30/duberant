@@ -50,10 +50,11 @@ public class MainMenu extends GUI {
 
     @Override
     public void createGuiElements() {
+        
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
         getFrame().getContainer().getStyle().setDisplay(DisplayType.FLEX);
-
+        
 
         Component frameContainer = getFrame().getContainer();
         frameContainer.getStyle().getBackground().setColor(ColorConstants.gray());
@@ -77,7 +78,8 @@ public class MainMenu extends GUI {
         loginButton.getStyle().setMinWidth(160f);
         loginButton.getStyle().setMinHeight(30f);
         loginButton.getStyle().setBorder(border);
-        loginButton.getStyle().setMarginRight(20f);
+        loginButton.getStyle().setRight(320f);
+        loginButton.getStyle().setTop(150f);
         loginButton.getStyle().setPosition(PositionType.RELATIVE);
 
         Button matchButton = new Button("Find Match");
@@ -101,9 +103,8 @@ public class MainMenu extends GUI {
         mainPanel.add(matchButton);
         mainPanel.add(loginButton);
         getFrame().getContainer().add(mainPanel);
-       
         
-    
+        
     }   
 
 

@@ -4,9 +4,9 @@ import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.client.match.Match;
 import duber.game.gameobjects.Scoreboard;
 import duber.engine.entities.components.Named;
-
+import org.liquidengine.legui.style.color.ColorConstants;
 import org.liquidengine.legui.component.TextArea;
-
+import org.liquidengine.legui.style.Style.DisplayType;
 import static org.liquidengine.legui.component.optional.align.HorizontalAlign.CENTER;
 import static org.liquidengine.legui.component.optional.align.VerticalAlign.BOTTOM;
 public class ScoreboardDisplay extends GUI {
@@ -37,6 +37,9 @@ public class ScoreboardDisplay extends GUI {
 
     @Override
     public void createGuiElements() {
+        getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
+        getFrame().getContainer().setFocusable(false);
+        getFrame().getContainer().getStyle().setDisplay(DisplayType.MANUAL);
         TextArea namesText= new TextArea(420,280,100,250);
         TextArea killsText= new TextArea(520,280,100,250);
         TextArea deathsText=new TextArea(620,280,100,250);
@@ -51,6 +54,7 @@ public class ScoreboardDisplay extends GUI {
         deathsText.setHorizontalScrollBarVisible(false);
         scoreboardText.setVerticalScrollBarVisible(false);
         scoreboardText.setHorizontalScrollBarVisible(false);
+        scoreboardText.setEditable(false);
         scoreboardText.getTextState().setText("SCORES");
         namesText.setEditable(false);
         killsText.setEditable(false);
@@ -79,15 +83,6 @@ public class ScoreboardDisplay extends GUI {
         namesText.getTextState().setText(currName);
         killsText.getTextState().setText(currKills);
         deathsText.getTextState().setText(currDeaths);
-        namesText.setCaretPosition(12);
-        namesText.getTextAreaField().getStyle().setHorizontalAlign(CENTER);
-        namesText.getTextAreaField().getStyle().setVerticalAlign(BOTTOM);
-        killsText.setCaretPosition(12);
-        killsText.getTextAreaField().getStyle().setHorizontalAlign(CENTER);
-        killsText.getTextAreaField().getStyle().setVerticalAlign(BOTTOM);
-        deathsText.setCaretPosition(12);
-        deathsText.getTextAreaField().getStyle().setHorizontalAlign(CENTER);
-        deathsText.getTextAreaField().getStyle().setVerticalAlign(BOTTOM);
         getFrame().getContainer().add(namesText);
         getFrame().getContainer().add(killsText);
         getFrame().getContainer().add(deathsText);
