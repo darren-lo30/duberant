@@ -8,6 +8,21 @@ import org.liquidengine.legui.style.color.ColorConstants;
 import org.liquidengine.legui.component.TextArea;
 import org.liquidengine.legui.style.Style.DisplayType;
 import static org.liquidengine.legui.component.optional.align.HorizontalAlign.CENTER;
+import static org.liquidengine.legui.component.optional.align.VerticalAlign.BOTTOM;
+import duber.game.User;
+import duber.game.networking.LoginPacket;
+import duber.game.networking.MatchFoundPacket;
+import duber.game.networking.MatchQueuePacket;
+import duber.game.networking.LoginConfirmationPacket;
+import org.liquidengine.legui.event.MouseClickEvent;
+import org.liquidengine.legui.event.MouseClickEvent.MouseClickAction;
+import org.liquidengine.legui.component.Button;
+import org.liquidengine.legui.component.Panel;
+import org.liquidengine.legui.component.*;
+import org.liquidengine.legui.style.border.SimpleLineBorder;
+import org.liquidengine.legui.style.Style.PositionType;
+import org.liquidengine.legui.style.flex.FlexStyle.*;
+import org.liquidengine.legui.style.length.LengthType;
 public class ScoreboardDisplay extends GUI {
     @Override
     public void enter() {
@@ -21,7 +36,13 @@ public class ScoreboardDisplay extends GUI {
 
     @Override
     public void update() {
-        //Nothing to update
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void render() {
+        // TODO Auto-generated method stub
     }
 
     private Scoreboard getMatchScoreboard() {
@@ -32,31 +53,50 @@ public class ScoreboardDisplay extends GUI {
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
-        getFrame().getContainer().getStyle().setDisplay(DisplayType.MANUAL);
-        TextArea namesText= new TextArea(420,280,100,250);
-        TextArea killsText= new TextArea(520,280,100,250);
-        TextArea deathsText=new TextArea(620,280,100,250);
-        TextArea scoreboardText=new TextArea(420,230,300,50);
+
+        Component frameContainer = getFrame().getContainer();
+        frameContainer.getStyle().getBackground().setColor(ColorConstants.gray());
+        frameContainer.getStyle().setPadding(10);
+        frameContainer.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
+        frameContainer.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
+        frameContainer.getStyle().setDisplay(DisplayType.FLEX);
+
+        Panel mainPanel= new Panel();
+        mainPanel.getStyle().getBackground().setColor(ColorConstants.lightGray());
+        mainPanel.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
+        mainPanel.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
+        mainPanel.getStyle().setDisplay(DisplayType.FLEX);
+        mainPanel.getStyle().setWidth(LengthType.percent(100));
+        mainPanel.getStyle().setHeight(LengthType.percent(100));
+        frameContainer.add(mainPanel);
+
+        TextArea namesText= new TextArea(250,250,250,250);
+        namesText.getStyle().setMinHeight(250f);
+        namesText.getStyle().setMinWidth(100f);
+        namesText.getStyle().setPosition(PositionType.RELATIVE);
+        TextArea killsText= new TextArea(250,250,250,250);
+        killsText.getStyle().setMinWidth(100f);
+        killsText.getStyle().setPosition(PositionType.RELATIVE);
+        TextArea deathsText=new TextArea(250,250,250,250);
+        deathsText.getStyle().setMinHeight(250f);
+        deathsText.getStyle().setMinWidth(100f);
+        deathsText.getStyle().setPosition(PositionType.RELATIVE);
+        
         namesText.setVerticalScrollBarVisible(false);
-        namesText.setPressed(false);
         namesText.setHorizontalScrollBarVisible(false);
         killsText.setVerticalScrollBarVisible(false);
         killsText.setHorizontalScrollBarVisible(false);
         deathsText.setVerticalScrollBarVisible(false);
         deathsText.setHorizontalScrollBarVisible(false);
-        scoreboardText.setVerticalScrollBarVisible(false);
-        scoreboardText.setHorizontalScrollBarVisible(false);
-        scoreboardText.setEditable(false);
-        scoreboardText.getTextState().setText("SCORES");
+  
         namesText.setEditable(false);
         killsText.setEditable(false);
         deathsText.setEditable(false);
-        String currName="Name\n";
-        String currKills="Kills\n";
-        String currDeaths="Deaths\n";
+        String currName="Name\n\n";
+        String currKills="Kills\n\n";
+        String currDeaths="Deaths\n\n";
 
         Scoreboard scoreboard = getMatchScoreboard();
-
         for(int team = 0; team < 2; team++) {
             for(int player = 0; player < scoreboard.getScores(team).size(); player++) {
                 int kills= scoreboard.getScores(team).get(player).getKills();
@@ -68,15 +108,12 @@ public class ScoreboardDisplay extends GUI {
                 currDeaths= currDeaths+Integer.toString(deaths)+"\n";
             }
         }
-
-
         namesText.getTextState().setText(currName);
         killsText.getTextState().setText(currKills);
         deathsText.getTextState().setText(currDeaths);
-        getFrame().getContainer().add(namesText);
-        getFrame().getContainer().add(killsText);
-        getFrame().getContainer().add(deathsText);
-        getFrame().getContainer().add(scoreboardText);
+        mainPanel.add(namesText);
+        mainPanel.add(killsText);
+        mainPanel.add(deathsText);
     }
     
 }
