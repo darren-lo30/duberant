@@ -77,15 +77,14 @@ public class MainMenu extends GUI {
         loginButton.getStyle().setMinWidth(160f);
         loginButton.getStyle().setMinHeight(30f);
         loginButton.getStyle().setBorder(border);
-        loginButton.getStyle().setRight(320f);
-        loginButton.getStyle().setTop(150f);
+        loginButton.getStyle().setTop(100f);
         loginButton.getStyle().setPosition(PositionType.RELATIVE);
-
+        
+        
         Button matchButton = new Button("Find Match");
         matchButton.getStyle().setMinWidth(480f);
         matchButton.getStyle().setMinHeight(90f);
         matchButton.getStyle().setBorder(border);
-        matchButton.getStyle().setPosition(PositionType.RELATIVE);
         loginButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE && !loggingIn && !getGame().isLoggedIn()) {
                 loggingIn = true;
@@ -97,7 +96,6 @@ public class MainMenu extends GUI {
         matchButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(getGame().isLoggedIn() && event.getAction() == MouseClickAction.RELEASE) {
                 inMatchQueue = !inMatchQueue;
-                System.out.println(inMatchQueue);
                 getGame().getClientNetwork().getConnection().sendTCP(new MatchQueuePacket(inMatchQueue));
                 if(inMatchQueue) {
                     matchButton.getTextState().setText("Stop Queue");
@@ -109,8 +107,7 @@ public class MainMenu extends GUI {
         mainPanel.add(matchButton);
         mainPanel.add(loginButton);
         getFrame().getContainer().add(mainPanel);
-        
-        
+       
 
     }   
 
