@@ -32,7 +32,7 @@ public class DuberantWorld extends PhysicsWorld {
     
     public DuberantWorld() {
         super();        
-        setCollisionHandler(new DuberantCollisionHandler(constantEntities, dynamicEntities));
+        setCollisionHandler(new DuberantCollisionHandler(constantEntities));
     }
 
     public void addDynamicEntity(Entity entity) {

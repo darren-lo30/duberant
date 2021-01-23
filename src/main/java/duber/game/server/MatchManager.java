@@ -230,7 +230,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         
         //Set up player collider
         Collider playerCollider = new Collider();
-        SphereCollider sphereCollider1 = new SphereCollider(1.0f, new Vector3f(0, 0, 0));
+        SphereCollider sphereCollider1 = new SphereCollider(1.0f, new Vector3f(0, 1, 0));
         SphereCollider sphereCollider2 = new SphereCollider(0.8f, new Vector3f(0, 1.5f, 0));
         SphereCollider sphereCollider3 = new SphereCollider(0.8f, new Vector3f(0, 3.0f, 0));
 
@@ -267,17 +267,18 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         gameLighting.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
-        float lightIntensity = 0.3f;
         Vector3f lightDirection = new Vector3f(0, 1, 1);
-        DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
+        DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, 0.3f);
         gameLighting.setDirectionalLight(directionalLight);   
 
         Vector3f[] redPositions = new Vector3f[] {
-            new Vector3f(50, 0, 0)
+            new Vector3f(50, 0, 0),
+            new Vector3f(100, 0, 0)
         };
 
         Vector3f[] bluePositions = new Vector3f[] {
-            new Vector3f(100, 0, 0)
+            new Vector3f(150, 0, 0),
+            new Vector3f(200, 0, 0)
         };
         
         gameMap = new GameMap(map, skyBox, gameLighting, redPositions, bluePositions);   

@@ -45,8 +45,6 @@ struct Material {
     int hasNormalMap;
 };
 
-
-
 uniform sampler2D texture_sampler;
 uniform sampler2D normalMap;
 

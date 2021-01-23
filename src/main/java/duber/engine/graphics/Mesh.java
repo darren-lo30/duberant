@@ -39,7 +39,7 @@ import duber.engine.entities.Face;
 import duber.engine.entities.components.MeshBody;
 
 public class Mesh implements Cleansable {    
-    private static final int MAX_WEIGHTS = 4;
+    public static final int MAX_WEIGHTS = 4;
     
     private final float[] positions;
     private final float[] textureCoords;

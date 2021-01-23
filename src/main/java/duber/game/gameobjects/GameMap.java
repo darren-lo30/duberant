@@ -19,8 +19,8 @@ public class GameMap {
     private transient Vector3f[] initialBluePositions;
 
     public GameMap(Entity mainMap, SkyBox skyBox, SceneLighting gameLighting, Vector3f[] initialRedPositions, Vector3f[] initialBluePositions) {
-        if(initialRedPositions.length != MatchData.NUM_PLAYERS_PER_TEAM || 
-            initialBluePositions.length != MatchData.NUM_PLAYERS_PER_TEAM) {
+        if(initialRedPositions.length < MatchData.NUM_PLAYERS_PER_TEAM || 
+            initialBluePositions.length < MatchData.NUM_PLAYERS_PER_TEAM) {
                 throw new IllegalArgumentException("There needs to be " + MatchData.NUM_PLAYERS_PER_TEAM + " initial positions per team");
         }       
         

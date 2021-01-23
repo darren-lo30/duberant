@@ -23,12 +23,21 @@ import duber.engine.graphics.Material;
 import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Texture;
 
-import static org.lwjgl.assimp.Assimp.*;
+import static org.lwjgl.assimp.Assimp.aiProcess_JoinIdenticalVertices;
+import static org.lwjgl.assimp.Assimp.aiProcess_Triangulate;
+import static org.lwjgl.assimp.Assimp.aiImportFile;
+import static org.lwjgl.assimp.Assimp.aiTextureType_DIFFUSE;
+import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_AMBIENT;
+import static org.lwjgl.assimp.Assimp.aiTextureType_NONE;
+import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_DIFFUSE;
+import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_SPECULAR;
+
+import static org.lwjgl.assimp.Assimp.aiGetMaterialColor;
 
 public class MeshLoader {
-    private static Map<MeshResource, Mesh[]> meshDatabase = new HashMap<>();
+    protected static Map<MeshResource, Mesh[]> meshDatabase = new HashMap<>();
 
-    private MeshLoader() {}
+    protected MeshLoader() {}
 
     public static Mesh[] load(String modelFile) throws LWJGLException {
         return load(modelFile, null);
@@ -88,7 +97,7 @@ public class MeshLoader {
     }
 
 
-    private static void processMaterial(AIMaterial aiMaterial, List<Material> materials, String textureDirectory) throws LWJGLException {
+    protected static void processMaterial(AIMaterial aiMaterial, List<Material> materials, String textureDirectory) throws LWJGLException {
 
         AIString path = AIString.calloc();
         Assimp.aiGetMaterialTexture(aiMaterial, aiTextureType_DIFFUSE, 0, path, (IntBuffer) null, null, null, null, null, null);
@@ -132,7 +141,7 @@ public class MeshLoader {
         materials.add(material);
     }
 
-    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
+    protected static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
         List<Float> vertexPositions = new ArrayList<>();
         List<Float> textureCoords = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
@@ -163,7 +172,7 @@ public class MeshLoader {
         return mesh;
     }
 
-    private static void processVertexPositions(AIMesh aiMesh, List<Float> vertexPositions) {
+    protected static void processVertexPositions(AIMesh aiMesh, List<Float> vertexPositions) {
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
         
         while(aiVertices.remaining() > 0) {
@@ -174,7 +183,7 @@ public class MeshLoader {
         }
     }
 
-    private static void processTextureCoords(AIMesh aiMesh, List<Float> textureCoords) {
+    protected static void processTextureCoords(AIMesh aiMesh, List<Float> textureCoords) {
         AIVector3D.Buffer aiTextureCoords = aiMesh.mTextureCoords(0);
         if(aiTextureCoords == null) {
             return;
@@ -187,7 +196,7 @@ public class MeshLoader {
         }
     }
 
-    private static void processNormals(AIMesh aiMesh, List<Float> normals) {
+    protected static void processNormals(AIMesh aiMesh, List<Float> normals) {
         AIVector3D.Buffer aiNormals = aiMesh.mNormals();
         if(aiNormals == null) {
             return;
@@ -201,7 +210,7 @@ public class MeshLoader {
         }
     }
 
-    private static void processVertexIndices(AIMesh aiMesh, List<Integer> vertexIndices) {
+    protected static void processVertexIndices(AIMesh aiMesh, List<Integer> vertexIndices) {
         AIFace.Buffer aiFaces = aiMesh.mFaces();
         while(aiFaces.remaining() > 0) {
             AIFace aiFace = aiFaces.get();

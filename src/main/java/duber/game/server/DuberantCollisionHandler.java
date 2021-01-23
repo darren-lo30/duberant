@@ -2,7 +2,6 @@ package duber.game.server;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.joml.Vector3f;
 
@@ -20,13 +19,10 @@ import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Player.MovementState;
 
 public class DuberantCollisionHandler implements ICollisionHandler {    
-
     private Octree constantEntities;
-    private Set<Entity> dynamicEntities;
     
-    public DuberantCollisionHandler(Octree constantEntities, Set<Entity> dynamicEntities) {
+    public DuberantCollisionHandler(Octree constantEntities) {
         this.constantEntities = constantEntities;    
-        this.dynamicEntities = dynamicEntities;
     }
 
     @Override
@@ -34,7 +30,6 @@ public class DuberantCollisionHandler implements ICollisionHandler {
         List<CollisionResponse> collisionResponses = new ArrayList<>();
 
         constantEntityCollisionDetection(collidingCollider, collisionResponses); 
-        dynamicEntityCollisionDetection(collidingEntity, collisionResponses);
         return collisionResponses;
     }
 
@@ -51,15 +46,6 @@ public class DuberantCollisionHandler implements ICollisionHandler {
             }          
         }
 
-        return collisionResponses;
-    }
-    
-    private List<CollisionResponse> dynamicEntityCollisionDetection(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
-        for(Entity entity : dynamicEntities) {
-            if(entity != collidingEntity) {
-                //Do something
-            }
-        }
         return collisionResponses;
     }
 
