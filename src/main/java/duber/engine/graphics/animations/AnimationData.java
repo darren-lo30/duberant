@@ -48,4 +48,8 @@ public class AnimationData {
         }
     }
 
+    public void resetFrame() {
+        currentFrame = 0;
+    }
+
 }

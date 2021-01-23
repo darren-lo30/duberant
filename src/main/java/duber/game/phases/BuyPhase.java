@@ -6,7 +6,7 @@ import duber.game.client.match.HUD.Font;
 import duber.game.server.MatchManager;
 
 public class BuyPhase extends MatchPhase {
-    private static final int TIME_TO_LAST = 15;
+    private static final int TIME_TO_LAST = 5;
 
     public BuyPhase() {
         setPlayerCanBuy(true);

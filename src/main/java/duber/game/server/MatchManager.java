@@ -68,6 +68,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
             loadGameMap();
             loadPlayers(redTeam, blueTeam);
         } catch (LWJGLException le) {
+            le.printStackTrace();
             System.out.println("Error: Could not load match");
         }
 
@@ -191,7 +192,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
     }
 
     public void loadPlayers(List<User> redTeam, List<User> blueTeam) throws LWJGLException {
-        Mesh[] playerMeshes = MeshLoader.load(MatchData.playerModel.getModelFile());
+        Mesh[] playerMeshes = MeshLoader.load(MatchData.playerModel.getModelFile()).getMeshes();
 
         for(User user: redTeam) {
             Player redPlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, MatchData.RED_TEAM);
@@ -230,10 +231,6 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         playerCollider.addColliderPart(sphereCollider3);
         player.addComponent(playerCollider);
 
-        //Set transform
-        Transform playerTransform = player.getComponent(Transform.class);
-        playerTransform.setScale(5.0f);
-        
         //Add player camera
         Vision playerVision = new Vision(new Vector3f(0, 30, 0));
         player.addComponent(playerVision);
@@ -241,13 +238,13 @@ public class MatchManager implements Runnable, MatchPhaseManager {
     }
     
     public void loadGameMap() throws LWJGLException {        
-        Mesh[] mapMesh = MeshLoader.load(MatchData.mapModel.getModelFile());
+        Mesh[] mapMesh = MeshLoader.load(MatchData.mapModel.getModelFile()).getMeshes();
         Entity map = new Entity();
         map.addComponent(new MeshBody(mapMesh));
         map.getComponent(Transform.class).setScale(0.3f);
         gameWorld.addConstantEntity(map);         
         
-        Mesh[] skyBoxMesh = MeshLoader.load(MatchData.skyBoxModel.getModelFile());
+        Mesh[] skyBoxMesh = MeshLoader.load(MatchData.skyBoxModel.getModelFile()).getMeshes();
         SkyBox skyBox = new SkyBox(skyBoxMesh[0]);
         skyBox.getComponent(Transform.class).setScale(3000.0f);
         

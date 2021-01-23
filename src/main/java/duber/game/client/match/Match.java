@@ -23,6 +23,7 @@ import duber.engine.Window;
 import duber.engine.entities.Entity;
 import duber.engine.entities.SkyBox;
 import duber.engine.entities.components.Vision;
+import duber.engine.entities.components.Animation;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.exceptions.LWJGLException;
@@ -30,6 +31,7 @@ import duber.engine.graphics.Mesh;
 import duber.engine.graphics.Renderer;
 import duber.engine.graphics.Scene;
 import duber.engine.loaders.MeshLoader;
+import duber.engine.loaders.MeshLoader.MeshData;
 import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.GunBuilder;
 import duber.game.gameobjects.GunType;
@@ -193,6 +195,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         } else {
             receivePackets();
         }        
+
+        for(Player player: getPlayers()) {
+            player.getComponent(Animation.class).getCurrentAnimation().nextFrame();
+        }
     }
 
     @Override
@@ -275,23 +281,24 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
         try {
             //Set player meshes
-            Mesh[] playerMeshes = MeshLoader.load(matchInitializePacket.playerModel);
+            MeshData playerMeshData = MeshLoader.load(matchInitializePacket.playerModel);
+            
             for(Player player : getPlayers()) {
-                MeshBody playerMeshBody = new MeshBody(playerMeshes, true);
-                player.addComponent(playerMeshBody);
+                player.addComponent(new MeshBody(playerMeshData.getMeshes(), true));
+                player.addComponent(new Animation(playerMeshData.getAnimationData()));
 
                 if(player == mainPlayer) {
-                    playerMeshBody.setVisible(false);
+                    player.getComponent(MeshBody.class).setVisible(false);
                 }
             }
     
             //Set mainMap meshes
-            Mesh[] mainMapMeshes = MeshLoader.load(matchInitializePacket.mapModel);
+            Mesh[] mainMapMeshes = MeshLoader.load(matchInitializePacket.mapModel).getMeshes();
             Entity mainMap = matchInitializePacket.gameMap.getMainMap();
             mainMap.addComponent(new MeshBody(mainMapMeshes, true));
     
             //Set skybox mesh
-            Mesh[] skyBoxMeshes = MeshLoader.load(matchInitializePacket.skyBoxModel);
+            Mesh[] skyBoxMeshes = MeshLoader.load(matchInitializePacket.skyBoxModel).getMeshes();
             SkyBox skyBox = matchInitializePacket.gameMap.getSkyBox();
             skyBox.addComponent(new MeshBody(skyBoxMeshes, true));
     

@@ -1,16 +1,16 @@
 package duber.engine.graphics;
 
 import duber.engine.entities.Entity;
+import duber.engine.entities.components.Animation;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Transform;
 import duber.engine.entities.Camera;
+import duber.engine.graphics.animations.AnimationFrame;
 import duber.engine.graphics.lighting.*;
 import duber.engine.utilities.Utils;
 import duber.engine.Cleansable;
 import duber.engine.Window;
 import duber.engine.exceptions.LWJGLException;
-
-
 
 import java.io.IOException;
 import java.util.List;
@@ -58,6 +58,9 @@ public class Renderer implements Cleansable {
 
         //Create material uniform
         sceneShaderProgram.createMaterialUniform("material");
+        
+        //Animations
+        sceneShaderProgram.createUniform("jointsMatrix");
 
         //Create uniform for lights
         sceneShaderProgram.createUniform("ambientLight");        
@@ -114,6 +117,12 @@ public class Renderer implements Cleansable {
                 } else {
                     modelViewMatrix = matrixTransformer.buildModelMatrix(entityTransform);
                 }
+
+                if(entity.hasComponent(Animation.class)) {
+                    AnimationFrame frame = entity.getComponent(Animation.class).getCurrentAnimation().getCurrentFrame();
+                    sceneShaderProgram.setUniform("jointsMatrix", frame.getJointMatrices());
+                }
+                
                 sceneShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
             });
         }

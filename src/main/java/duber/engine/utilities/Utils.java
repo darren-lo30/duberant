@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -119,5 +120,17 @@ public class Utils {
 
     public static String capitalize(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+    }
+
+    public static int[] buildIntArray(int size, int fillNumber) {
+        int[] arr = new int[size];
+        Arrays.fill(arr, fillNumber);
+        return arr;
+    }
+
+    public static float[] buildFloatArray(int size, float fillNumber) {
+        float[] arr = new float[size];
+        Arrays.fill(arr, fillNumber);
+        return arr;
     }
 }

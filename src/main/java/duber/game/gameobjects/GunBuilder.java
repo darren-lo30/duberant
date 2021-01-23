@@ -41,7 +41,7 @@ public class GunBuilder {
 
         if(!gunMeshes.containsKey(gunType)) {
             MeshResource gunMeshResource = gunType.getGunMeshResource();
-            gunMeshes.put(gunType, new MeshBody(MeshLoader.load(gunMeshResource)));
+            gunMeshes.put(gunType, new MeshBody(MeshLoader.load(gunMeshResource).getMeshes()));
         }
         
         MeshBody gunMesh = new MeshBody(gunMeshes.get(gunType));
