@@ -32,6 +32,7 @@ import duber.engine.graphics.Scene;
 import duber.engine.loaders.MeshLoader;
 import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.GunBuilder;
+import duber.game.gameobjects.GunType;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.gameobjects.WeaponsInventory;
@@ -39,6 +40,7 @@ import duber.game.phases.MatchPhaseManager;
 import duber.game.client.GameState;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.networking.GunFirePacket;
+import duber.game.networking.GunPurchasePacket;
 import duber.game.networking.MatchInitializePacket;
 import duber.game.networking.MatchPhasePacket;
 import duber.game.networking.PlayerUpdatePacket;
@@ -364,6 +366,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     private void processPacket(GunFirePacket gunFirePacket) {
         matchSounds.playGunSounds(getPlayerById(gunFirePacket.shooterId));
+    }
+
+    public void sendGunPurchaseRequest(GunType gunType) {
+        getGame().getUser().getConnection().sendTCP(new GunPurchasePacket(gunType));
     }
 
     public void leave() {

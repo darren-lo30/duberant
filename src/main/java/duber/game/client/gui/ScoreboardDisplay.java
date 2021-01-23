@@ -70,8 +70,6 @@ public class ScoreboardDisplay extends GUI {
             }
         }
 
-        System.out.println(currName);
-        System.out.println(currKills);
 
         namesText.getTextState().setText(currName);
         killsText.getTextState().setText(currKills);

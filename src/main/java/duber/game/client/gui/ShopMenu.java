@@ -2,6 +2,8 @@ package duber.game.client.gui;
 
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.client.match.Match;
+import duber.game.gameobjects.GunType;
+
 import org.liquidengine.legui.event.MouseClickEvent;
 import org.liquidengine.legui.event.MouseClickEvent.MouseClickAction;
 import org.liquidengine.legui.component.Button;
@@ -54,49 +56,45 @@ public class ShopMenu extends GUI {
 
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
 
-        Button smgButton = new Button("Small Machine gun");
-        smgButton.getStyle().setMinWidth(160f);
-        smgButton.getStyle().setMinHeight(30f);
-        smgButton.getStyle().setBorder(border);
-        smgButton.getStyle().setMarginRight(20f);
-        smgButton.getStyle().setPosition(PositionType.RELATIVE);
+        Button pistolButton = new Button("Pistol");
+        pistolButton.getStyle().setMinWidth(160f);
+        pistolButton.getStyle().setMinHeight(30f);
+        pistolButton.getStyle().setBorder(border);
+        pistolButton.getStyle().setMarginRight(20f);
+        pistolButton.getStyle().setPosition(PositionType.RELATIVE);
 
-        Button lmgButton = new Button("Large Machine Gun");
+        Button lmgButton = new Button("Light Machine Gun");
         lmgButton.getStyle().setMinWidth(480f);
         lmgButton.getStyle().setMinHeight(90f);
         lmgButton.getStyle().setBorder(border);
         lmgButton.getStyle().setPosition(PositionType.RELATIVE);
         
-        Button arButton = new Button("Assault Rifle");
-        arButton.getStyle().setMinWidth(480f);
-        arButton.getStyle().setMinHeight(90f);
-        arButton.getStyle().setBorder(border);
-        arButton.getStyle().setPosition(PositionType.RELATIVE);
+        Button rifleButton = new Button("Assault Rifle");
+        rifleButton.getStyle().setMinWidth(480f);
+        rifleButton.getStyle().setMinHeight(90f);
+        rifleButton.getStyle().setBorder(border);
+        rifleButton.getStyle().setPosition(PositionType.RELATIVE);
         
-        arButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
+        rifleButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE) {
-              
+                match.sendGunPurchaseRequest(GunType.RIFLE);
             }
         });
         lmgButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE) {
-              
+                match.sendGunPurchaseRequest(GunType.LMG);
             }
         });
         
-        smgButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
+        pistolButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE) {
-
+                match.sendGunPurchaseRequest(GunType.PISTOL);
             }
         });
 
-        mainPanel.add(smgButton);
+        mainPanel.add(pistolButton);
         mainPanel.add(lmgButton);
-        mainPanel.add(arButton);
+        mainPanel.add(rifleButton);
         getFrame().getContainer().add(mainPanel);
-        
-
-    }
-    
-    
+    }   
 }

@@ -28,12 +28,10 @@ import duber.game.MatchData;
 import duber.game.gameobjects.GameMap;
 import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.GunBuilder;
-import duber.game.gameobjects.GunType;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.gameobjects.Player.MovementState;
 import duber.game.gameobjects.Player.PlayerData;
-import duber.game.gameobjects.WeaponsInventory;
 import duber.game.User;
 import duber.game.networking.GunPurchasePacket;
 import duber.game.networking.MatchInitializePacket;
@@ -153,13 +151,6 @@ public class MatchManager implements Runnable, MatchPhaseManager {
             MatchInitializePacket matchInitializePacket = 
                 new MatchInitializePacket(getPlayers(), usersPlayer.getId(), gameMap);
             user.getConnection().sendTCP(matchInitializePacket);
-        }
-
-        for(Player player : getPlayers()) {
-            WeaponsInventory playerInventory = player.getWeaponsInventory();
-            playerInventory.setPrimaryGun(GunBuilder.getInstance().buildGun(GunType.RIFLE));
-            playerInventory.setSecondaryGun(GunBuilder.getInstance().buildGun(GunType.PISTOL));
-            playerInventory.equipPrimaryGun();
         }
     }
 
@@ -338,7 +329,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
 
     private void processPacket(User user, GunPurchasePacket gunPurchasePacket) {
         Player player = getUsersPlayer(user);
-        Gun purchasedGun = GunBuilder.getInstance().buildGun(gunPurchasePacket.gunType);
+        Gun purchasedGun = GunBuilder.getInstance().buildGun(gunPurchasePacket.getGunType());
         player.purchaseGun(purchasedGun);
     }
 
