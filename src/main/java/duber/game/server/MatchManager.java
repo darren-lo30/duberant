@@ -294,8 +294,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
 
             //Give player money
             player.getPlayerData().addMoney(1000); 
-            player.getPlayerData().setMovementState(MovementState.STOP);
-           
+            player.getPlayerData().setMovementState(MovementState.STOP); 
         } 
 
         resetPlayerMovement();
