@@ -44,7 +44,6 @@ public class ScoreboardDisplay extends GUI {
         TextArea killsText= new TextArea(520,280,100,250);
         TextArea deathsText=new TextArea(620,280,100,250);
         TextArea scoreboardText=new TextArea(420,230,300,50);
-        scoreboardText.getTextAreaField().getStyle().setHorizontalAlign(CENTER);
         namesText.setVerticalScrollBarVisible(false);
         namesText.setPressed(false);
         namesText.setHorizontalScrollBarVisible(false);

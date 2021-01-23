@@ -1,29 +1,61 @@
 package duber.game.client.gui;
 
+import duber.game.User;
+import duber.game.client.GameStateManager.GameStateOption;
+import duber.game.networking.LoginPacket;
+import duber.game.networking.MatchFoundPacket;
+import duber.game.networking.MatchQueuePacket;
+import duber.game.networking.LoginConfirmationPacket;
 import org.liquidengine.legui.event.MouseClickEvent;
 import org.liquidengine.legui.event.MouseClickEvent.MouseClickAction;
 import org.liquidengine.legui.component.Button;
+import org.liquidengine.legui.component.Panel;
+import org.liquidengine.legui.component.*;
 import org.liquidengine.legui.style.border.SimpleLineBorder;
 import org.liquidengine.legui.style.color.ColorConstants;
+import org.liquidengine.legui.style.Style.DisplayType;
+import org.liquidengine.legui.style.Style.PositionType;
+import org.liquidengine.legui.style.flex.FlexStyle.*;
+import org.liquidengine.legui.style.length.LengthType;
+
 
 public class OptionsMenu extends GUI {
 
 	@Override
 	public void createGuiElements() {
-		getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
+        getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
+        getFrame().getContainer().getStyle().setDisplay(DisplayType.FLEX);
+		Component frameContainer = getFrame().getContainer();
+        frameContainer.getStyle().getBackground().setColor(ColorConstants.gray());
+        frameContainer.getStyle().setPadding(10);
+        frameContainer.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
+        frameContainer.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
+        frameContainer.getStyle().setDisplay(DisplayType.FLEX);
 
-        Button quitButton = new Button("Quit Game", 500, 350, 480, 90);
+        Panel mainPanel= new Panel();
+        mainPanel.getStyle().getBackground().setColor(ColorConstants.lightGray());
+        mainPanel.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
+        mainPanel.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
+        mainPanel.getStyle().setDisplay(DisplayType.FLEX);
+        mainPanel.getStyle().setWidth(LengthType.percent(100));
+        mainPanel.getStyle().setHeight(LengthType.percent(100));
+        frameContainer.add(mainPanel);
+
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
-        quitButton.getStyle().setBorder(border);
 
+        Button quitButton = new Button("QUIT GAME");
+        quitButton.getStyle().setMinWidth(160f);
+        quitButton.getStyle().setMinHeight(30f);
+        quitButton.getStyle().setBorder(border);
+        quitButton.getStyle().setPosition(PositionType.RELATIVE);
         quitButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE ) {
                 getWindow().setShouldClose(true);
             }
         });
-
-        getFrame().getContainer().add(quitButton);
+        mainPanel.add(quitButton);
+        
 		
 	}
 

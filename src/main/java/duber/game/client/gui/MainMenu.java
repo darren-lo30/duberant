@@ -25,7 +25,7 @@ import org.liquidengine.legui.style.length.LengthType;
 public class MainMenu extends GUI {
     private volatile boolean loggingIn = false;
     private volatile boolean inMatchQueue = false;
-
+    
     @Override
     public void update() {
         Queue<Object> receivedPackets = getGame().getClientNetwork().getPackets();
@@ -50,7 +50,6 @@ public class MainMenu extends GUI {
 
     @Override
     public void createGuiElements() {
-        
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
         getFrame().getContainer().getStyle().setDisplay(DisplayType.FLEX);
@@ -91,13 +90,20 @@ public class MainMenu extends GUI {
             if(event.getAction() == MouseClickAction.RELEASE && !loggingIn && !getGame().isLoggedIn()) {
                 loggingIn = true;
                 new Thread(new LoginRequest("Darren")).start();
+                loginButton.getParent().remove(loginButton);
             }
         });
         
         matchButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(getGame().isLoggedIn() && event.getAction() == MouseClickAction.RELEASE) {
                 inMatchQueue = !inMatchQueue;
+                System.out.println(inMatchQueue);
                 getGame().getClientNetwork().getConnection().sendTCP(new MatchQueuePacket(inMatchQueue));
+                if(inMatchQueue==true){
+                    matchButton.getTextState().setText("Stop Queue");
+                }else if(inMatchQueue==false){
+                    matchButton.getTextState().setText("Find Match");
+                }
             }
         });
         mainPanel.add(matchButton);
@@ -105,6 +111,7 @@ public class MainMenu extends GUI {
         getFrame().getContainer().add(mainPanel);
         
         
+
     }   
 
 

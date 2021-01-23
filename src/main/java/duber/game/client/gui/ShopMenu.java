@@ -55,10 +55,9 @@ public class ShopMenu extends GUI {
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
 
         Button smgButton = new Button("Small Machine gun");
-        smgButton.getStyle().setMinWidth(160f);
-        smgButton.getStyle().setMinHeight(30f);
+        smgButton.getStyle().setMinWidth(480f);
+        smgButton.getStyle().setMinHeight(90f);
         smgButton.getStyle().setBorder(border);
-        smgButton.getStyle().setMarginRight(20f);
         smgButton.getStyle().setPosition(PositionType.RELATIVE);
 
         Button lmgButton = new Button("Large Machine Gun");
@@ -80,7 +79,7 @@ public class ShopMenu extends GUI {
         });
         lmgButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE) {
-              
+                
             }
         });
         
