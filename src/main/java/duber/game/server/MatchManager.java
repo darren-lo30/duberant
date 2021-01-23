@@ -192,7 +192,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
     }
 
     public void loadPlayers(List<User> redTeam, List<User> blueTeam) throws LWJGLException {
-        Mesh[] playerMeshes = MeshLoader.load(MatchData.playerModel.getModelFile()).getMeshes();
+        Mesh[] playerMeshes = MeshLoader.load(MatchData.redPlayerModel.getModelFile()).getMeshes();
 
         for(User user: redTeam) {
             Player redPlayer = createPlayer(user.getId(), user.getUsername(), playerMeshes, MatchData.RED_TEAM);
@@ -222,13 +222,19 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         
         //Set up player collider
         Collider playerCollider = new Collider();
-        SphereCollider sphereCollider1 = new SphereCollider(1.0f, new Vector3f(0, 1, 0));
-        SphereCollider sphereCollider2 = new SphereCollider(0.8f, new Vector3f(0, 1.5f, 0));
-        SphereCollider sphereCollider3 = new SphereCollider(0.8f, new Vector3f(0, 3.0f, 0));
+        SphereCollider sphereCollider1 = new SphereCollider(5.0f, new Vector3f(0, 5, 0));
+        SphereCollider sphereCollider2 = new SphereCollider(4.0f, new Vector3f(0, 10, 0));
+        SphereCollider sphereCollider3 = new SphereCollider(4.0f, new Vector3f(0, 16, 0));
+        SphereCollider sphereCollider4 = new SphereCollider(4.0f, new Vector3f(0, 22, 0));
+        SphereCollider sphereCollider5 = new SphereCollider(4.0f, new Vector3f(0, 28, 0));
+
 
         playerCollider.setBaseCollider(sphereCollider1);
         playerCollider.addColliderPart(sphereCollider2);
         playerCollider.addColliderPart(sphereCollider3);
+        playerCollider.addColliderPart(sphereCollider4);
+        playerCollider.addColliderPart(sphereCollider5);
+
         player.addComponent(playerCollider);
 
         //Add player camera
@@ -255,8 +261,8 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         gameLighting.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
-        Vector3f lightDirection = new Vector3f(0, 1, 1);
-        DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, 0.3f);
+        Vector3f lightDirection = new Vector3f(0, 1, 0);
+        DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, 0.4f);
         gameLighting.setDirectionalLight(directionalLight);   
 
         Vector3f[] redPositions = new Vector3f[] {
@@ -329,7 +335,6 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         Gun purchasedGun = GunBuilder.getInstance().buildGun(gunPurchasePacket.getGunType());
         player.purchaseGun(purchasedGun);
     }
-
     
     /**
      * Update the match state and send updates out to users

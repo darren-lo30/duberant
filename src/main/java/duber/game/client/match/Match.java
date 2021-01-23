@@ -38,7 +38,9 @@ import duber.game.gameobjects.GunType;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.gameobjects.WeaponsInventory;
+import duber.game.gameobjects.Player.MovementState;
 import duber.game.phases.MatchPhaseManager;
+import duber.game.MatchData;
 import duber.game.client.GameState;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.networking.GunFirePacket;
@@ -195,11 +197,8 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         } else {
             receivePackets();
         }        
-
-        for(Player player: getPlayers()) {
-            player.getComponent(Animation.class).getCurrentAnimation().nextFrame();
-        }
     }
+    
 
     @Override
     public void render() {
@@ -254,6 +253,17 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         return hud;
     }
 
+    public void updateAnimations() {
+        for(Player player: getPlayers()) {
+            MovementState playerMovement = player.getPlayerData().getPlayerMovement();
+            if(playerMovement == MovementState.STOP || playerMovement == MovementState.JUMPING) {
+                player.getComponent(Animation.class).getCurrentAnimation().resetFrame();
+            } else {
+                player.getComponent(Animation.class).getCurrentAnimation().nextFrame();
+            }
+        }
+    }
+
     public void receivePackets() {
         while(!getGame().getClientNetwork().getPackets().isEmpty()){
             Object packet = getGame().getClientNetwork().getPackets().poll();
@@ -281,15 +291,21 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
         try {
             //Set player meshes
-            MeshData playerMeshData = MeshLoader.load(matchInitializePacket.playerModel);
-            
             for(Player player : getPlayers()) {
-                player.addComponent(new MeshBody(playerMeshData.getMeshes(), true));
-                player.addComponent(new Animation(playerMeshData.getAnimationData()));
-
-                if(player == mainPlayer) {
-                    player.getComponent(MeshBody.class).setVisible(false);
+                MeshData playerMeshData;
+                if(player.getPlayerData().getTeam() == MatchData.RED_TEAM) {
+                    playerMeshData = MeshLoader.load(matchInitializePacket.redPlayerModel);
+                } else {
+                    playerMeshData = MeshLoader.load(matchInitializePacket.bluePlayerModel);
                 }
+
+                MeshBody playerMeshBody = new MeshBody(playerMeshData.getMeshes(), true);
+                if(player == mainPlayer) {
+                    playerMeshBody.setVisible(false);
+                }
+
+                player.addComponent(playerMeshBody);
+                player.addComponent(new Animation(playerMeshData.getAnimationData()));
             }
     
             //Set mainMap meshes
@@ -329,10 +345,6 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         //Update the player position and camera
         modifiedPlayer.getComponent(Transform.class).set(playerUpdatePacket.playerTransform);
         modifiedPlayer.getView().getComponent(Transform.class).set(playerUpdatePacket.cameraTransform);
-        
-        if(modifiedPlayer != mainPlayer) {
-            modifiedPlayer.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
-        }
 
         //Update other player information
         modifiedPlayer.getScore().set(playerUpdatePacket.playerScore);
@@ -340,13 +352,20 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
         updatePlayerWeapons(modifiedPlayer.getWeaponsInventory(), playerUpdatePacket.playerInventory);
         
-        if(modifiedPlayer == mainPlayer) {
-            Gun equippedGun = modifiedPlayer.getWeaponsInventory().getEquippedGun();
-
-            if(equippedGun != null) {
+        Gun equippedGun = modifiedPlayer.getWeaponsInventory().getEquippedGun();
+        if(equippedGun != null) {
+            if(modifiedPlayer == mainPlayer) {
                 equippedGun.getComponent(Transform.class).setRelativeView(false);
                 equippedGun.getComponent(Transform.class).getPosition().set(5.5f, -5, -7);
+                equippedGun.getComponent(Transform.class).getRotation().set(0, 0, 0);
+                equippedGun.getComponent(Transform.class).setScale(1.4f);
             }
+
+            equippedGun.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
+        }
+
+        if(modifiedPlayer != mainPlayer) {
+            modifiedPlayer.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
         }
     }
 

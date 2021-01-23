@@ -111,43 +111,6 @@ public class Player extends Entity {
         }
     }
 
-    /*
-    public void updateEquippedGun() {
-        Camera playerCamera = getView();
-        playerCamera.updateViewMatrix();
-        
-        Transform cameraTransform = getView().getComponent(Transform.class);
-        Gun equippedGun = getWeaponsInventory().getEquippedGun();
-
-        
-        if(equippedGun != null) {
-            //Rotate the gun relative to the player
-            Transform gunTransform = equippedGun.getComponent(Transform.class);
-
-            Vector3f cameraRotation = cameraTransform.getRotation();
-            Vector3f cameraPosition = cameraTransform.getPosition();
-            gunTransform.getRotation().set(cameraRotation.x(), cameraRotation.y() - Math.PI, cameraRotation.z());
-
-            gunTransform.getPosition().set(
-                cameraPosition.x() - Math.sin(cameraRotation.y() + Math.PI/6) * 0.6f,
-                cameraPosition.y() - 0.5f,
-                cameraPosition.z() + Math.cos(cameraRotation.y() + Math.PI/6) * 0.6f;
-            )
-            
-            gunTransform.getPosition().set(
-                cameraPosition.x() + 5*Math.sin(cameraRotation.y() + Math.PI/6),
-                cameraPosition.y() - 7,
-                cameraPosition.z() - 5*Math.cos(cameraRotation.y() + Math.PI/6)
-            );
-
-            
-
-            gunTransform.getRotation().set(cameraRotation.x(), cameraRotation.y(), 0);
-        }
-    }
-    */
-
-
     public enum MovementState {
         STOP,
         RUNNING, 

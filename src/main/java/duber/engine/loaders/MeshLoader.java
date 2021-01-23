@@ -49,8 +49,6 @@ import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_DIFFUSE;
 import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_SPECULAR;
 
 public class MeshLoader {
-    private static Map<MeshResource, MeshData> meshDatabase = new HashMap<>();
-
     private MeshLoader() {}
 
     public static MeshData load(String modelFile) throws LWJGLException {
@@ -65,11 +63,7 @@ public class MeshLoader {
         return load(new MeshResource(modelFile, texturesDirectory, flags));
     }
 
-    public static MeshData load(MeshResource meshResource) throws LWJGLException {
-        if(meshDatabase.containsKey(meshResource)) {
-            return meshDatabase.get(meshResource);
-        }
-        
+    public static MeshData load(MeshResource meshResource) throws LWJGLException {        
         String modelFile = meshResource.getModelFile();
         String texturesDirectory = meshResource.getTextureDirectory();
         int flags = meshResource.getFlags();
