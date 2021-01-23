@@ -25,10 +25,6 @@ public class Player extends Entity {
 
         addComponent(new Identifier(id));
         addComponent(new Named(name));
-        
-        if(team != 0 && team != 1) {
-            throw new IllegalArgumentException("The team must either be 0 or 1 for red or blue");
-        }
 
         PlayerData playerData = new PlayerData();
         playerData.setTeam(team);

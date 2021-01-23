@@ -163,7 +163,7 @@ public class DuberantServer {
 
             User connectedUser = getUser(connection);
             if(connectedUser != null && packet instanceof MatchQueuePacket) {
-                System.out.println("Received match queeu packet");
+                System.out.println("Player sent match queue request");
                 processPacket(connectedUser, (MatchQueuePacket) packet);
             }
         }

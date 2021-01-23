@@ -94,7 +94,5 @@ public class DuberantCollisionHandler implements ICollisionHandler {
 
         float cosAngleBetween = faceNormal.dot(groundNormal);
         return cosAngleBetween > 0.9;
-    }
-
-    
+    }    
 }

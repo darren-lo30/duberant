@@ -7,7 +7,7 @@ import duber.engine.entities.components.Named;
 import org.liquidengine.legui.style.color.ColorConstants;
 import org.liquidengine.legui.component.TextArea;
 import org.liquidengine.legui.style.Style.DisplayType;
-import static org.liquidengine.legui.component.optional.align.HorizontalAlign.CENTER;
+
 public class ScoreboardDisplay extends GUI {
     @Override
     public void enter() {
