@@ -148,7 +148,7 @@ public class Player extends Entity {
         }
         
         public void setTeam(int team) {
-            if(team != MatchData.RED_TEAM || team != MatchData.BLUE_TEAM) {
+            if(team != MatchData.RED_TEAM && team != MatchData.BLUE_TEAM) {
                 throw new IllegalArgumentException("The team does not exist");
             }
             this.team = team;
