@@ -54,11 +54,11 @@ public class GameStateManager implements Cleansable {
     }
 
     public void pushState(GameState gameState) {
-        if(gameState.isOpened()) {
+        if (gameState.isOpened()) {
             throw new IllegalStateException("The game state is already open");
         }
 
-        if(!gameStates.empty()) {
+        if (!gameStates.empty()) {
             gameStates.peek().exit();
         }
 
@@ -83,7 +83,7 @@ public class GameStateManager implements Cleansable {
     public GameState popState() {
         GameState poppedState = popStateLogic();
 
-        if(!gameStates.isEmpty()) {
+        if (!gameStates.isEmpty()) {
             gameStates.peek().enter();
         }
         return poppedState;
@@ -123,7 +123,7 @@ public class GameStateManager implements Cleansable {
             popped = true;
         }
 
-        if(popped && !gameStates.isEmpty()) {
+        if (popped && !gameStates.isEmpty()) {
             gameStates.peek().enter();
         }
 
@@ -133,14 +133,14 @@ public class GameStateManager implements Cleansable {
         for(int i = gameStatesList.size()-1; i >= 0; i--) {
             GameState gameState = gameStatesList.get(i);
             
-            if(!gameState.shouldClose() && (stateIsFocused(gameState) || gameState.isUpdateInBackground())) {
+            if (!gameState.shouldClose() && (stateIsFocused(gameState) || gameState.isUpdateInBackground())) {
                 gameState.update();
             }
         }
     }
 
     public void render() {
-        if(getFocusedState() != null) {
+        if (getFocusedState() != null) {
             getFocusedState().render();
         }
     }
@@ -149,7 +149,7 @@ public class GameStateManager implements Cleansable {
     public void cleanup() {
         while(!gameStates.isEmpty()){
             GameState nextState = gameStates.pop();
-            if(nextState instanceof Cleansable) {
+            if (nextState instanceof Cleansable) {
                 ((Cleansable) nextState).cleanup();
             }
         }

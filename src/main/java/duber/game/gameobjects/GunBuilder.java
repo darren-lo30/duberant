@@ -15,7 +15,7 @@ public class GunBuilder {
     private static GunBuilder instance;
 
     public static GunBuilder getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new GunBuilder();
         }
         return instance;
@@ -30,16 +30,16 @@ public class GunBuilder {
     }
 
     public void loadGunMesh(Gun gun) throws LWJGLException {
-        if(gun == null) {
+        if (gun == null) {
             return;
         }
         
         GunType gunType = GunType.getGunType(gun);
-        if(gunType == null) {
+        if (gunType == null) {
             throw new IllegalArgumentException("The gun is not registered with a mesh");
         }
 
-        if(!gunMeshes.containsKey(gunType)) {
+        if (!gunMeshes.containsKey(gunType)) {
             MeshResource gunMeshResource = gunType.getGunMeshResource();
             gunMeshes.put(gunType, new MeshBody(MeshLoader.load(gunMeshResource).getMeshes()));
         }

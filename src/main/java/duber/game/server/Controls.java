@@ -37,12 +37,12 @@ public class Controls {
     private Controls() {}
     
     private static void addControlVelocity(Vector3f playerVelocity, Vector3f controlRotation, Vector3f controlVelocity) {
-        if(controlVelocity.z() != 0) {
+        if (controlVelocity.z() != 0) {
             playerVelocity.x += (float) Math.sin(controlRotation.y()) * -1.0f * controlVelocity.z();
             playerVelocity.z += (float) Math.cos(controlRotation.y()) * controlVelocity.z();
         }
         
-        if(controlVelocity.x() != 0) {
+        if (controlVelocity.x() != 0) {
             playerVelocity.x += (float) Math.sin(controlRotation.y() - Math.toRadians(90)) * -1.0f * controlVelocity.x();
             playerVelocity.z += (float) Math.cos(controlRotation.y() - Math.toRadians(90)) * controlVelocity.x();
         }
@@ -56,15 +56,15 @@ public class Controls {
 
         float moveSpeed = walking ? playerData.getWalkingSpeed() : playerData.getRunningSpeed();
 
-        if(keyboardInput.isKeyPressed(FORWARD)) {
+        if (keyboardInput.isKeyPressed(FORWARD)) {
             controlVelocity.add(0, 0, -moveSpeed);
-        } else if(keyboardInput.isKeyPressed(BACKWARD)) {
+        } else if (keyboardInput.isKeyPressed(BACKWARD)) {
             controlVelocity.add(0, 0, moveSpeed);
         }
 
-        if(keyboardInput.isKeyPressed(STRAFE_LEFT)) {
+        if (keyboardInput.isKeyPressed(STRAFE_LEFT)) {
             controlVelocity.add(-moveSpeed, 0, 0);
-        } else if(keyboardInput.isKeyPressed(STRAFE_RIGHT)) {
+        } else if (keyboardInput.isKeyPressed(STRAFE_RIGHT)) {
             controlVelocity.add(moveSpeed, 0, 0);
         }
 
@@ -101,22 +101,22 @@ public class Controls {
         updatePlayerRotation(player, mouseInput);
         
         //Make player shoot
-        if(mouseInput.leftButtonIsPressed() && player.canShoot()) {
+        if (mouseInput.leftButtonIsPressed() && player.canShoot()) {
             match.getGameWorld().simulateShot(player);
             GunFirePacket gunFirePacket = new GunFirePacket(player.getId());
 
             match.sendAllTCP(gunFirePacket);
         }
 
-        if(keyboardInput.isKeyPressed(JUMP)) {
+        if (keyboardInput.isKeyPressed(JUMP)) {
             playerData.setMovementState(MovementState.JUMPING);
         }
         
         //Set player movement state
-        if(!playerData.isJumping()) {
-            if(controlVelocity.equals(0, 0, 0)) {
+        if (!playerData.isJumping()) {
+            if (controlVelocity.equals(0, 0, 0)) {
                 playerData.setMovementState(MovementState.STOP);
-            } else if(keyboardInput.isKeyPressed(WALK)) {
+            } else if (keyboardInput.isKeyPressed(WALK)) {
                 playerData.setMovementState(MovementState.WALKING);
             } else {
                 playerData.setMovementState(MovementState.RUNNING);
@@ -124,9 +124,9 @@ public class Controls {
         }   
 
         //Switch weapons
-        if(keyboardInput.isKeyPressed(PRIMARY_WEAPON)) {
+        if (keyboardInput.isKeyPressed(PRIMARY_WEAPON)) {
             player.getWeaponsInventory().equipPrimaryGun();
-        } else if(keyboardInput.isKeyPressed(SECONDARY_WEAPON)) {
+        } else if (keyboardInput.isKeyPressed(SECONDARY_WEAPON)) {
             player.getWeaponsInventory().equipSecondaryGun();
         }
 

@@ -80,7 +80,7 @@ public final class GameEngine implements Runnable, Cleansable {
             interpolationFactor = accumulator/interval;
             render();
 
-            if(!window.optionIsTurnedOn(Window.Options.ENABLE_VSYNC)) {
+            if (!window.optionIsTurnedOn(Window.Options.ENABLE_VSYNC)) {
                 sync();
             }
         }
@@ -106,7 +106,7 @@ public final class GameEngine implements Runnable, Cleansable {
     private void calculateAndDisplayFps() {
         if (fpsTimer.secondHasPassed()) {
             fpsTimer.getElapsedTimeAndUpdate();
-            if(window.optionIsTurnedOn(Window.Options.DISPLAY_FPS)) {
+            if (window.optionIsTurnedOn(Window.Options.DISPLAY_FPS)) {
                 window.setTitle(windowTitle + " - " + fps + " FPS");
             }
             fps = 0;

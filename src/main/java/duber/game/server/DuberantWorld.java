@@ -69,17 +69,17 @@ public class DuberantWorld extends PhysicsWorld {
         
         for(Entity entity : dynamicEntities) {
             //Find all instances of players in the dynamic entities
-            if(entity instanceof Player && entity != shootingPlayer) {
+            if (entity instanceof Player && entity != shootingPlayer) {
                 Player hitPlayer = (Player) entity;
                 
                 //Make sure the player is the enemy and also alive and that the bullet hits them
-                if(shootingPlayer.isEnemy(hitPlayer) && hitPlayer.isAlive() && bulletHitsPlayer(hitPlayer, bulletRay)) {
+                if (shootingPlayer.isEnemy(hitPlayer) && hitPlayer.isAlive() && bulletHitsPlayer(hitPlayer, bulletRay)) {
                     //Make hit player take the damage
                     Bullet shotBullet = shootingPlayer.getWeaponsInventory().getEquippedGun().getGunData().getGunBullets();
                     hitPlayer.takeShot(shotBullet);                        
                     
                     //Update the player's scores if it was a kill
-                    if(!hitPlayer.isAlive()) {
+                    if (!hitPlayer.isAlive()) {
                         shootingPlayer.getScore().addKill();
                         hitPlayer.getScore().addDeath();
                     }
@@ -92,7 +92,7 @@ public class DuberantWorld extends PhysicsWorld {
         for(ColliderPart colliderPart : hitPlayer.getComponent(Collider.class).getColliderParts()) {
             Box colliderBox = colliderPart.getBox();
 
-            if(bulletRay.test(colliderBox.getMinXYZ().x(), colliderBox.getMinXYZ().y(), colliderBox.getMinXYZ().z(),
+            if (bulletRay.test(colliderBox.getMinXYZ().x(), colliderBox.getMinXYZ().y(), colliderBox.getMinXYZ().z(),
                colliderBox.getMaxXYZ().x(), colliderBox.getMaxXYZ().y(), colliderBox.getMaxXYZ().z())) {
                    return true;
             }
@@ -111,7 +111,7 @@ public class DuberantWorld extends PhysicsWorld {
 
     private void updatePlayerGunTransform(Player player) {
         Gun equippedGun = player.getWeaponsInventory().getEquippedGun();
-        if(equippedGun != null) {
+        if (equippedGun != null) {
             Transform gunTransform = equippedGun.getComponent(Transform.class);
 
             Vector3f playerRotation = player.getComponent(Transform.class).getRotation();
@@ -134,7 +134,7 @@ public class DuberantWorld extends PhysicsWorld {
         for(Entity entity : dynamicEntities) {
             updateEntityPhysics(entity);
 
-            if(entity instanceof Player) {
+            if (entity instanceof Player) {
                 Player player = (Player) entity;
                 player.getComponent(Transform.class).limitXRotation((float) -Math.PI/2.0f, (float) Math.PI/2.0f);
                 

@@ -19,7 +19,7 @@ public class ScoreboardDisplay extends GUI {
     @Override
     public void enter() {
         super.enter();
-        if(!getManager().getState(GameStateOption.MATCH).isOpened()) {
+        if (!getManager().getState(GameStateOption.MATCH).isOpened()) {
             throw new IllegalStateException("There must be a match ongoing to open the scoreboard");
         }
 
@@ -86,7 +86,7 @@ public class ScoreboardDisplay extends GUI {
         Scoreboard scoreboard = getMatchScoreboard();
         for(int team = 0; team < 2; team++) {
             for(int player = 0; player < scoreboard.getScores(team).size(); player++) {
-                if(team==1&&player==0){
+                if (team==1&&player==0){
                     currName=currName+"\n";
                     currKills=currKills+"\n";
                     currDeaths=currDeaths+"\n";

@@ -31,7 +31,7 @@ public class MeshBody extends Component {
         this.meshes = meshes;
         visible = rendered;
 
-        if(rendered) {
+        if (rendered) {
             for(Mesh mesh : meshes) {
                 mesh.makeRenderable();
             }

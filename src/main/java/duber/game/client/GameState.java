@@ -63,7 +63,7 @@ public abstract class GameState {
     }
 
     public void popSelf() {
-        if(isFocused()) {
+        if (isFocused()) {
             manager.popState();
         } else {
             throw new IllegalStateException("Can't pop self if not focused");

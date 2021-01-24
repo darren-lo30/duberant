@@ -56,7 +56,7 @@ public class Player extends Entity {
 
     public boolean canShoot() {
         WeaponsInventory weaponsInventory = getWeaponsInventory();
-        if(weaponsInventory.getEquippedGun() != null) {
+        if (weaponsInventory.getEquippedGun() != null) {
             return weaponsInventory.getEquippedGun().canFire();
         }
 
@@ -85,7 +85,7 @@ public class Player extends Entity {
 
         getPlayerData().setHealth(newHealth);
 
-        if(!isAlive()) {
+        if (!isAlive()) {
             getComponent(MeshBody.class).setVisible(false);
             getWeaponsInventory().clear();
         }
@@ -97,10 +97,10 @@ public class Player extends Entity {
 
     public void purchaseGun(Gun gun) {
         int gunCost = gun.getComponent(Buyable.class).getCost();
-        if(gunCost <= getPlayerData().getMoney()) {
-            if(gun.isPrimaryGun()) {
+        if (gunCost <= getPlayerData().getMoney()) {
+            if (gun.isPrimaryGun()) {
                 getWeaponsInventory().setPrimaryGun(gun);
-            } else if(gun.isSecondaryGun()) {
+            } else if (gun.isSecondaryGun()) {
                 getWeaponsInventory().setSecondaryGun(gun);
             }
 
@@ -148,7 +148,7 @@ public class Player extends Entity {
         }
         
         public void setTeam(int team) {
-            if(team != MatchData.RED_TEAM && team != MatchData.BLUE_TEAM) {
+            if (team != MatchData.RED_TEAM && team != MatchData.BLUE_TEAM) {
                 throw new IllegalArgumentException("The team does not exist");
             }
             this.team = team;

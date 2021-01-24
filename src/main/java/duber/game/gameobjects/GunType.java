@@ -56,7 +56,7 @@ public enum GunType {
 
     public static GunType getGunType(String gunString) {
         for(GunType gunType : GunType.values()) {
-            if(gunType.toString().equals(gunString)) {
+            if (gunType.toString().equals(gunString)) {
                 return gunType;
             }
         }

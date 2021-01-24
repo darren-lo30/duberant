@@ -102,8 +102,8 @@ public class Duberant extends GameLogic {
     private void configureOptionsMenuCallback() {
         GLFWKeyCallbackI optionsCallback = (windowHandle, keyCode, scanCode, action, mods) -> {
             GameState optionMenu = GameStateOption.OPTIONS_MENU.getGameState();
-            if(keyCode == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-                if(optionMenu.isOpened()) {
+            if (keyCode == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+                if (optionMenu.isOpened()) {
                     optionMenu.setShouldClose(true);
                 } else {
                     optionMenu.pushSelf();

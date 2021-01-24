@@ -37,7 +37,7 @@ public class ServerNetwork extends Listener {
 
     public Queue<Object> getPackets(Connection connection) {
         Queue<Object> connectionPackets = packets.get(connection);
-        if(connectionPackets == null) {
+        if (connectionPackets == null) {
             return new ConcurrentLinkedQueue<>();
         }
         
@@ -65,7 +65,7 @@ public class ServerNetwork extends Listener {
 
     @Override
     public void received(Connection connection, Object packet) {
-        if(!(packet instanceof FrameworkMessage.KeepAlive)) {
+        if (!(packet instanceof FrameworkMessage.KeepAlive)) {
             packets.get(connection).add(packet);
         }
     }

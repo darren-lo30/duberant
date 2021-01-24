@@ -9,11 +9,11 @@ public class SoundSource {
     public SoundSource(boolean loop, boolean relative){
         id = alGenSources();
 
-        if(loop){
+        if (loop){
             alSourcei(id, AL_LOOPING, AL_TRUE);
         }
 
-        if(relative){
+        if (relative){
             alSourcei(id, AL_SOURCE_RELATIVE, AL_TRUE);
         }
     }

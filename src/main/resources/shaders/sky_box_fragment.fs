@@ -10,7 +10,7 @@ uniform sampler2D texture_sampler;
 uniform vec3 ambientLight;
 
 void main() {
-    if(hasTexture == 1) {
+    if (hasTexture == 1) {
         fragColour = vec4(ambientLight, 1.0) * texture(texture_sampler, outTextureCoord);
     } else {
         fragColour = colour * vec4(ambientLight, 1.0);

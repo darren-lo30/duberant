@@ -74,7 +74,7 @@ public class MeshLoader {
         }
 
         List<Material> materials;
-        if(texturesDirectory == null) {
+        if (texturesDirectory == null) {
             materials = new ArrayList<>(0);
         } else {
             materials = new ArrayList<>();
@@ -333,7 +333,7 @@ public class MeshLoader {
         String texturePath = path.dataString();
 
         Texture texture = null;
-        if(texturePath != null && texturePath.length() > 0) {
+        if (texturePath != null && texturePath.length() > 0) {
             TextureDatabase textureDatabase = TextureDatabase.getInstance();
             texture = textureDatabase.getTexture(texturesDirectory + "/" + texturePath);
         }
@@ -348,19 +348,19 @@ public class MeshLoader {
 
         //Get materials ambient colour
         int ambientDefined = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, colour);
-        if(ambientDefined == 0) {
+        if (ambientDefined == 0) {
             ambientColour = new Vector4f(colour.r(), colour.g(), colour.b(), colour.a());
         }
 
         //Get materials diffuse colour
         int diffuseDefined = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, aiTextureType_NONE, 0, colour);
-        if(diffuseDefined == 0) {
+        if (diffuseDefined == 0) {
             diffuseColour = new Vector4f(colour.r(), colour.g(), colour.b(), colour.a());
         }
 
         //Get materials specular colour
         int specularDefined = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, colour);
-        if(specularDefined == 0) {
+        if (specularDefined == 0) {
             specularColour = new Vector4f(colour.r(), colour.g(), colour.b(), colour.a());
         }
 
@@ -383,7 +383,7 @@ public class MeshLoader {
 
     private static void processTextureCoords(AIMesh aiMesh, List<Float> textureCoords) {
         AIVector3D.Buffer aiTextureCoords = aiMesh.mTextureCoords(0);
-        if(aiTextureCoords == null) {
+        if (aiTextureCoords == null) {
             return;
         }
         
@@ -396,7 +396,7 @@ public class MeshLoader {
 
     private static void processNormals(AIMesh aiMesh, List<Float> normals) {
         AIVector3D.Buffer aiNormals = aiMesh.mNormals();
-        if(aiNormals == null) {
+        if (aiNormals == null) {
             return;
         }
 

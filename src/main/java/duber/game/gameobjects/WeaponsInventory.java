@@ -25,11 +25,11 @@ public class WeaponsInventory extends Component {
     }
 
     public void resetGuns() {
-        if(getPrimaryGun() != null) {
+        if (getPrimaryGun() != null) {
             getPrimaryGun().getGunData().reset();
         }
 
-        if(getSecondaryGun() != null) {
+        if (getSecondaryGun() != null) {
             getSecondaryGun().getGunData().reset();
         }
     }
@@ -51,7 +51,7 @@ public class WeaponsInventory extends Component {
     }
 
     public void setPrimaryGun(Gun primaryGun) {
-        if(primaryGun != null  && primaryGun.getGunData().getCategory() != PRIMARY_GUN) {
+        if (primaryGun != null  && primaryGun.getGunData().getCategory() != PRIMARY_GUN) {
             throw new IllegalArgumentException("Gun must be primary gun");
         }
         guns[PRIMARY_GUN_IDX] = primaryGun;
@@ -62,7 +62,7 @@ public class WeaponsInventory extends Component {
     }
 
     public void setSecondaryGun(Gun secondaryGun) {
-        if(secondaryGun != null && secondaryGun.getGunData().getCategory() != SECONDARY_GUN) {
+        if (secondaryGun != null && secondaryGun.getGunData().getCategory() != SECONDARY_GUN) {
             throw new IllegalArgumentException("Gun must be secondary gun");
         }
 

@@ -32,9 +32,9 @@ public class MatchData {
     private MatchData() {}
 
     public static String getTeamString(int team) {
-        if(team == RED_TEAM) {
+        if (team == RED_TEAM) {
             return "red";
-        } else if(team == BLUE_TEAM) {
+        } else if (team == BLUE_TEAM) {
             return "blue";
         } 
 

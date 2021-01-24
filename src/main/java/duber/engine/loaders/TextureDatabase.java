@@ -16,7 +16,7 @@ public class TextureDatabase {
     }
 
     public static synchronized TextureDatabase getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new TextureDatabase();
         }
         return instance;
@@ -24,7 +24,7 @@ public class TextureDatabase {
 
     public Texture getTexture(String filePath) throws LWJGLException {
         Texture texture;
-        if(!texturesMap.containsKey(filePath)) {
+        if (!texturesMap.containsKey(filePath)) {
             texture = new Texture(filePath);
             texturesMap.put(filePath, texture);
         } else {

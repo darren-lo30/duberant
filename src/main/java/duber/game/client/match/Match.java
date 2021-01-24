@@ -96,7 +96,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         
         //Cursor position callback
         GLFWCursorPosCallbackI mouseCursorCallback = (window, xPos, yPos) -> {
-            if(isFocused()) {
+            if (isFocused()) {
                 mouseInput.setCurrentPos(xPos, yPos);
             }
         };
@@ -104,7 +104,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
         //Mouse click callback
         GLFWMouseButtonCallbackI mouseButtonCallback = (window, button, action, mode) -> {
-            if(isFocused()) {
+            if (isFocused()) {
                 mouseInput.setLeftButtonIsPressed(button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS);
                 mouseInput.setRightButtonIsPressed(button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS);
             }
@@ -116,27 +116,27 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         List<CallbackI> callbacks = getCallbacks();
 
         GLFWKeyCallbackI keyboardCallback = (window, keyCode, scanCode, action, mods) -> {
-            if(isFocused()) {
-                if(action == GLFW_PRESS) {
+            if (isFocused()) {
+                if (action == GLFW_PRESS) {
                     keyboardInput.setKeyPressed(keyCode, true);
-                } else if(action == GLFW_RELEASE) {
+                } else if (action == GLFW_RELEASE) {
                     keyboardInput.setKeyPressed(keyCode, false);
                 }
             }
 
             //Shop menu
-            if(isInitialized() && currMatchPhase.playerCanBuy() && keyCode == GLFW_KEY_B && action == GLFW_RELEASE) {
+            if (isInitialized() && currMatchPhase.playerCanBuy() && keyCode == GLFW_KEY_B && action == GLFW_RELEASE) {
                 GameState shopMenu = GameStateOption.SHOP_MENU.getGameState();
-                if(shopMenu.isOpened()) {
+                if (shopMenu.isOpened()) {
                     shopMenu.setShouldClose(true);
                 } else {
                     shopMenu.pushSelf();
                 }
             }
 
-            if(isInitialized() && keyCode == GLFW_KEY_TAB && action == GLFW_RELEASE) {
+            if (isInitialized() && keyCode == GLFW_KEY_TAB && action == GLFW_RELEASE) {
                 GameState scoreboardDisplay = GameStateOption.SCOREBOARD_DISPLAY.getGameState();
-                if(scoreboardDisplay.isOpened()) {
+                if (scoreboardDisplay.isOpened()) {
                     scoreboardDisplay.setShouldClose(true);
                 } else {
                     scoreboardDisplay.pushSelf();
@@ -189,8 +189,8 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     public void update() {       
         mouseInput.updateCursorDisplacement(); 
         
-        if(isInitialized()) {
-            if(!currMatchPhase.playerCanBuy() && GameStateOption.SHOP_MENU.getGameState().isOpened()) {
+        if (isInitialized()) {
+            if (!currMatchPhase.playerCanBuy() && GameStateOption.SHOP_MENU.getGameState().isOpened()) {
                 GameStateOption.SHOP_MENU.getGameState().setShouldClose(true);
             }
             currMatchPhase.update();
@@ -202,7 +202,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
 
     @Override
     public void render() {
-        if(isInitialized()) {
+        if (isInitialized()) {
             currMatchPhase.render();
         } else {
             hud.displayText("Waiting for server...", 0.5f, 0.5f, true, HUD.TITLE_FONT);
@@ -238,7 +238,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     }
 
     public void sendPackets() {
-        if(isInitialized() && currMatchPhase.playerCanMove()) {
+        if (isInitialized() && currMatchPhase.playerCanMove()) {
             UserInputPacket matchCommands = new UserInputPacket(keyboardInput, mouseInput);
             getGame().getUser().getConnection().sendUDP(matchCommands);
         }
@@ -256,7 +256,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     public void updateAnimations() {
         for(Player player: getPlayers()) {
             MovementState playerMovement = player.getPlayerData().getPlayerMovement();
-            if(playerMovement == MovementState.RUNNING || playerMovement == MovementState.WALKING) {
+            if (playerMovement == MovementState.RUNNING || playerMovement == MovementState.WALKING) {
                 player.getComponent(Animation.class).getCurrentAnimation().nextFrame();
             }
         }
@@ -266,13 +266,13 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         while(!getGame().getClientNetwork().getPackets().isEmpty()){
             Object packet = getGame().getClientNetwork().getPackets().poll();
         
-            if(packet instanceof MatchInitializePacket) {
+            if (packet instanceof MatchInitializePacket) {
                 processPacket((MatchInitializePacket) packet);
-            } else if(packet instanceof MatchPhasePacket) {
+            } else if (packet instanceof MatchPhasePacket) {
                 processPacket((MatchPhasePacket) packet);
-            } else if(packet instanceof PlayerUpdatePacket) {
+            } else if (packet instanceof PlayerUpdatePacket) {
                 processPacket((PlayerUpdatePacket) packet);
-            } else if(packet instanceof GunFirePacket) {
+            } else if (packet instanceof GunFirePacket) {
                 processPacket((GunFirePacket) packet);
             }
         }
@@ -291,14 +291,14 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
             //Set player meshes
             for(Player player : getPlayers()) {
                 MeshData playerMeshData;
-                if(player.getPlayerData().getTeam() == MatchData.RED_TEAM) {
+                if (player.getPlayerData().getTeam() == MatchData.RED_TEAM) {
                     playerMeshData = MeshLoader.load(matchInitializePacket.redPlayerModel);
                 } else {
                     playerMeshData = MeshLoader.load(matchInitializePacket.bluePlayerModel);
                 }
 
                 MeshBody playerMeshBody = new MeshBody(playerMeshData.getMeshes(), true);
-                if(player == mainPlayer) {
+                if (player == mainPlayer) {
                     playerMeshBody.setVisible(false);
                 }
 
@@ -334,7 +334,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     }
 
     private void processPacket(PlayerUpdatePacket playerUpdatePacket) {
-        if(!isInitialized()) {
+        if (!isInitialized()) {
             return;
         }
 
@@ -351,8 +351,8 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         updatePlayerWeapons(modifiedPlayer.getWeaponsInventory(), playerUpdatePacket.playerInventory);
         
         Gun equippedGun = modifiedPlayer.getWeaponsInventory().getEquippedGun();
-        if(equippedGun != null) {
-            if(modifiedPlayer == mainPlayer) {
+        if (equippedGun != null) {
+            if (modifiedPlayer == mainPlayer) {
                 equippedGun.getComponent(Transform.class).setRelativeView(false);
                 equippedGun.getComponent(Transform.class).getPosition().set(5.5f, -5, -7);
                 equippedGun.getComponent(Transform.class).getRotation().set(0, 0, 0);
@@ -362,7 +362,7 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
             equippedGun.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
         }
 
-        if(modifiedPlayer != mainPlayer) {
+        if (modifiedPlayer != mainPlayer) {
             modifiedPlayer.getComponent(MeshBody.class).setVisible(playerUpdatePacket.visible);
         }
     }

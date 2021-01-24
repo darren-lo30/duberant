@@ -97,21 +97,21 @@ public class Utils {
     }
 
     public static Vector3f clamp(Vector3f vec, Vector3f clamp) {
-        if(vec.x > clamp.x) {
+        if (vec.x > clamp.x) {
             vec.x = clamp.x;
-        } else if(vec.x < -clamp.x) {
+        } else if (vec.x < -clamp.x) {
             vec.x = -clamp.x;
         }
 
-        if(vec.y > clamp.y) {
+        if (vec.y > clamp.y) {
             vec.y = clamp.y;
-        } else if(vec.y < -clamp.y) {
+        } else if (vec.y < -clamp.y) {
             vec.y = -clamp.y;
         }
 
-        if(vec.z > clamp.z) {
+        if (vec.z > clamp.z) {
             vec.z = clamp.z;
-        } else if(vec.z < -clamp.z) {
+        } else if (vec.z < -clamp.z) {
             vec.z = -clamp.z;
         }
 

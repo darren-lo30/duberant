@@ -53,9 +53,9 @@ public class Scoreboard {
     }
     
     public int getWinner() {
-        if(teamWins[MatchData.RED_TEAM] >= MatchData.NUM_ROUNDS_TO_WIN) {
+        if (teamWins[MatchData.RED_TEAM] >= MatchData.NUM_ROUNDS_TO_WIN) {
             return MatchData.RED_TEAM;
-        } else if(teamWins[MatchData.BLUE_TEAM] >= MatchData.NUM_ROUNDS_TO_WIN) {
+        } else if (teamWins[MatchData.BLUE_TEAM] >= MatchData.NUM_ROUNDS_TO_WIN) {
             return MatchData.BLUE_TEAM;
         }
         return MatchData.NULL_TEAM;
@@ -63,7 +63,7 @@ public class Scoreboard {
 
     
     private static boolean compareScores(Score left, Score right) {
-        if(left.getKills() == right.getKills()) {
+        if (left.getKills() == right.getKills()) {
             //Sort deaths ascending
             return left.getDeaths() > right.getKills();
         }
@@ -81,7 +81,7 @@ public class Scoreboard {
                 Score leftScore = scoresList.get(i);
                 Score rightScore = scoresList.get(i+1);
                 
-                if(compareScores(leftScore, rightScore)) {
+                if (compareScores(leftScore, rightScore)) {
                     //Swap the scores if the comparison returns true
                     //Also set the flag to true so the sort does not end
                     sortEnded = false;

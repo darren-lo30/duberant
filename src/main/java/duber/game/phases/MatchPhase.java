@@ -40,13 +40,13 @@ public abstract class MatchPhase {
     public abstract void makeServerLogic(MatchManager match);
 
     public void render() {
-        if(phaseLogic != null) {
+        if (phaseLogic != null) {
             phaseLogic.render();
         }
     }
 
     public void update() {
-        if(phaseLogic != null) {
+        if (phaseLogic != null) {
             phaseLogic.update();
         }
     }
@@ -106,7 +106,7 @@ public abstract class MatchPhase {
 
         public void update() {
             int matchWinner = match.getMatchWinner();
-            if(matchWinner != MatchData.NULL_TEAM && !match.isOver()) {
+            if (matchWinner != MatchData.NULL_TEAM && !match.isOver()) {
                 changeMatchPhase(new MatchEndPhase(matchWinner));
                 return;
             }
@@ -137,7 +137,7 @@ public abstract class MatchPhase {
 
         @Override
         public void tryChangeMatchPhase() {
-            if(phaseTimer.getElapsedTime() > timeToLast) {
+            if (phaseTimer.getElapsedTime() > timeToLast) {
                 changeMatchPhase(nextPhase);
             }
         }

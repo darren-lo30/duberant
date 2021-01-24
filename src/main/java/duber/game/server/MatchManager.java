@@ -172,12 +172,12 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         boolean redWin = getPlayersByTeam(MatchData.BLUE_TEAM).stream().allMatch(p -> !p.isAlive());
         boolean blueWin = getPlayersByTeam(MatchData.RED_TEAM).stream().allMatch(p -> !p.isAlive());
 
-        if(redWin && blueWin) {
+        if (redWin && blueWin) {
             double choice = Math.random();
             return choice > 0.5 ? MatchData.RED_TEAM : MatchData.BLUE_TEAM;
-        } else if(redWin) {
+        } else if (redWin) {
             return MatchData.RED_TEAM;
-        } else if(blueWin) {
+        } else if (blueWin) {
             return MatchData.BLUE_TEAM;
         } 
 
@@ -315,9 +315,9 @@ public class MatchManager implements Runnable, MatchPhaseManager {
             //Process all the packets
             while(!receivedPackets.isEmpty()) {
                 Object packet = receivedPackets.poll();
-                if(packet instanceof UserInputPacket) {
+                if (packet instanceof UserInputPacket) {
                     processPacket(user, (UserInputPacket) packet);
-                } else if(packet instanceof GunPurchasePacket) {
+                } else if (packet instanceof GunPurchasePacket) {
                     processPacket(user, (GunPurchasePacket) packet);
                 }
             }
@@ -325,7 +325,7 @@ public class MatchManager implements Runnable, MatchPhaseManager {
     }
 
     private void processPacket(User user, UserInputPacket userInputPacket) {
-        if(currMatchPhase.playerCanMove()) {
+        if (currMatchPhase.playerCanMove()) {
             Controls.updatePlayer(this, getUsersPlayer(user), userInputPacket.mouseInput, userInputPacket.keyboardInput);
         }
     }

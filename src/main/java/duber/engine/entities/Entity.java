@@ -21,7 +21,7 @@ public class Entity {
 
     public <T extends Component> T getComponent(Class<T> type) {
         Component component = components.get(type);
-        if(component == null) {
+        if (component == null) {
             throw new IllegalArgumentException("The entity does not have the component with class: " + type);
         }
         return type.cast(component);
@@ -39,7 +39,7 @@ public class Entity {
 
     @Override
     public int hashCode() {
-        if(!hasComponent(Identifier.class)) {
+        if (!hasComponent(Identifier.class)) {
             return super.hashCode();
         }
 
@@ -48,19 +48,19 @@ public class Entity {
 
     @Override
     public boolean equals(Object obj) {
-        if(!hasComponent(Identifier.class)) {
+        if (!hasComponent(Identifier.class)) {
             return super.equals(obj);
         }
 
-        if(obj == this) {
+        if (obj == this) {
             return true;
         }
 
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
 
-        if(obj.getClass() != getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
         

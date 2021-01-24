@@ -44,7 +44,7 @@ public class OptionsMenu extends GUI {
         quitButton.getStyle().setBorder(border);
         quitButton.getStyle().setPosition(PositionType.RELATIVE);
         quitButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE ) {
+            if (event.getAction() == MouseClickAction.RELEASE ) {
                 getWindow().setShouldClose(true);
             }
         });

@@ -104,7 +104,7 @@ public class Renderer implements Cleansable {
         for(Map.Entry<Mesh, List<Entity>> meshMapEntry: meshMap.entrySet()) {
             Mesh renderableMesh = meshMapEntry.getKey();
             List<Entity> entities = meshMapEntry.getValue();
-            if(viewMatrix != null) {
+            if (viewMatrix != null) {
                 sceneShaderProgram.setUniform("material", renderableMesh.getMaterial());
             }
 
@@ -112,13 +112,13 @@ public class Renderer implements Cleansable {
                 Transform entityTransform = entity.getComponent(Transform.class);           
 
                 Matrix4f modelViewMatrix;
-                if(entityTransform.isRelativeView()) {
+                if (entityTransform.isRelativeView()) {
                     modelViewMatrix = matrixTransformer.buildModelViewMatrix(entityTransform, viewMatrix);
                 } else {
                     modelViewMatrix = matrixTransformer.buildModelMatrix(entityTransform);
                 }
 
-                if(entity.hasComponent(Animation.class)) {
+                if (entity.hasComponent(Animation.class)) {
                     AnimationFrame frame = entity.getComponent(Animation.class).getCurrentAnimation().getCurrentFrame();
                     sceneShaderProgram.setUniform("jointsMatrix", frame.getJointMatrices());
                 }
@@ -165,12 +165,12 @@ public class Renderer implements Cleansable {
     }
 
     private void renderPointLights(Matrix4f viewMatrix, PointLight[] pointLights) {
-        if(pointLights == null) {
+        if (pointLights == null) {
             return;
         }
         
         for(int i = 0; i<pointLights.length; i++) {
-            if(pointLights[i] == null) {
+            if (pointLights[i] == null) {
                 continue;
             }
 
@@ -190,12 +190,12 @@ public class Renderer implements Cleansable {
     }
 
     private void renderSpotLights(Matrix4f viewMatrix, SpotLight[] spotLights) {
-        if(spotLights == null) {
+        if (spotLights == null) {
             return;
         }
         
         for(int i = 0; i<spotLights.length; i++) {
-            if(spotLights[i] == null) {
+            if (spotLights[i] == null) {
                 continue;
             }
 
@@ -220,7 +220,7 @@ public class Renderer implements Cleansable {
     }
 
     private void renderDirectionalLight(Matrix4f viewMatrix, DirectionalLight directionalLight) {
-        if(directionalLight == null) {
+        if (directionalLight == null) {
             return;
         }
         
@@ -239,7 +239,7 @@ public class Renderer implements Cleansable {
     private void renderSkyBox(Window window, Camera camera, Scene scene) {  
         Entity skyBox = scene.getSkyBox();
 
-        if(skyBox == null) {
+        if (skyBox == null) {
             return;
         }
 
@@ -286,11 +286,11 @@ public class Renderer implements Cleansable {
 
 
     public void cleanup() {
-        if(sceneShaderProgram != null) {
+        if (sceneShaderProgram != null) {
             sceneShaderProgram.cleanup();
         }
 
-        if(skyBoxShaderProgram != null) {
+        if (skyBoxShaderProgram != null) {
             skyBoxShaderProgram.cleanup();
         }
 

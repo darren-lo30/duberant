@@ -29,7 +29,7 @@ public class Texture implements Cleansable {
 
             //Load the image to the buffer
             textureBuffer = stbi_load(fileName, w, h, channels, 4);
-            if(textureBuffer == null) {
+            if (textureBuffer == null) {
                 throw new LWJGLException(String.format("Could not load texture %s: Reason: %s", fileName, stbi_failure_reason()));
             }
             

@@ -40,12 +40,12 @@ public class SoundManager implements Cleansable {
 
         deviceHandle = alcOpenDevice((ByteBuffer) null);
 
-        if(deviceHandle == NULL){
+        if (deviceHandle == NULL){
             throw new IllegalStateException("Could not open deviceHandle");
         }
         ALCCapabilities deviceCapabilities = ALC.createCapabilities(deviceHandle);
         context = alcCreateContext(deviceHandle, (IntBuffer) null);
-        if(context == NULL){
+        if (context == NULL){
             throw new IllegalStateException("Failed to create OpenAL context");
         }
 
@@ -67,7 +67,7 @@ public class SoundManager implements Cleansable {
 
     public void playSoundSource(String name){
         SoundSource soundSource = soundSources.get(name);
-        if(soundSource != null && !soundSource.isPlaying()){
+        if (soundSource != null && !soundSource.isPlaying()){
             soundSource.play();
         }
     }
@@ -127,10 +127,10 @@ public class SoundManager implements Cleansable {
         }
         soundBuffers.clear();
 
-        if(context != NULL){
+        if (context != NULL){
             alcDestroyContext(context);
         }
-        if(deviceHandle != NULL){
+        if (deviceHandle != NULL){
             alcCloseDevice(deviceHandle);
         }
     }

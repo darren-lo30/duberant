@@ -118,7 +118,7 @@ public class Mesh implements Cleansable {
     }
 
     public final boolean makeRenderable() {
-        if(isRenderable()) {
+        if (isRenderable()) {
             return false;
         }
 
@@ -167,7 +167,7 @@ public class Mesh implements Cleansable {
             //Create normal VBO
             int normalsVboId = glGenBuffers();
             vboIdList.add(normalsVboId);
-            if(normals.length == 0) {
+            if (normals.length == 0) {
                 normalsBuffer = MemoryUtil.memAllocFloat(normals.length);
             } else {
                 normalsBuffer = MemoryUtil.memAllocFloat(positions.length);
@@ -219,17 +219,17 @@ public class Mesh implements Cleansable {
 
 
     private void initRender() {
-        if(!isRenderable()) {
+        if (!isRenderable()) {
             throw new IllegalStateException("Make the mesh renderable before rendering!");
         }
         
         //Set active texture if it exists
-        if(material.hasTexture()) {
+        if (material.hasTexture()) {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
         }
 
-        if(material.hasNormalMap()) {
+        if (material.hasNormalMap()) {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, material.getNormalMap().getId());
         }
@@ -266,7 +266,7 @@ public class Mesh implements Cleansable {
         for(Entity entity: entities) {
             consumer.accept(entity);
             
-            if(entity.hasComponent(MeshBody.class) && entity.getComponent(MeshBody.class).isVisible()) {
+            if (entity.hasComponent(MeshBody.class) && entity.getComponent(MeshBody.class).isVisible()) {
                 glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
             }
         }
@@ -274,13 +274,13 @@ public class Mesh implements Cleansable {
     }
 
     private void freeBuffer(Buffer buffer) {
-        if(buffer != null) {
+        if (buffer != null) {
             MemoryUtil.memFree(buffer);
         }
     }
     
     public void cleanup() {
-        if(!isRenderable()) {
+        if (!isRenderable()) {
             return;
         }
 
@@ -299,10 +299,10 @@ public class Mesh implements Cleansable {
         }
 
         //Delete texture if it exists
-        if(material.hasTexture()) {
+        if (material.hasTexture()) {
             material.getTexture().cleanup();
         }
-        if(material.hasNormalMap()) {
+        if (material.hasNormalMap()) {
             material.getNormalMap().cleanup();
         }
 

@@ -27,7 +27,7 @@ public class ShopMenu extends GUI {
 
     @Override
     public void update() {
-        if(!match.getCurrMatchPhase().playerCanBuy()) {
+        if (!match.getCurrMatchPhase().playerCanBuy()) {
             setShouldClose(true);
         }
     }
@@ -77,18 +77,18 @@ public class ShopMenu extends GUI {
         rifleButton.getStyle().setPosition(PositionType.RELATIVE);
         
         rifleButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE) {
+            if (event.getAction() == MouseClickAction.RELEASE) {
                 match.sendGunPurchaseRequest(GunType.RIFLE);
             }
         });
         lmgButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE) {
+            if (event.getAction() == MouseClickAction.RELEASE) {
                 match.sendGunPurchaseRequest(GunType.LMG);
             }
         });
         
         pistolButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE) {
+            if (event.getAction() == MouseClickAction.RELEASE) {
                 match.sendGunPurchaseRequest(GunType.PISTOL);
             }
         });

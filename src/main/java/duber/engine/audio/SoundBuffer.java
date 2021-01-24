@@ -56,7 +56,7 @@ public class SoundBuffer {
 
     public void cleanup(){
         alDeleteBuffers(id);
-        if(pulseCodedModulation != null){
+        if (pulseCodedModulation != null){
             MemoryUtil.memFree(pulseCodedModulation);
         }
     }

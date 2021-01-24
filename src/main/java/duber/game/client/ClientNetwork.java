@@ -78,10 +78,10 @@ public class ClientNetwork extends Listener {
     }
 
     public void close() {
-        if(client != null) {
+        if (client != null) {
             client.close();
         }
-        if(connection != null) {
+        if (connection != null) {
             connection.close();
         }
     }

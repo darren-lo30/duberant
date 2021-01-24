@@ -40,7 +40,7 @@ public class DuberantCollisionHandler implements ICollisionHandler {
                 CollisionResponse response = colliderPart.checkCollision(entityFace);
                 response.setCollidedEntityColliderPart(colliderPart);
                 
-                if(response.isCollides()) {
+                if (response.isCollides()) {
                     collisionResponses.add(response);
                 }
             }          
@@ -51,7 +51,7 @@ public class DuberantCollisionHandler implements ICollisionHandler {
 
     @Override
     public void processCollisions(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
-        if(collidingEntity instanceof Player) {
+        if (collidingEntity instanceof Player) {
             resolvePlayerCollisions((Player) collidingEntity, collisionResponses);
         }
     }
@@ -71,14 +71,14 @@ public class DuberantCollisionHandler implements ICollisionHandler {
             
             //Resolve the resultPush
             resultPush.normalize();
-            if(resultPush.isFinite()) {
+            if (resultPush.isFinite()) {
                 float dot = resultPush.dot(playerBody.getVelocity());
                 resultPush.mul(dot);
                 playerBody.getVelocity().sub(resultPush);
             }
 
             //Resolve jumpng
-            if(resultPush.isFinite() && collisionResponse.isCollides() && player.getPlayerData().isJumping() &&
+            if (resultPush.isFinite() && collisionResponse.isCollides() && player.getPlayerData().isJumping() &&
                 collisionResponse.getCollidedEntityColliderPart() == player.getComponent(Collider.class).getBaseCollider() &&
                 collisionWithGround(collisionResponse)) {
                 

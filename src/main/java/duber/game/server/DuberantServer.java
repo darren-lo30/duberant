@@ -81,7 +81,7 @@ public class DuberantServer {
             for(Connection connection : serverNetwork.getConnections()) {                
                 Queue<Object> packets = serverNetwork.getPackets(connection);
                 
-                if(packets != null && !usersInMatch.contains(getUser(connection))) {
+                if (packets != null && !usersInMatch.contains(getUser(connection))) {
                     processAllPackets(connection, packets);
                 }
             }
@@ -90,7 +90,7 @@ public class DuberantServer {
             //Ensure that a maximum of 10 updates per second happens
             //It is fine if less than 10 updates per second happens
             elapsedTime = serverLoopTimer.getElapsedTimeAndUpdate();
-            if(elapsedTime < interval) {
+            if (elapsedTime < interval) {
                 Thread.sleep((long) (interval - elapsedTime) * 1_000_000L);
             }
         } 
@@ -104,7 +104,7 @@ public class DuberantServer {
     private void cleanUsersSearchingMatches() {
         for(Iterator<User> i = usersSearchingForMatch.iterator(); i.hasNext();) {
             User user = i.next();
-            if(!user.isLoggedIn()) {
+            if (!user.isLoggedIn()) {
                 i.remove();
             }
         }
@@ -142,7 +142,7 @@ public class DuberantServer {
     private void cleanupMatches() {
         for(Iterator<MatchManager> i = matchManagers.iterator(); i.hasNext();) {
             MatchManager match = i.next();
-            if(!match.isRunning()) {
+            if (!match.isRunning()) {
                 System.out.println("Match ended");
                 i.remove();
 
@@ -157,12 +157,12 @@ public class DuberantServer {
         //Only process certain requests, leave other requests up to the match manager
         while(!packets.isEmpty()) {
             Object packet = packets.poll();
-            if(packet instanceof LoginPacket) {
+            if (packet instanceof LoginPacket) {
                 processPacket(connection, (LoginPacket) packet);
             } 
 
             User connectedUser = getUser(connection);
-            if(connectedUser != null && packet instanceof MatchQueuePacket) {
+            if (connectedUser != null && packet instanceof MatchQueuePacket) {
                 System.out.println("Player sent match queue request");
                 processPacket(connectedUser, (MatchQueuePacket) packet);
             }
@@ -184,7 +184,7 @@ public class DuberantServer {
     }
 
     private void processPacket(User user, MatchQueuePacket matchQueuePacket) {
-        if(matchQueuePacket.joinQueue) {
+        if (matchQueuePacket.joinQueue) {
             //Join match queue
             usersSearchingForMatch.add(user);
         } else {

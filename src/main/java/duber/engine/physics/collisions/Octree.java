@@ -22,7 +22,7 @@ public class Octree {
     }
 
     public void addEntity(Entity entity, Transform faceTransform) {
-        if(!entity.hasComponent(MeshBody.class)){
+        if (!entity.hasComponent(MeshBody.class)){
             throw new IllegalArgumentException("To add an entity to the octree, it must have a mesh body");
         }
         

@@ -28,7 +28,7 @@ public class ShaderProgram implements Cleansable {
 
     public ShaderProgram() throws LWJGLException {
         programId = glCreateProgram();
-        if(programId == 0) {
+        if (programId == 0) {
             throw new LWJGLException("Could not create shader program");
         }
         uniforms = new HashMap<>();
@@ -44,7 +44,7 @@ public class ShaderProgram implements Cleansable {
 
     protected int createShader(String shaderCode, int shaderType) throws LWJGLException {
         int shaderId = glCreateShader(shaderType);
-        if(shaderId == 0) {
+        if (shaderId == 0) {
             throw new LWJGLException("Error creating shader of type: " + shaderType);
         }
 
@@ -52,7 +52,7 @@ public class ShaderProgram implements Cleansable {
         glShaderSource(shaderId, shaderCode);
         glCompileShader(shaderId);
 
-        if(glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
+        if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
             throw new LWJGLException("Erorr compiling shader. Code: " + glGetShaderInfoLog(shaderId, 1024));
         }
 
@@ -63,27 +63,27 @@ public class ShaderProgram implements Cleansable {
 
     public void link() throws LWJGLException {
         glLinkProgram(programId);
-        if(glGetProgrami(programId, GL_LINK_STATUS) == 0) {
+        if (glGetProgrami(programId, GL_LINK_STATUS) == 0) {
             throw new LWJGLException("Error linking shader program. Code: " + glGetProgramInfoLog(programId, 1024));
         }
 
-        if(vertexShaderId != 0) {
+        if (vertexShaderId != 0) {
             glDetachShader(programId, vertexShaderId);
         }
 
-        if(fragmentShaderId != 0) {
+        if (fragmentShaderId != 0) {
             glDetachShader(programId, fragmentShaderId);
         }
 
         glValidateProgram(programId);
-        if(glGetProgrami(programId, GL_VALIDATE_STATUS) == 0) {
+        if (glGetProgrami(programId, GL_VALIDATE_STATUS) == 0) {
             System.err.println("Warning while validating program");
         }
     }
 
     public void createUniform(String uniformName) throws LWJGLException {
         int uniformLocation = glGetUniformLocation(programId, uniformName);
-        if(uniformLocation < 0) {
+        if (uniformLocation < 0) {
             throw new LWJGLException("Could not find uniform: " + uniformName);
         }
 
@@ -236,7 +236,7 @@ public class ShaderProgram implements Cleansable {
     @Override
     public void cleanup() {
         unbind();
-        if(programId != 0) {
+        if (programId != 0) {
             glDeleteProgram(programId);
         }
     }

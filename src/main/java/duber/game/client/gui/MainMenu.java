@@ -33,7 +33,7 @@ public class MainMenu extends GUI {
         while(!receivedPackets.isEmpty()){
             Object packet = receivedPackets.poll();
 
-            if(packet instanceof LoginConfirmationPacket) {
+            if (packet instanceof LoginConfirmationPacket) {
                 //Receive user connected packet from server
                 LoginConfirmationPacket userConnectedPacket = (LoginConfirmationPacket) packet;
                 
@@ -41,7 +41,7 @@ public class MainMenu extends GUI {
                 User connectedUser = userConnectedPacket.user;
                 connectedUser.setConnection(getGame().getClientNetwork().getConnection());
                 getGame().setUser(connectedUser);
-            } else if(getGame().isLoggedIn() && packet instanceof MatchFoundPacket) {
+            } else if (getGame().isLoggedIn() && packet instanceof MatchFoundPacket) {
                 inMatchQueue = false;
                 getManager().pushState(GameStateOption.MATCH);
             }
@@ -93,7 +93,7 @@ public class MainMenu extends GUI {
         matchButton.getStyle().setMinHeight(90f);
         matchButton.getStyle().setBorder(border);
         loginButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE && !loggingIn && !getGame().isLoggedIn()) {
+            if (event.getAction() == MouseClickAction.RELEASE && !loggingIn && !getGame().isLoggedIn()) {
                 loggingIn = true;
                 new Thread(new LoginRequest(loginInput.getTextState().getText())).start();
                 loginButton.getParent().remove(loginButton);
@@ -103,10 +103,10 @@ public class MainMenu extends GUI {
         });
         
         matchButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(getGame().isLoggedIn() && event.getAction() == MouseClickAction.RELEASE) {
+            if (getGame().isLoggedIn() && event.getAction() == MouseClickAction.RELEASE) {
                 inMatchQueue = !inMatchQueue;
                 getGame().getClientNetwork().getConnection().sendTCP(new MatchQueuePacket(inMatchQueue));
-                if(inMatchQueue) {
+                if (inMatchQueue) {
                     matchButton.getTextState().setText("Stop Queue");
                 } else {
                     matchButton.getTextState().setText("Find Match");
@@ -139,7 +139,7 @@ public class MainMenu extends GUI {
                 }
 
                 //Send user login packet with username
-                if(!getGame().isLoggedIn()) { 
+                if (!getGame().isLoggedIn()) { 
                     getGame().getClientNetwork().getClient().sendTCP(new LoginPacket(username));       
                 }
             } catch (IOException ioe) {

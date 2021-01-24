@@ -11,7 +11,7 @@ public class Gun extends Entity {
     }
 
     public Gun(String name, GunData gunData, int cost) {
-        if(gunData == null) {
+        if (gunData == null) {
             throw new IllegalArgumentException("Gun must have gun data");
         }
 

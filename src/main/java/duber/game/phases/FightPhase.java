@@ -31,7 +31,7 @@ public class FightPhase extends MatchPhase {
         @Override
         public void tryChangeMatchPhase() {
             int roundWinner = match.getRoundWinner();
-            if(match.getRoundWinner() != MatchData.NULL_TEAM) {
+            if (match.getRoundWinner() != MatchData.NULL_TEAM) {
                 changeMatchPhase(new RoundEndPhase(roundWinner));
             }    
         }
@@ -48,7 +48,7 @@ public class FightPhase extends MatchPhase {
 
 		@Override
 		public void render() {
-            if(!match.getMainPlayer().isAlive()) {
+            if (!match.getMainPlayer().isAlive()) {
                 getHud().displayText(DEATH_MESSAGE, 0.5f, 0.5f, true, deathFont);
             } else {
                 match.renderGameScene();

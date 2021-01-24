@@ -78,7 +78,7 @@ public class Window {
     private void init() {
         GLFWErrorCallback.createPrint(System.err).set();
 
-        if(!glfwInit()) {
+        if (!glfwInit()) {
             throw new IllegalStateException("Could not start glfw");
         }
 
@@ -96,7 +96,7 @@ public class Window {
         //GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         //windowHandle = glfwCreateWindow(vidmode.width(), vidmode.height(), title, NULL, NULL);
         windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
-        if(windowHandle == NULL) {
+        if (windowHandle == NULL) {
             throw new IllegalStateException("Could not start the window");
         }
         
@@ -124,8 +124,8 @@ public class Window {
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
             //Full screen callback
-            if(keyCode == GLFW_KEY_F11 && action == GLFW_RELEASE) {
-                if(isFullScreen()) {
+            if (keyCode == GLFW_KEY_F11 && action == GLFW_RELEASE) {
+                if (isFullScreen()) {
                     glfwSetWindowMonitor(window, NULL, 0, 0, width, height, GLFW_DONT_CARE);
                 } else {
                     long monitor = glfwGetPrimaryMonitor();
@@ -151,13 +151,13 @@ public class Window {
     private <T extends CallbackI> IChainCallback<T> getChainCallback(T callback) {
         CallbackKeeper callbackKeeper = defaultInitializer.getCallbackKeeper();
 
-        if(callback instanceof GLFWCursorPosCallbackI) {
+        if (callback instanceof GLFWCursorPosCallbackI) {
             return (IChainCallback<T>) callbackKeeper.getChainCursorPosCallback();
-        } else if(callback instanceof GLFWMouseButtonCallbackI) {
+        } else if (callback instanceof GLFWMouseButtonCallbackI) {
             return (IChainCallback<T>) callbackKeeper.getChainMouseButtonCallback();
-        } else if(callback instanceof GLFWFramebufferSizeCallbackI) {
+        } else if (callback instanceof GLFWFramebufferSizeCallbackI) {
             return (IChainCallback<T>) callbackKeeper.getChainFramebufferSizeCallback();
-        } else if(callback instanceof GLFWKeyCallbackI) {
+        } else if (callback instanceof GLFWKeyCallbackI) {
             return (IChainCallback<T>) callbackKeeper.getChainKeyCallback();
         } else {
             throw new IllegalArgumentException("The callback is not valid. Register it before adding it");
@@ -170,7 +170,7 @@ public class Window {
 
     public <T extends CallbackI> void removeCallback(T callback) {
         IChainCallback<T> chainCallback = getChainCallback(callback);
-        if(chainCallback.contains(callback)) {
+        if (chainCallback.contains(callback)) {
             chainCallback.remove(callback);
         }
     }
@@ -233,26 +233,26 @@ public class Window {
 
 
     public void applyOptions() {
-        if(options.isTurnedOn(Options.CULL_FACES)) {
+        if (options.isTurnedOn(Options.CULL_FACES)) {
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
         } else {
             glDisable(GL_CULL_FACE);
         }
 
-        if(options.isTurnedOn(Options.SHOW_CURSOR)) {
+        if (options.isTurnedOn(Options.SHOW_CURSOR)) {
             glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
             glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
 
-        if(options.isTurnedOn(Options.DISPLAY_TRIANGLES)) {
+        if (options.isTurnedOn(Options.DISPLAY_TRIANGLES)) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         } else {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
 
-        if(options.isTurnedOn(Options.ENABLE_VSYNC)) {
+        if (options.isTurnedOn(Options.ENABLE_VSYNC)) {
             glfwSwapInterval(1);
         } else {
             glfwSwapInterval(0);

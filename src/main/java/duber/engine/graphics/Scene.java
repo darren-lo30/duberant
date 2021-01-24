@@ -50,13 +50,13 @@ public class Scene implements Cleansable {
     }
 
     private void checkRenderable(Entity entity) {
-        if(!entity.hasComponent(MeshBody.class) || !entity.getComponent(MeshBody.class).isInitialized()) {
+        if (!entity.hasComponent(MeshBody.class) || !entity.getComponent(MeshBody.class).isInitialized()) {
             throw new IllegalArgumentException("Mesh body for entity not valid");
         }
     }
 
     public void addRenderableEntities(Entity[] renderableEntities) {
-        if(renderableEntities == null) {
+        if (renderableEntities == null) {
             return;
         }
         
@@ -66,7 +66,7 @@ public class Scene implements Cleansable {
     }
 
     public void addRenderableEntity(Entity renderableEntity) {
-        if(renderableEntity == null){
+        if (renderableEntity == null){
             return;
         }
 
@@ -84,7 +84,7 @@ public class Scene implements Cleansable {
     }
 
     public void removeRenderableEntity(Entity renderableEntity) {
-        if(renderableEntity == null) {
+        if (renderableEntity == null) {
             return;
         }
 
@@ -93,7 +93,7 @@ public class Scene implements Cleansable {
         entities.remove(renderableEntity);
         Mesh[] renderableMeshes = renderableEntity.getComponent(MeshBody.class).getMeshes();
         for(Mesh renderableMesh: renderableMeshes) {
-            if(meshMap.containsKey(renderableMesh)) {
+            if (meshMap.containsKey(renderableMesh)) {
                 meshMap.get(renderableMesh).remove(renderableEntity);
             }
         }

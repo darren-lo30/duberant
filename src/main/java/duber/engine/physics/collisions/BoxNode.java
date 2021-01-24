@@ -88,12 +88,12 @@ public class BoxNode extends Box {
     }
 
     public void addFaceBox(FaceBox faceBox) {
-        if(!partitioned) {
+        if (!partitioned) {
             partition();
         }
 
         for(BoxNode childNode: children) {
-            if(faceBox.isCompletelyInside(childNode)){
+            if (faceBox.isCompletelyInside(childNode)){
                 childNode.addFaceBox(faceBox);
                 return;
             }
@@ -102,17 +102,17 @@ public class BoxNode extends Box {
     }
 
     public void getIntersectingFaces(Box box, Collection<EntityFace> faces) {
-        if(partitioned) {
+        if (partitioned) {
             for(BoxNode childNode: children) {
-                if(childNode.intersects(box)){
+                if (childNode.intersects(box)){
                     childNode.getIntersectingFaces(box, faces);
                 }
             }
         }
 
-        if(intersects(box)) {
+        if (intersects(box)) {
             for(FaceBox faceBox: faceBoxes) {
-                if(faceBox.intersects(box)) {
+                if (faceBox.intersects(box)) {
                     faces.add(faceBox.getFace());
                 }
             }

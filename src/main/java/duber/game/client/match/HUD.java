@@ -57,7 +57,7 @@ public class HUD implements Cleansable {
             nvgCreate(NVG_ANTIALIAS | NVG_STENCIL_STROKES) :
             nvgCreate(NVG_STENCIL_STROKES);
             
-        if(vgContext == NULL) {
+        if (vgContext == NULL) {
             throw new LWJGLException("Could not create a HUD with NanoVG");
         }
 
@@ -68,7 +68,7 @@ public class HUD implements Cleansable {
         ByteBuffer fontBuffer = Utils.ioResourceToByteBuffer(fontFile, bufferSize);
         fonts.put(fontName, fontBuffer);
         int font = nvgCreateFontMem(vgContext, fontName, fontBuffer, 0);
-        if(font == -1) {
+        if (font == -1) {
             throw new LWJGLException("Unable to create font");
         }
     }
@@ -88,7 +88,7 @@ public class HUD implements Cleansable {
     private void displayGun(Gun equippedGun) {
         String gunType;
         String bulletsRemaining;
-        if(equippedGun == null) {
+        if (equippedGun == null) {
             gunType = "No gun equipped";
             bulletsRemaining = "N/A";
         } else {
@@ -110,13 +110,13 @@ public class HUD implements Cleansable {
     }
 
     private void displayInit() {
-        if(displayCounter++ == 0) {
+        if (displayCounter++ == 0) {
             nvgBeginFrame(vgContext, window.getWidth(), window.getHeight(), 1);
         } 
     }
 
     private void displayEnd() {
-        if(--displayCounter == 0) {
+        if (--displayCounter == 0) {
             nvgEndFrame(vgContext);
             window.restoreState();
         }
@@ -162,7 +162,7 @@ public class HUD implements Cleansable {
     }
 
     public void displayText(String text, float xPos, float yPos, boolean ratio, Font font) {
-        if(ratio) {
+        if (ratio) {
             xPos *= window.getWidth();
             yPos *= window.getHeight();
         }
@@ -177,7 +177,7 @@ public class HUD implements Cleansable {
     }
 
     public void displayTextWithBackground(String text, float xPos, float yPos, boolean ratio, Font font, float padding, Vector4f backgroundColour) {
-        if(ratio) {
+        if (ratio) {
             xPos *= window.getWidth();
             yPos *= window.getHeight();
         }
@@ -200,7 +200,7 @@ public class HUD implements Cleansable {
 
 
     public void displayRectangle(float xPos, float yPos, float width, float height, boolean ratio, Vector4f colour) {
-        if(ratio) {
+        if (ratio) {
             xPos *= window.getWidth();
             yPos *= window.getHeight();
             width *= window.getWidth();

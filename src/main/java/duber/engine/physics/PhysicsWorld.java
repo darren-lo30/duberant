@@ -20,11 +20,11 @@ public abstract class PhysicsWorld {
     }
     
     public void updateEntityPhysics(Entity entity) {
-        if(entity.hasComponent(RigidBody.class)) {
+        if (entity.hasComponent(RigidBody.class)) {
             updateRigidBody(entity.getComponent(RigidBody.class), entity);
         }
         
-        if(entity.hasComponent(Collider.class)) {
+        if (entity.hasComponent(Collider.class)) {
             updateCollider(entity.getComponent(Collider.class), entity);            
         }
     }
@@ -44,7 +44,7 @@ public abstract class PhysicsWorld {
         transform.rotate(angularVelocity.x(), angularVelocity.y(), angularVelocity.z());
         velocity.y -= GRAVITY;
         velocity.set(0, velocity.y(), 0);
-        if(velocity.y > MAX_Y_SPEED) {
+        if (velocity.y > MAX_Y_SPEED) {
             velocity.y = MAX_Y_SPEED;
         } else if (velocity.y < -MAX_Y_SPEED) {
             velocity.y = -MAX_Y_SPEED;

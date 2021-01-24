@@ -26,7 +26,7 @@ void main() {
     int count = 0;
     for(int i = 0; i < MAX_WEIGHTS; i++) {
         float weight = jointWeights[i];
-        if(weight > 0) {
+        if (weight > 0) {
             count++;
             int jointIndex = jointIndices[i];
             vec4 tmpPos = jointsMatrix[jointIndex] * vec4(position, 1.0);
