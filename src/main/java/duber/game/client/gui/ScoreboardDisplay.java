@@ -62,6 +62,7 @@ public class ScoreboardDisplay extends GUI {
         namesText.getStyle().setPosition(PositionType.RELATIVE);
         TextArea killsText= new TextArea(250,250,250,250);
         killsText.getStyle().setMinWidth(100f);
+        killsText.getStyle().setMinHeight(250f);
         killsText.getStyle().setPosition(PositionType.RELATIVE);
         TextArea deathsText=new TextArea(250,250,250,250);
         deathsText.getStyle().setMinHeight(250f);
@@ -85,7 +86,7 @@ public class ScoreboardDisplay extends GUI {
         Scoreboard scoreboard = getMatchScoreboard();
         for(int team = 0; team < 2; team++) {
             for(int player = 0; player < scoreboard.getScores(team).size(); player++) {
-                if(team==1){
+                if(team==1&&player==0){
                     currName=currName+"\n";
                     currKills=currKills+"\n";
                     currDeaths=currDeaths+"\n";
