@@ -38,13 +38,13 @@ public class Controls {
     
     private static void addControlVelocity(Vector3f playerVelocity, Vector3f controlRotation, Vector3f controlVelocity) {
         if(controlVelocity.z() != 0) {
-            playerVelocity.x += (float)Math.sin(controlRotation.y()) * -1.0f * controlVelocity.z();
-            playerVelocity.z += (float)Math.cos(controlRotation.y()) * controlVelocity.z();
+            playerVelocity.x += (float) Math.sin(controlRotation.y()) * -1.0f * controlVelocity.z();
+            playerVelocity.z += (float) Math.cos(controlRotation.y()) * controlVelocity.z();
         }
         
         if(controlVelocity.x() != 0) {
-            playerVelocity.x += (float)Math.sin(controlRotation.y() - Math.toRadians(90)) * -1.0f * controlVelocity.x();
-            playerVelocity.z += (float)Math.cos(controlRotation.y() - Math.toRadians(90)) * controlVelocity.x();
+            playerVelocity.x += (float) Math.sin(controlRotation.y() - Math.toRadians(90)) * -1.0f * controlVelocity.x();
+            playerVelocity.z += (float) Math.cos(controlRotation.y() - Math.toRadians(90)) * controlVelocity.x();
         }
         playerVelocity.y += controlVelocity.y();
     }

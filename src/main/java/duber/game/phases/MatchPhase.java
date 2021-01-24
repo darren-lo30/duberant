@@ -7,7 +7,7 @@ import duber.game.client.match.Match;
 import duber.game.server.MatchManager;
 
 public abstract class MatchPhase {
-    protected transient MatchPhaseLogic phaseLogic;
+    private transient MatchPhaseLogic phaseLogic;
     
     private boolean playerCanMove = false;
     private boolean playerCanBuy = false;

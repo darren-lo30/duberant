@@ -106,9 +106,9 @@ public class MainMenu extends GUI {
             if(getGame().isLoggedIn() && event.getAction() == MouseClickAction.RELEASE) {
                 inMatchQueue = !inMatchQueue;
                 getGame().getClientNetwork().getConnection().sendTCP(new MatchQueuePacket(inMatchQueue));
-                if(inMatchQueue==true){
+                if(inMatchQueue) {
                     matchButton.getTextState().setText("Stop Queue");
-                }else if(inMatchQueue==false){
+                } else {
                     matchButton.getTextState().setText("Find Match");
                 }
             }
@@ -143,7 +143,6 @@ public class MainMenu extends GUI {
                 //Send user login packet with username
                 if(!getGame().isLoggedIn()) { 
                     getGame().getClientNetwork().getClient().sendTCP(new LoginPacket(username));       
-                    System.out.println("Connected lol");
                 }
             } catch (IOException ioe) {
                 //Failed to connect

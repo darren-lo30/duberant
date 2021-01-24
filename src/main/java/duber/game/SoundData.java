@@ -45,18 +45,5 @@ public class SoundData {
     public static void setSourceSound(SoundManager soundManager, SoundSource soundSource, SoundFile soundFile) {
         int newSoundBuffer = soundFile.getBufferId(soundManager);
         soundSource.setBuffer(newSoundBuffer);
-    } 
-
-    public static void playLoopSourceSound(SoundManager soundManager, SoundSource soundSource, SoundFile soundFile) {
-        int newSoundBuffer = soundFile.getBufferId(soundManager);
-
-        if(soundSource.getBuffer() != newSoundBuffer) {
-            soundSource.setBuffer(newSoundBuffer);
-        }
-        
-        if(!soundSource.isPlaying()) {
-            soundSource.play();
-        }
-    }
-    
+    }     
 }

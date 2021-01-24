@@ -8,19 +8,22 @@ import static duber.game.gameobjects.Gun.GunData.SECONDARY_GUN;
 
 
 public enum GunType {
-    RIFLE (new Gun("Rifle", new GunData(PRIMARY_GUN, 90, 10, new Bullet(40)), 1800), new MeshResource("models/rifle/rifle.obj", "models/rifle")) {
+    RIFLE (new Gun("Rifle", new GunData(PRIMARY_GUN, 90, 10, new Bullet(40)), 1800),
+           new MeshResource("models/rifle/rifle.obj", "models/rifle")) {
         @Override
         public String toString() {
             return "Rifle";
         }
     }, 
-    LMG (new Gun("Light Machine Gun", new GunData(PRIMARY_GUN, 90, 10, new Bullet(22)), 1300), new MeshResource("models/lmg/lmg.obj", "models/lmg")) {
+    LMG (new Gun("Light Machine Gun", new GunData(PRIMARY_GUN, 90, 10, new Bullet(22)), 1300), 
+         new MeshResource("models/lmg/lmg.obj", "models/lmg")) {
         @Override
         public String toString() {
             return "Light Machine Gun";
         }
     }, 
-    PISTOL (new Gun("Pistol", new GunData(SECONDARY_GUN, 20, 3.3f, new Bullet(20)), 500), new MeshResource("models/pistol/pistol.obj", "models/pistol")) {
+    PISTOL (new Gun("Pistol", new GunData(SECONDARY_GUN, 20, 3.3f, new Bullet(20)), 500),   
+            new MeshResource("models/pistol/pistol.obj", "models/pistol")) {
         @Override
         public String toString() {
             return "Pistol";

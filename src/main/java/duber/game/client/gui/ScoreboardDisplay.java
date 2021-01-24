@@ -7,22 +7,7 @@ import duber.engine.entities.components.Named;
 import org.liquidengine.legui.style.color.ColorConstants;
 import org.liquidengine.legui.component.TextArea;
 import org.liquidengine.legui.style.Style.DisplayType;
-import static org.liquidengine.legui.component.optional.align.HorizontalAlign.CENTER;
-import static org.liquidengine.legui.component.optional.align.VerticalAlign.BOTTOM;
-import duber.game.User;
-import duber.game.networking.LoginPacket;
-import duber.game.networking.MatchFoundPacket;
-import duber.game.networking.MatchQueuePacket;
-import duber.game.networking.LoginConfirmationPacket;
-import org.liquidengine.legui.event.MouseClickEvent;
-import org.liquidengine.legui.event.MouseClickEvent.MouseClickAction;
-import org.liquidengine.legui.component.Button;
-import org.liquidengine.legui.component.Panel;
-import org.liquidengine.legui.component.*;
-import org.liquidengine.legui.style.border.SimpleLineBorder;
-import org.liquidengine.legui.style.Style.PositionType;
-import org.liquidengine.legui.style.flex.FlexStyle.*;
-import org.liquidengine.legui.style.length.LengthType;
+
 public class ScoreboardDisplay extends GUI {
     @Override
     public void enter() {

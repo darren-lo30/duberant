@@ -10,11 +10,14 @@ public class Scoreboard {
     private int[] teamWins = new int[2];
     private List<List<Score>> teamScores = new ArrayList<>(2);
 
-    public Scoreboard(Collection<Player> players) {
+    public Scoreboard() {
         for(int i = 0; i<2; i++) {
             teamScores.add(new ArrayList<>());
         }
+    }
 
+    public Scoreboard(Collection<Player> players) {
+        this();
         for(Player player: players) {
             addPlayer(player);
         }
@@ -29,10 +32,11 @@ public class Scoreboard {
     }
 
     public void addPlayer(Player player) {
-        int team = player.getPlayerData().getTeam();
-        Score playerScore = player.getScore();
+        addScore(player.getPlayerData().getTeam(), player.getScore());
+    }
 
-        teamScores.get(team).add(playerScore);
+    public void addScore(int team, Score score) {
+        teamScores.get(team).add(score);
     }
 
     public void addWin(int team) {
@@ -70,8 +74,8 @@ public class Scoreboard {
 
     private static void reorderScores(List<Score> scoresList) {
         //Bubble sort
-        boolean sortEnded = false;
-        while(!sortEnded) {
+        boolean sortEnded;
+        do {
             sortEnded = true;
             for(int i = 0; i<scoresList.size()-1; i++) {
                 Score leftScore = scoresList.get(i);
@@ -82,7 +86,6 @@ public class Scoreboard {
                     scoresList.set(i, rightScore);                    
                 }
             }
-
-        }
+        } while (!sortEnded);
     }
 }
