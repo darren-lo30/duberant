@@ -1,12 +1,19 @@
 package duber.game.client.gui;
 
+
 import duber.game.client.GameStateManager.GameStateOption;
-import duber.game.client.match.Match;
 import duber.game.gameobjects.Scoreboard;
+import duber.game.client.match.Match;
+import org.liquidengine.legui.component.Panel;
+import org.liquidengine.legui.component.*;
 import duber.engine.entities.components.Named;
 import org.liquidengine.legui.style.color.ColorConstants;
-import org.liquidengine.legui.component.TextArea;
 import org.liquidengine.legui.style.Style.DisplayType;
+import org.liquidengine.legui.style.Style.PositionType;
+import org.liquidengine.legui.style.flex.FlexStyle.*;
+import org.liquidengine.legui.style.length.LengthType;
+
+
 
 public class ScoreboardDisplay extends GUI {
     @Override
@@ -31,7 +38,7 @@ public class ScoreboardDisplay extends GUI {
     }
 
     private Scoreboard getMatchScoreboard() {
-        return ((Match) getManager().getState(GameStateOption.MATCH)).getScoreboard();
+        return ((Match)getManager().getState(GameStateOption.MATCH)).getScoreboard();
     }
 
     @Override
@@ -84,6 +91,11 @@ public class ScoreboardDisplay extends GUI {
         Scoreboard scoreboard = getMatchScoreboard();
         for(int team = 0; team < 2; team++) {
             for(int player = 0; player < scoreboard.getScores(team).size(); player++) {
+                if(team==1){
+                    currName=currName+"\n";
+                    currKills=currKills+"\n";
+                    currDeaths=currDeaths+"\n";
+                }
                 int kills= scoreboard.getScores(team).get(player).getKills();
                 int deaths= scoreboard.getScores(team).get(player).getDeaths();
                 String name= scoreboard.getScores(team).get(player).getEntity().getComponent(Named.class).getName();
