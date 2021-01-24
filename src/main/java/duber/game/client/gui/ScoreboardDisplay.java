@@ -5,8 +5,14 @@ import duber.game.client.match.Match;
 import duber.game.gameobjects.Scoreboard;
 import duber.engine.entities.components.Named;
 import org.liquidengine.legui.style.color.ColorConstants;
+import org.liquidengine.legui.style.flex.FlexStyle.AlignItems;
+import org.liquidengine.legui.style.flex.FlexStyle.JustifyContent;
+import org.liquidengine.legui.style.length.LengthType;
+import org.liquidengine.legui.component.Component;
+import org.liquidengine.legui.component.Panel;
 import org.liquidengine.legui.component.TextArea;
 import org.liquidengine.legui.style.Style.DisplayType;
+import org.liquidengine.legui.style.Style.PositionType;
 
 public class ScoreboardDisplay extends GUI {
     @Override
@@ -21,13 +27,7 @@ public class ScoreboardDisplay extends GUI {
 
     @Override
     public void update() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void render() {
-        // TODO Auto-generated method stub
+        //Nothing to update
     }
 
     private Scoreboard getMatchScoreboard() {
