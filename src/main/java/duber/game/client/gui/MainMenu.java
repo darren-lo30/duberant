@@ -5,8 +5,6 @@ import java.util.Queue;
 
 import duber.game.User;
 import duber.game.client.GameStateManager.GameStateOption;
-import duber.game.gameobjects.Buyable;
-import duber.game.gameobjects.GunType;
 import duber.game.networking.LoginPacket;
 import duber.game.networking.MatchFoundPacket;
 import duber.game.networking.MatchQueuePacket;
@@ -52,7 +50,6 @@ public class MainMenu extends GUI {
 
     @Override
     public void createGuiElements() {
-        /** 
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
         getFrame().getContainer().getStyle().setDisplay(DisplayType.FLEX);
@@ -121,71 +118,7 @@ public class MainMenu extends GUI {
         mainPanel.add(loginButton);
         
         getFrame().getContainer().add(mainPanel);
-       */getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
-        getFrame().getContainer().setFocusable(false);
-        getFrame().getContainer().getStyle().setDisplay(DisplayType.FLEX);
-
-
-        Component frameContainer = getFrame().getContainer();
-        frameContainer.getStyle().getBackground().setColor(ColorConstants.gray());
-        frameContainer.getStyle().setPadding(10);
-        frameContainer.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
-        frameContainer.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
-        frameContainer.getStyle().setDisplay(DisplayType.FLEX);
-
-        Panel mainPanel= new Panel();
-        mainPanel.getStyle().getBackground().setColor(ColorConstants.lightGray());
-        mainPanel.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
-        mainPanel.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
-        mainPanel.getStyle().setDisplay(DisplayType.FLEX);
-        mainPanel.getStyle().setWidth(LengthType.percent(100));
-        mainPanel.getStyle().setHeight(LengthType.percent(100));
-        frameContainer.add(mainPanel);
-
-        SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
-        Button pistolButton = new Button("Pistol $"+Integer.toString(GunType.PISTOL.getGun().getComponent(Buyable.class).getCost()));
-        
-        
-        pistolButton.getStyle().setMinWidth(480f);
-        pistolButton.getStyle().setMinHeight(90f);
-        pistolButton.getStyle().setBorder(border);
-        pistolButton.getStyle().setPosition(PositionType.RELATIVE);
-
-        Button lmgButton = new Button("Light Machine Gun $"+Integer.toString(GunType.LMG.getGun().getComponent(Buyable.class).getCost()));
-        lmgButton.getStyle().setMinWidth(480f);
-        lmgButton.getStyle().setMinHeight(90f);
-        lmgButton.getStyle().setBorder(border);
-        lmgButton.getStyle().setPosition(PositionType.RELATIVE);
-        
-        Button rifleButton = new Button("Assault Rifle $"+Integer.toString(GunType.RIFLE.getGun().getComponent(Buyable.class).getCost()));
-        rifleButton.getStyle().setMinWidth(480f);
-        rifleButton.getStyle().setMinHeight(90f);
-        rifleButton.getStyle().setBorder(border);
-        rifleButton.getStyle().setPosition(PositionType.RELATIVE);
-        
-        rifleButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE) {
-             
-            }
-        });
-        lmgButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE) {
-             
-            }
-        });
-        
-        pistolButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if(event.getAction() == MouseClickAction.RELEASE) {
-         
-            }
-        });
-
-        mainPanel.add(pistolButton);
-        mainPanel.add(lmgButton);
-        mainPanel.add(rifleButton);
-        getFrame().getContainer().add(mainPanel);
-     
-    }   
+    }
 
 
     private class LoginRequest implements Runnable {

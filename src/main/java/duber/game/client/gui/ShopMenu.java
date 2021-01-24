@@ -57,20 +57,20 @@ public class ShopMenu extends GUI {
 
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
 
-        Button pistolButton = new Button("Pistol\n"+Integer.toString(GunType.PISTOL.getGun().getComponent(Buyable.class).getCost()));
+        Button pistolButton = new Button("Pistol $"+Integer.toString(GunType.PISTOL.getGun().getComponent(Buyable.class).getCost()));
         pistolButton.getStyle().setMinWidth(160f);
         pistolButton.getStyle().setMinHeight(30f);
         pistolButton.getStyle().setBorder(border);
         pistolButton.getStyle().setMarginRight(20f);
         pistolButton.getStyle().setPosition(PositionType.RELATIVE);
 
-        Button lmgButton = new Button("Light Machine Gun\n"+Integer.toString(GunType.LMG.getGun().getComponent(Buyable.class).getCost()));
+        Button lmgButton = new Button("Light Machine Gun $"+Integer.toString(GunType.LMG.getGun().getComponent(Buyable.class).getCost()));
         lmgButton.getStyle().setMinWidth(480f);
         lmgButton.getStyle().setMinHeight(90f);
         lmgButton.getStyle().setBorder(border);
         lmgButton.getStyle().setPosition(PositionType.RELATIVE);
         
-        Button rifleButton = new Button("Assault Rifle\n"+Integer.toString(GunType.RIFLE.getGun().getComponent(Buyable.class).getCost()));
+        Button rifleButton = new Button("Assault Rifle $"+Integer.toString(GunType.RIFLE.getGun().getComponent(Buyable.class).getCost()));
         rifleButton.getStyle().setMinWidth(480f);
         rifleButton.getStyle().setMinHeight(90f);
         rifleButton.getStyle().setBorder(border);

@@ -80,7 +80,10 @@ public class Scoreboard {
             for(int i = 0; i<scoresList.size()-1; i++) {
                 Score leftScore = scoresList.get(i);
                 Score rightScore = scoresList.get(i+1);
+                
                 if(compareScores(leftScore, rightScore)) {
+                    //Swap the scores if the comparison returns true
+                    //Also set the flag to true so the sort does not end
                     sortEnded = false;
                     scoresList.set(i+1, leftScore);
                     scoresList.set(i, rightScore);                    
@@ -89,3 +92,4 @@ public class Scoreboard {
         } while (!sortEnded);
     }
 }
+
