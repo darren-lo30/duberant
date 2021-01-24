@@ -77,10 +77,17 @@ public class MainMenu extends GUI {
         loginButton.getStyle().setMinWidth(160f);
         loginButton.getStyle().setMinHeight(30f);
         loginButton.getStyle().setBorder(border);
-        loginButton.getStyle().setTop(100f);
+        loginButton.getStyle().setMarginTop(250f);
+        loginButton.getStyle().setLeft(25f);
         loginButton.getStyle().setPosition(PositionType.RELATIVE);
         
-        
+        TextInput loginInput= new TextInput();
+        loginInput.getStyle().setMinWidth(150f);
+        loginInput.getStyle().setMinHeight(30f);
+        loginInput.getStyle().setBorder(border);
+        loginInput.getStyle().setMarginTop(250f);
+        loginInput.getStyle().setRight(25f);
+        loginInput.getStyle().setPosition(PositionType.RELATIVE);
         Button matchButton = new Button("Find Match");
         matchButton.getStyle().setMinWidth(480f);
         matchButton.getStyle().setMinHeight(90f);
@@ -88,8 +95,10 @@ public class MainMenu extends GUI {
         loginButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if(event.getAction() == MouseClickAction.RELEASE && !loggingIn && !getGame().isLoggedIn()) {
                 loggingIn = true;
-                new Thread(new LoginRequest("Darren")).start();
+                new Thread(new LoginRequest(loginInput.getTextState().getText())).start();
                 loginButton.getParent().remove(loginButton);
+                loginInput.getParent().remove(loginInput);  
+                
             }
         });
         
@@ -105,7 +114,9 @@ public class MainMenu extends GUI {
             }
         });
         mainPanel.add(matchButton);
+        mainPanel.add(loginInput);
         mainPanel.add(loginButton);
+        
         getFrame().getContainer().add(mainPanel);
        
 
