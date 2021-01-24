@@ -9,6 +9,7 @@ import duber.engine.entities.components.Named;
 
 import duber.engine.entities.components.MeshBody;
 import duber.engine.entities.components.Vision;
+import duber.game.MatchData;
 import duber.engine.entities.components.RigidBody;
 
 /**
@@ -147,6 +148,9 @@ public class Player extends Entity {
         }
         
         public void setTeam(int team) {
+            if(team != MatchData.RED_TEAM || team != MatchData.BLUE_TEAM) {
+                throw new IllegalArgumentException("The team does not exist");
+            }
             this.team = team;
         }
         
