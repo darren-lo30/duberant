@@ -48,21 +48,52 @@ import static org.lwjgl.assimp.Assimp.aiTextureType_NONE;
 import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_DIFFUSE;
 import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_SPECULAR;
 
+/**
+ * A utility class used to load Meshes from files
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class MeshLoader {
+    /**
+     * Private constructor to discourage instantiation
+     */
     private MeshLoader() {}
 
+    /**
+     * Loads Meshes without textures.
+     * @param modelFile the model file
+     * @throws LWJGLException if the model could not be loaded
+     */
     public static MeshData load(String modelFile) throws LWJGLException {
         return load(modelFile, null);
     }
 
+    /**
+     * Loads Meshes with textures
+     * @param modelFile the model file
+     * @param texturesDirectory the directory to the model's textures
+     * @throws LWJGLException if the model could not be loaded
+     */
     public static MeshData load(String modelFile, String texturesDirectory) throws LWJGLException {
         return load(modelFile, texturesDirectory, MeshResource.DEFAULT_FLAGS);
     }
 
+    /**
+     * Loads Meshes with textures and with flags
+     * @param modelFile the model file
+     * @param texturesDirectory the directory to the model's textures
+     * @param flags the flags to use while loading the model
+     * @throws LWJGLException if the model could not be loaded
+     */
     public static MeshData load(String modelFile, String texturesDirectory, int flags) throws LWJGLException {
         return load(new MeshResource(modelFile, texturesDirectory, flags));
     }
 
+    /**
+     * Loads Meshes from a MeshResource
+     * @param meshResource the MeshResource containing the file data to load the model
+     * @throws LWJGLException if the model could not be loaded
+     */
     public static MeshData load(MeshResource meshResource) throws LWJGLException {        
         String modelFile = meshResource.getModelFile();
         String texturesDirectory = meshResource.getTextureDirectory();
@@ -104,6 +135,9 @@ public class MeshLoader {
         return new MeshData(meshes, animationData);
     }
 
+    /**
+     * Builds nodes tree used in animations
+     */
     private static Node buildNodesTree(AINode aiNode, Node parentNode) {
         String nodeName = aiNode.mName().dataString();
         Node node = new Node(nodeName, parentNode, toMatrix(aiNode.mTransformation()));
@@ -118,6 +152,9 @@ public class MeshLoader {
         return node;
     }
 
+    /**
+     * Processes all the animations for a model
+     */
     private static Map<String, AnimationData> processAnimations(AIScene aiScene, List<Bone> boneList,
                                                             Node rootNode, Matrix4f globalInverseTransformation) {
         Map<String, AnimationData> animationData = new HashMap<>();
@@ -143,6 +180,16 @@ public class MeshLoader {
         return animationData;
     }
 
+    /**
+     * Builds the matrices used in animation frames.
+     * @param aiAnimation the animation being loaded
+     * @param boneList the List of Bones
+     * @param animatedFrame the AnimationFrame being built
+     * @param frame the frame
+     * @param node the node
+     * @param parentTransformation the parent transformation
+     * @param globalInverseTransform the global inverse transform
+     */
     private static void buildFrameMatrices(AIAnimation aiAnimation, List<Bone> boneList, AnimationFrame animatedFrame, int frame,
                                            Node node, Matrix4f parentTransformation, Matrix4f globalInverseTransform) {
         String nodeName = node.getName();
@@ -166,6 +213,12 @@ public class MeshLoader {
         }
     }
 
+    /**
+     * Builds a transformation matrix for nodes.
+     * @param aiNodeAnim the node animation being loaded
+     * @param frame the frame
+     * @return the transformation matrix
+     */
     private static Matrix4f buildNodeTransformationMatrix(AINodeAnim aiNodeAnim, int frame) {
         AIVectorKey.Buffer positionKeys = aiNodeAnim.mPositionKeys();
         AIVectorKey.Buffer scalingKeys = aiNodeAnim.mScalingKeys();
@@ -198,6 +251,11 @@ public class MeshLoader {
         return nodeTransform;
     }
 
+    /**
+     * Finds a node.
+     * @param aiAnimation the animation
+     * @param nodeName the node to search for
+     */
     private static AINodeAnim findAIAnimNode(AIAnimation aiAnimation, String nodeName) {
         AINodeAnim result = null;
         int numAnimNodes = aiAnimation.mNumChannels();
@@ -212,6 +270,10 @@ public class MeshLoader {
         return result;
     }
 
+    /**
+     * Calculates the maximum frames in an animation.
+     * @param aiAnimation the animation
+     */
     private static int calcAnimationMaxFrames(AIAnimation aiAnimation) {
         int maxFrames = 0;
         int numNodeAnims = aiAnimation.mNumChannels();
@@ -226,6 +288,13 @@ public class MeshLoader {
         return maxFrames;
     }
 
+    /**
+     * Processes the bones of a mesh.
+     * @param aiMesh the mesh to process
+     * @param boneList the List of Bonese
+     * @param boneIds the List of Bone ids
+     * @param weights the List of weights
+     */
     private static void processBones(AIMesh aiMesh, List<Bone> boneList, List<Integer> boneIds,
                                      List<Float> weights) {
         Map<Integer, List<VertexWeight>> weightSet = new HashMap<>();
@@ -267,6 +336,12 @@ public class MeshLoader {
         }
     }
 
+    /**
+     * Processes a mesh.
+     * @param aiMesh the mesh to process
+     * @param materials the List of Materials
+     * @param boneList the List of Bones
+     */
     private static Mesh processMesh(AIMesh aiMesh, List<Material> materials, List<Bone> boneList) {
         List<Float> vertices = new ArrayList<>();
         List<Float> textures = new ArrayList<>();
@@ -304,6 +379,11 @@ public class MeshLoader {
         return mesh;
     }
 
+    /**
+     * Converts an Assimp matrix to a JOML matrix.
+     * @param aiMatrix4x4 the Assimp matrix
+     * @return the JOML matrix
+     */
     private static Matrix4f toMatrix(AIMatrix4x4 aiMatrix4x4) {
         Matrix4f result = new Matrix4f();
         result.m00(aiMatrix4x4.a1());
@@ -326,6 +406,13 @@ public class MeshLoader {
         return result;
     }
 
+    /**
+     * Processes a Material.
+     * @param aiMaterial the material to process
+     * @param materials the List of Materials
+     * @param texturesDirectory the directory containing the textures
+     * @throws LWJGLException if the Material could not be loaded
+     */
     private static void processMaterial(AIMaterial aiMaterial, List<Material> materials, String texturesDirectory) throws LWJGLException {
 
         AIString path = AIString.calloc();
@@ -370,6 +457,11 @@ public class MeshLoader {
         materials.add(material);
     }
 
+    /**
+     * Processes the positions of vertices in a mesh.
+     * @param aiMesh the mesh to process
+     * @param vertexPositions the List of vertex positions
+     */
     private static void processVertexPositions(AIMesh aiMesh, List<Float> vertexPositions) {
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
         
@@ -381,6 +473,11 @@ public class MeshLoader {
         }
     }
 
+    /**
+     * Processes the coordinates of textures in a mesh
+     * @param aiMesh the mesh to process
+     * @param textureCoords the List of the texture coordinates
+     */
     private static void processTextureCoords(AIMesh aiMesh, List<Float> textureCoords) {
         AIVector3D.Buffer aiTextureCoords = aiMesh.mTextureCoords(0);
         if (aiTextureCoords == null) {
@@ -394,6 +491,11 @@ public class MeshLoader {
         }
     }
 
+    /**
+     * Processes the normals of a mesh.
+     * @param aiMesh the mesh to process
+     * @param normals the List of normals in the mesh
+     */
     private static void processNormals(AIMesh aiMesh, List<Float> normals) {
         AIVector3D.Buffer aiNormals = aiMesh.mNormals();
         if (aiNormals == null) {
@@ -408,6 +510,11 @@ public class MeshLoader {
         }
     }
 
+    /**
+     * Processes the indices of the vertices.
+     * @param aiMesh the mesh to process
+     * @param vertexIndices the List of vertex indices
+     */
     private static void processVertexIndices(AIMesh aiMesh, List<Integer> vertexIndices) {
         AIFace.Buffer aiFaces = aiMesh.mFaces();
         while(aiFaces.remaining() > 0) {
@@ -419,19 +526,38 @@ public class MeshLoader {
         }
     }
 
+    /**
+     * A class to store data about a loaded mesh.
+     */
     public static class MeshData {
+        /** The Meshes. */
         private Mesh[] meshes;
+
+        /** The animation data for the Meshes. */
         private Map<String, AnimationData> animationData;
 
+        /**
+         * Constructs a MeshData.
+         * @param meshes the Meshes
+         * @param animationData the animation data for the Meshes
+         */
         public MeshData(Mesh[] meshes, Map<String, AnimationData> animationData) {
             this.meshes = meshes;
             this.animationData = animationData;
         }
 
+        /**
+         * Gets the Meshes.
+         * @return the Meshes
+         */
         public Mesh[] getMeshes() {
             return meshes;
         }
 
+        /**
+         * Gets the Map of AnimationData.
+         * @return the Map of AnimationData
+         */
         public Map<String, AnimationData> getAnimationData() {
             return animationData;
         }
