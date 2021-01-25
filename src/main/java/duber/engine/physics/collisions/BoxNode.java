@@ -6,14 +6,29 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
+/**
+ * A node that is also a Box inside an Octree.
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class BoxNode extends Box {
+    /** The number of children each node has */
     private static final int NUM_CHILDREN = 8;
 
+    /** The List of FaceBoxes contained inside the node */
     private final List<FaceBox> faceBoxes;
+
+    /** The Array of BoxNodes that are the children */
     private final BoxNode[] children;
 
+    /** IF this BoxNode is partitioned yet */
     private boolean partitioned;
 
+    /**
+     * Constructs a BoxNode that spans over the min to max bounds
+     * @param minXYZ the min bounds of the box
+     * @param maxXYZ the max bounds of the box
+     */
     public BoxNode(Vector3f minXYZ, Vector3f maxXYZ) {
         super(minXYZ, maxXYZ);
         partitioned = false;
@@ -21,6 +36,9 @@ public class BoxNode extends Box {
         children = new BoxNode[NUM_CHILDREN];
     }
 
+    /**
+     * Partitions the box node into 8 children.
+     */
     private void partition() {
         Vector3f length = calculateLength();
         
@@ -87,6 +105,10 @@ public class BoxNode extends Box {
         partitioned = true;
     }
 
+    /**
+     * Adds a FaceBox to this BoxNode.
+     * @param faceBox the FaceBox to add
+     */
     public void addFaceBox(FaceBox faceBox) {
         if (!partitioned) {
             partition();
@@ -101,6 +123,11 @@ public class BoxNode extends Box {
         faceBoxes.add(faceBox);
     }
 
+    /**
+     * Gets all the intersecting EntityFaces between a Box and the FaceBoxes in this BoxNode.
+     * @param box the Box to check
+     * @param faces the Collection storing all interesecting EntityFaces
+     */
     public void getIntersectingFaces(Box box, Collection<EntityFace> faces) {
         if (partitioned) {
             for(BoxNode childNode: children) {
