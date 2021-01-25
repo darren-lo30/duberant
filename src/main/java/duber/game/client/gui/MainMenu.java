@@ -27,6 +27,9 @@ public class MainMenu extends GUI {
     private volatile boolean inMatchQueue = false;
     
     @Override
+    /**
+     * Updates the loginStatus/connection status of the user
+     */
     public void update() {
         Queue<Object> receivedPackets = getGame().getClientNetwork().getPackets();
         
@@ -49,6 +52,9 @@ public class MainMenu extends GUI {
     }
 
     @Override
+    /**
+     * Creates the GUI elements, placing them in the frame
+     */
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
@@ -129,6 +135,9 @@ public class MainMenu extends GUI {
         }
 
         @Override
+        /**
+         * Runs the Main menu
+         */
         public void run() {
             
             // If the game is not already connected to the server, attempt to connect

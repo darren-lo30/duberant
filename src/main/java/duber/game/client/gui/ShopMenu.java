@@ -20,12 +20,18 @@ public class ShopMenu extends GUI {
     private Match match;
 
     @Override
+    /**
+     * Initialization 
+     */
     public void init() {
         super.init();
         match = (Match) GameStateOption.MATCH.getGameState();
     }
 
     @Override
+    /**
+     * Updated the buy phase
+     */
     public void update() {
         if (!match.getCurrMatchPhase().playerCanBuy()) {
             setShouldClose(true);
@@ -33,6 +39,9 @@ public class ShopMenu extends GUI {
     }
 
     @Override
+     /**
+     * Creates the GUI elements, placing them in the frame
+     */
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);

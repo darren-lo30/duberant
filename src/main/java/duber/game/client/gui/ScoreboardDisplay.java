@@ -17,6 +17,9 @@ import org.liquidengine.legui.style.length.LengthType;
 
 public class ScoreboardDisplay extends GUI {
     @Override
+    /**
+     * Enter a match
+     */
     public void enter() {
         super.enter();
         if (!getManager().getState(GameStateOption.MATCH).isOpened()) {
@@ -27,15 +30,24 @@ public class ScoreboardDisplay extends GUI {
     }
 
     @Override
+    /**
+     * Empty update func
+     */
     public void update() {
         //Nothing to update
     }
 
+    /**
+     * @return the scoreboard
+     */
     private Scoreboard getMatchScoreboard() {
         return ((Match)getManager().getState(GameStateOption.MATCH)).getScoreboard();
     }
 
     @Override
+     /**
+     * Creates the GUI elements, placing them in the frame
+     */
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);

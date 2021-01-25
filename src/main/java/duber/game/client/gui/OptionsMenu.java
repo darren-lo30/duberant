@@ -15,7 +15,10 @@ import org.liquidengine.legui.style.length.LengthType;
 
 public class OptionsMenu extends GUI {
 
-	@Override
+    @Override
+     /**
+     * Creates the GUI elements, placing them in the frame
+     */
 	public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
@@ -54,6 +57,9 @@ public class OptionsMenu extends GUI {
 	}
 
     @Override
+    /**
+     * Empty update func
+     */
     public void update() {
         //Nothing to update
     }

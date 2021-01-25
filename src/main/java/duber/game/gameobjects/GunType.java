@@ -28,7 +28,11 @@ public enum GunType {
         public String toString() {
             return "Pistol";
         }
+
+
     };
+
+
     
     private Gun gun;
     private MeshResource gunMeshResource;
