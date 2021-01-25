@@ -12,7 +12,15 @@ import duber.game.client.gui.ScoreboardDisplay;
 import duber.game.client.gui.ShopMenu;
 import duber.game.client.match.Match;
 
+/**
+ * A manager for GameStates
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class GameStateManager implements Cleansable {
+    /**
+     * All the GameStates available in Duberant
+     */
     public enum GameStateOption {
         MAIN_MENU           (new MainMenu()), 
         MATCH               (new Match()), 
@@ -31,8 +39,16 @@ public class GameStateManager implements Cleansable {
         }
     }
 
+    /**
+     * The stack of GameStates in the game.
+     */
     private Stack<GameState> gameStates;
 
+    /**
+     * Constructs a GameStateManager.
+     * @param game the game that is being managed
+     * @throws LWJGLException if the GameStateManager could not be created
+     */
     public GameStateManager(Duberant game) throws LWJGLException {
         gameStates = new Stack<>();
 
@@ -45,14 +61,27 @@ public class GameStateManager implements Cleansable {
         GameStateOption.MATCH.getGameState().setUpdateInBackground(true);
     }
 
+    /**
+     * Gets the GameState associated with a GameStateOption.
+     * @param gameStateOption the associated GameStateOption
+     * @return the associated GameState
+     */
     public GameState getState(GameStateOption gameStateOption) {
         return gameStateOption.getGameState();
     }
 
+    /**
+     * Pushes a GameStateOption to the stack.
+     * @param gameStateOption the GameStateOption whose GameState to push
+     */
     public void pushState(GameStateOption gameStateOption) {
         pushState(gameStateOption.getGameState());
     }
 
+    /**
+     * Pushes a GameState to the stack.
+     * @param gameState the GameState to push
+     */
     public void pushState(GameState gameState) {
         if (gameState.isOpened()) {
             throw new IllegalStateException("The game state is already open");
@@ -70,6 +99,10 @@ public class GameStateManager implements Cleansable {
         gameStates.push(gameState);
     }
 
+    /**
+     * Pops a GameState without entering the new one.
+     * @return the popped GameState
+     */
     private GameState popStateLogic() {
         GameState poppedState = gameStates.pop();
         poppedState.setOpened(false);
@@ -80,6 +113,10 @@ public class GameStateManager implements Cleansable {
         return poppedState;
     }
 
+    /**
+     * Pops a GameState from the stack.
+     * @return the popped GameState
+     */
     public GameState popState() {
         GameState poppedState = popStateLogic();
 
@@ -89,6 +126,10 @@ public class GameStateManager implements Cleansable {
         return poppedState;
     }
 
+    /**
+     * Clears the GameState stack.
+     * @param firstState the starting GameState to push after clearing
+     */
     public void clearState(GameStateOption firstState) {
         while(!gameStates.isEmpty()) {
             popStateLogic();
@@ -97,6 +138,11 @@ public class GameStateManager implements Cleansable {
         pushState(firstState);
     }
 
+    /**
+     * Changes the current GameState to another GameState.
+     * @param gameStateOption the GameStateOption whose GameState to change to
+     * @return the removed GameState
+     */
     public GameState changeState(GameStateOption gameStateOption) {
         GameState poppedState = popStateLogic();
         pushState(gameStateOption);
@@ -104,18 +150,26 @@ public class GameStateManager implements Cleansable {
         return poppedState;
     }
 
+    /**
+     * Gets the current focused GameState.
+     * @return the focused GameState
+     */
     public GameState getFocusedState() {
         return gameStates.isEmpty() ? null : gameStates.peek();
     }
 
+    /**
+     * Determines if a GameState is focused.
+     * @param gameState the GameState to check
+     * @return whether or not the GameState is focused
+     */
     public boolean stateIsFocused(GameState gameState) {
         return getFocusedState() == gameState;
     }
 
-    public boolean stateIsFocused(GameStateOption gameStateOption) {
-        return stateIsFocused(gameStateOption.getGameState());
-    }
-    
+    /**
+     * Updates the GameStates.
+     */
     public void update() {
         boolean popped = false;
         while(getFocusedState() != null && getFocusedState().shouldClose()) {
@@ -139,12 +193,18 @@ public class GameStateManager implements Cleansable {
         }
     }
 
+    /**
+     * Renders the focused GameState.
+     */
     public void render() {
         if (getFocusedState() != null) {
             getFocusedState().render();
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void cleanup() {
         while(!gameStates.isEmpty()){

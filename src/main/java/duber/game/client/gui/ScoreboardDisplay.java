@@ -1,6 +1,7 @@
 package duber.game.client.gui;
 
 
+import duber.game.MatchData;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.client.match.Match;
@@ -15,11 +16,17 @@ import org.liquidengine.legui.style.length.LengthType;
 
 
 
+/**
+ * The GUI for the Scoreboard inside a match.
+ * @author Andy Tian
+ * @version 1.0
+ */
 public class ScoreboardDisplay extends GUI {
-    @Override
     /**
-     * Enter a match
+     * {@inheritDoc}
+     * Enters the match
      */
+    @Override
     public void enter() {
         super.enter();
         if (!getManager().getState(GameStateOption.MATCH).isOpened()) {
@@ -29,25 +36,27 @@ public class ScoreboardDisplay extends GUI {
         getMatchScoreboard().updateScoreboard();
     }
 
-    @Override
     /**
-     * Empty update func
+     * {@inheritDoc}
      */
+    @Override
     public void update() {
         //Nothing to update
     }
 
     /**
+     * Gets the match scoreboard
      * @return the scoreboard
      */
     private Scoreboard getMatchScoreboard() {
         return ((Match)getManager().getState(GameStateOption.MATCH)).getScoreboard();
     }
 
-    @Override
-     /**
+    /**
+     * {@inheritDoc}
      * Creates the GUI elements, placing them in the frame
      */
+    @Override
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
@@ -93,9 +102,9 @@ public class ScoreboardDisplay extends GUI {
         deathsText.setEditable(false);
         Scoreboard scoreboard = getMatchScoreboard();
         String currName="\nName\n\n";
-        String currKills="Blue-"+scoreboard.getWins(1)+"\nKills\n\n";
-        String currDeaths="Red-"+scoreboard.getWins(0)+"\nDeaths\n\n";
 
+        String currKills="Blue - "+scoreboard.getWins(MatchData.BLUE_TEAM)+"\nKills\n\n";
+        String currDeaths="Red - "+scoreboard.getWins(MatchData.RED_TEAM)+"\nDeaths\n\n";
         
         for(int team = 0; team < 2; team++) {
             for(int player = 0; player < scoreboard.getScores(team).size(); player++) {

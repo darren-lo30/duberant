@@ -36,12 +36,7 @@ public enum GunType {
 
     };
 
-<<<<<<< Updated upstream
-
-    
-=======
     /** The Gun associated with the GunType */
->>>>>>> Stashed changes
     private Gun gun;
 
     /** The MeshResource associated with the GunType */

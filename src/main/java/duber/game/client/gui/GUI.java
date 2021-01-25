@@ -16,6 +16,8 @@ import duber.game.client.GameState;
 
 /**
  * A class that holds necessary data to draw the GUI
+ * @author Darren Lo
+ * @version 1.0
  */
 public abstract class GUI extends GameState {
     private Frame frame;
@@ -40,12 +42,17 @@ public abstract class GUI extends GameState {
         guiRenderer = guiManager.getRenderer();
     }
 
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void startup() {
         //Nothing to do on startup
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void enter() {
         getWindow().setOption(Window.Options.SHOW_CURSOR, true);
@@ -55,16 +62,25 @@ public abstract class GUI extends GameState {
         createGuiElements();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void exit() {
         //Nothing to do on exit
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         //Nothing to do on close
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void render() {
         guiRenderer.render(frame, context);
@@ -75,28 +91,55 @@ public abstract class GUI extends GameState {
         AnimatorProvider.getAnimator().runAnimations();
     }
 
+    /**
+     * Creates the elements used to draw the GUI.
+     */
     public abstract void createGuiElements();
 
+    /**
+     * Gets the Frame used to store GUI components.
+     * @return the frame
+     */
     public Frame getFrame() {
         return frame;
     }
 
+    /**
+     * Gets the Context used to draw the GUI.
+     * @return the context
+     */
     public Context getContext() {
         return context;
     }
 
+    /**
+     * Gets the CallbackKeeper used to manage callbacks.
+     * @return the callbackkeeper
+     */
     public CallbackKeeper getCallbackKeeper() {
         return callbackKeeper;
     }
 
+    /**
+     * Gets the EventProcessor that processes GUI events.
+     * @return the event processor
+     */
     public EventProcessor getEventProcessor() {
         return eventProcessor;
     }
 
+    /**
+     * Gets the SystemEvenetProcessor that processes system events
+     * @return the system event processor
+     */
     public SystemEventProcessor getSystemEventProcessor() {
         return systemEventProcessor;
     }
 
+    /**
+     * Gets the Renderer used to render GUI.
+     * @return the GUI renderer
+     */
     public Renderer getGuiRenderer() {
         return guiRenderer;
     }
