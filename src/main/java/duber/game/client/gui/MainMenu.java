@@ -64,7 +64,6 @@ public class MainMenu extends GUI {
      */
     @Override
     public void createGuiElements() {
-        
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
         getFrame().getContainer().getStyle().setDisplay(DisplayType.FLEX);
