@@ -1,6 +1,0 @@
-TODO
-
-Gun Loading
-Animations
-
-Bugs: still thinks walking in menu
