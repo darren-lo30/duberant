@@ -18,13 +18,28 @@ import duber.engine.utilities.Utils;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Player.MovementState;
 
+/**
+ * Handles collisions between Entities.
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class DuberantCollisionHandler implements ICollisionHandler {    
+    /**
+     * An Octree containing all the constant entities
+     */
     private Octree constantEntities;
     
+    /**
+     * Constructs a collision handler.
+     * @param constantEntities the constant entities.
+     */
     public DuberantCollisionHandler(Octree constantEntities) {
         this.constantEntities = constantEntities;    
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<CollisionResponse> detectCollisions(Collider collidingCollider, Entity collidingEntity) {
         List<CollisionResponse> collisionResponses = new ArrayList<>();
@@ -33,6 +48,12 @@ public class DuberantCollisionHandler implements ICollisionHandler {
         return collisionResponses;
     }
 
+    /**
+     * Detects collisions between a Collider and all the constant Entities.
+     * @param collidingCollider the Collider that is colliding
+     * @param collisionResponses the parent of the Collider
+     * @return a list of collision responses
+     */
     private List<CollisionResponse> constantEntityCollisionDetection(Collider collidingCollider, List<CollisionResponse> collisionResponses) {
         List<ColliderPart> colliderParts = collidingCollider.getColliderParts();
         for(ColliderPart colliderPart : colliderParts) {
@@ -49,6 +70,9 @@ public class DuberantCollisionHandler implements ICollisionHandler {
         return collisionResponses;
     }
 
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void processCollisions(Entity collidingEntity, List<CollisionResponse> collisionResponses) {
         if (collidingEntity instanceof Player) {
@@ -56,6 +80,11 @@ public class DuberantCollisionHandler implements ICollisionHandler {
         }
     }
 
+    /**
+     * Resolves a players collision with other Entities.
+     * @param player the player to resolve
+     * @param collisionResponses the collision responses between the player and other Entities.
+     */
     private void resolvePlayerCollisions(Player player, List<CollisionResponse> collisionResponses) {
         for(CollisionResponse collisionResponse : collisionResponses) {
             Vector3f resultPush = new Vector3f();
@@ -88,6 +117,11 @@ public class DuberantCollisionHandler implements ICollisionHandler {
         }
     }
 
+    /**
+     * Determines whether a collision response was the result of touching the ground.
+     * @param collisionData the collision response to check
+     * @return whether or not the collision was with the ground
+     */
     private boolean collisionWithGround(CollisionResponse collisionData) {
         Vector3f groundNormal = new Vector3f(0, 1, 0);
         Vector3f faceNormal = collisionData.getFaceNormal();

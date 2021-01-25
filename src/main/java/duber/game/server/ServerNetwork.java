@@ -2,7 +2,6 @@ package duber.game.server;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,15 +14,38 @@ import com.esotericsoftware.kryonet.Server;
 
 import duber.game.networking.KryoRegister;
 
-public class ServerNetwork extends Listener {
-    private final int port;
+/**
+ * A class to encapsulate all the server network data for the game
+ * @author Darren Lo
+ * @version 1.0
+ */
+public class ServerNetwork extends Listener {    
+    /**
+     * Whether or not the server is running.
+     */
     private boolean running;
+
+    /**
+     * The Server used to communicate with the client.
+     */
     private Server server;
+
+    /**
+     * All packets received from each Connection.
+     */
     private Map<Connection, ConcurrentLinkedQueue<Object>> packets = new ConcurrentHashMap<>();
+
+    /**
+     * A Set of all active Connections.
+     */
     private Set<Connection> connections = ConcurrentHashMap.newKeySet();
     
+    /**
+     * Constructs a server listening on a given port.
+     * @param port the port to listen to
+     * @throws IOException if the server could not be started
+     */
     public ServerNetwork(int port) throws IOException {
-        this.port = port;
         server = new Server(50000, 50000);
         server.bind(port, port);
 
@@ -31,10 +53,11 @@ public class ServerNetwork extends Listener {
         server.addListener(this);
     }
 
-    public int getPort() {
-        return port;
-    }
-
+    /**
+     * Gets all the packets received from a given Connection.
+     * @param connection the Connection to query from
+     * @return a Queue of all received packets from the Connection
+     */
     public Queue<Object> getPackets(Connection connection) {
         Queue<Object> connectionPackets = packets.get(connection);
         if (connectionPackets == null) {
@@ -44,32 +67,55 @@ public class ServerNetwork extends Listener {
         return connectionPackets;
     }
 
+    /**
+     * Starts the server.
+     */
     public void start() {
         System.out.println("Starting server network");
         running = true;
         server.start();
     }
 
+    /**
+     * Stops the server.
+     */
     public void stop() {
         running = false;
         server.stop();
     }
 
+    /**
+     * Determines if the server is running.
+     * @return whether or not the server is running
+     */
     public boolean isRunning() {
         return running;
-    }
+    }   
 
+    /**
+     * Gets the Server that connects to the client.
+     * @return the Server that connects to the client
+     */
     public Server getServer() {
         return server;
     }
 
+    /**
+     * A method to run when a packet is received.
+     * @param connection the Connection that sent the packet
+     * @param packet the packet that was sent
+     */
     @Override
     public void received(Connection connection, Object packet) {
         if (!(packet instanceof FrameworkMessage.KeepAlive)) {
             packets.get(connection).add(packet);
         }
     }
-    
+
+    /**
+     * A method to run when a Connection connects.
+     * @param connection the connected Connection
+     */
     @Override
     public void connected(Connection connection) {
         System.out.println("Connected with: " + connection);
@@ -77,6 +123,10 @@ public class ServerNetwork extends Listener {
         connections.add(connection);
     }
 
+    /**
+     * A method that runs when a Connection disconnects.
+     * @param connection the disconnected Connection
+     */
     @Override
     public void disconnected(Connection connection) {
         System.out.println("Disconnected with: " + connection);
@@ -84,20 +134,26 @@ public class ServerNetwork extends Listener {
         packets.remove(connection);
     }
 
+    /**
+     * Adds a Listener to the Server.
+     * @param listener the Listener to add
+     */
     public void addListener(Listener listener) {
         server.addListener(listener);
     }
 
+    /**
+     * Removes a Listener from the Server.
+     * @param listener the Listener to remove
+     */
     public void removeListener(Listener listener) {
         server.removeListener(listener);
     }
 
-    public Optional<Connection> getConnectionById(int id) {
-        return connections.stream()
-                .filter(connection -> connection.getID() == id)
-                .findFirst();
-    }
-
+    /**
+     * Gets a Set of all connected Connections.
+     * @return all the connected Connections
+     */
     public Set<Connection> getConnections() {
         return connections;
     }

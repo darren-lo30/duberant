@@ -14,6 +14,9 @@ import org.liquidengine.legui.system.renderer.Renderer;
 import duber.engine.Window;
 import duber.game.client.GameState;
 
+/**
+ * A class that holds necessary data to draw the GUI
+ */
 public abstract class GUI extends GameState {
     private Frame frame;
     private Context context;
@@ -22,6 +25,9 @@ public abstract class GUI extends GameState {
     private SystemEventProcessor systemEventProcessor;
     private Renderer guiRenderer;
 
+    /**
+     * Initializes the GUI variables
+     */
     @Override
     public void init() {
         DefaultInitializer guiManager = getWindow().getDefaultInitializer();
@@ -33,6 +39,7 @@ public abstract class GUI extends GameState {
         systemEventProcessor = guiManager.getSystemEventProcessor();
         guiRenderer = guiManager.getRenderer();
     }
+
     
     @Override
     public void startup() {
