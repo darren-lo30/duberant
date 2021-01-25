@@ -93,7 +93,7 @@ public class ScoreboardDisplay extends GUI {
         deathsText.setEditable(false);
         Scoreboard scoreboard = getMatchScoreboard();
         String currName="Name\n\n";
-        String currKills="Red-"+scoreboard.getWins(0)+"\nKills\n\n";
+        String currKills="Kills\n"+"Red-"+scoreboard.getWins(1)+"\n";
         String currDeaths="Deaths\n\n";
 
         
