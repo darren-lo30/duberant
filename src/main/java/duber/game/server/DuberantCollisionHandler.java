@@ -16,7 +16,7 @@ import duber.engine.physics.collisions.ICollisionHandler;
 import duber.engine.physics.collisions.Octree;
 import duber.engine.utilities.Utils;
 import duber.game.gameobjects.Player;
-import duber.game.gameobjects.Player.MovementState;
+import duber.game.gameobjects.Player.PlayerData.MovementState;
 
 /**
  * Handles collisions between Entities.

@@ -8,7 +8,7 @@ import duber.engine.MouseInput;
 import duber.engine.entities.components.RigidBody;
 import duber.engine.entities.components.Transform;
 import duber.game.gameobjects.Player;
-import duber.game.gameobjects.Player.MovementState;
+import duber.game.gameobjects.Player.PlayerData.MovementState;
 import duber.game.gameobjects.Player.PlayerData;
 import duber.game.networking.GunFirePacket;
 

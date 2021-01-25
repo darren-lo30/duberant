@@ -9,11 +9,23 @@ import java.util.Map;
 
 import duber.engine.entities.components.MeshBody;
 
+
+/**
+ * Used to build guns in the game
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class GunBuilder {
+    /** The meshes for each gun type. */
     private Map<GunType, MeshBody> gunMeshes;
 
+    /** The instance of the GunBuilder. */
     private static GunBuilder instance;
 
+    /**
+     * Gets an instance of the GunBuilder.
+     * @return the instance of the GunBuilder
+     */
     public static GunBuilder getInstance() {
         if (instance == null) {
             instance = new GunBuilder();
@@ -21,14 +33,26 @@ public class GunBuilder {
         return instance;
     }
     
+    /**
+     * Constructs a GunBuilder.
+     */
     private GunBuilder() {
         gunMeshes = new EnumMap<>(GunType.class);
     }
 
+    /**
+     * Builds a gun of a GunType.
+     * @return the Gun that was built
+     */
     public Gun buildGun(GunType gunType) {
         return new Gun(gunType.getGun());
     }
 
+    /**
+     * Loads a mesh for a gun.
+     * @param gun the gun whose mesh to load
+     * @throws LWJGLException if the mesh could not be loaded
+     */
     public void loadGunMesh(Gun gun) throws LWJGLException {
         if (gun == null) {
             return;

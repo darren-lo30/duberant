@@ -30,7 +30,7 @@ import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.GunBuilder;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
-import duber.game.gameobjects.Player.MovementState;
+import duber.game.gameobjects.Player.PlayerData.MovementState;
 import duber.game.gameobjects.Player.PlayerData;
 import duber.game.User;
 import duber.game.networking.GunPurchasePacket;
