@@ -101,22 +101,15 @@ public class ScoreboardDisplay extends GUI {
         killsText.setEditable(false);
         deathsText.setEditable(false);
         Scoreboard scoreboard = getMatchScoreboard();
-<<<<<<< HEAD
-        String currName="\nName\n\n";
-=======
         String currName="Name\n\n";
-        String currKills="Kills\n"+"Red-"+scoreboard.getWins(1)+"\n";
+        String currKills="Kills\n"+"Red-"+scoreboard.getWins(MatchData.RED_TEAM)+"\n";
         String currDeaths="Deaths\n\n";
->>>>>>> 014ec3ad4bfa64bef41c95f09619829c5f8083a1
 
-        String currKills="Blue - "+scoreboard.getWins(MatchData.BLUE_TEAM)+"\nKills\n\n";
-        String currDeaths="Red - "+scoreboard.getWins(MatchData.RED_TEAM)+"\nDeaths\n\n";
-        
         for(int team = 0; team < 2; team++) {
             for(int player = 0; player < scoreboard.getScores(team).size(); player++) {
                 if (team==1&&player==0){
                     currName=currName+"\n";
-                    currKills=currKills+"Blue-"+scoreboard.getWins(1)+"\n";
+                    currKills=currKills+"Blue-"+scoreboard.getWins(MatchData.BLUE_TEAM)+"\n";
                     currDeaths=currDeaths+"\n";
                 }
                 int kills= scoreboard.getScores(team).get(player).getKills();

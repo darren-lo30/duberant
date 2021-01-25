@@ -51,19 +51,42 @@ import org.liquidengine.legui.component.Frame;
 import org.liquidengine.legui.system.context.CallbackKeeper;
 
 
+/**
+ * A window used to display graphics.
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class Window {
+
+    /** The memory location of the window */
     private long windowHandle;
     
-	private String title;
+    /** The title displayed at the top left of the window */
+    private String title;
+    
+    /** The width of the window */
     private int width;
+
+    /** The height of the window */
     private int height;
 
+    /**
+     * The projection matrix used to display 3D worlds on the window
+     */
     private Matrix4f projectionMatrix;
+
+    /** The options for the Window */
     private Options options;
 
-    //Used for LEGUI
+    /** The DefaultIntiializer used for the GUI */
     private DefaultInitializer defaultInitializer;
     
+    /** 
+     * Constructs a Window with a title, width and height
+     * @param title the Window's title
+     * @param width the Window's width
+     * @param height the Window's height
+     */
     public Window(String title, int width, int height) {
         this.title = title;
         this.width = width;
@@ -75,6 +98,9 @@ public class Window {
         init();
     }
 
+    /** 
+     * Intiializes the window 
+     */
     private void init() {
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -115,10 +141,17 @@ public class Window {
         configureDefaultFrameBufferSizeCallback();
     }
 
+    /**
+     * Gets the defaultInitializer
+     * @return the defaultInitializer
+     */
     public DefaultInitializer getDefaultInitializer() {
         return defaultInitializer;
     }
 
+    /**
+     * Configures key callbacks.
+     */
     private void configureDefaultKeyCallbacks() {
         GLFWKeyCallbackI defaultKeyCallbacks = (window, keyCode, scanCode, action, mods) -> {
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -138,6 +171,9 @@ public class Window {
     }
 
 
+    /**
+     * Configures frame buffer callbacks.
+     */
     private void configureDefaultFrameBufferSizeCallback() {
         GLFWFramebufferSizeCallbackI defaultFrameBufferSizeCallback = (window, newWidth, newHeight) -> {
             width = newWidth;
@@ -147,6 +183,12 @@ public class Window {
         addCallback(defaultFrameBufferSizeCallback);
     }
 
+    /**
+     * Gets the ChainCallback for a callback
+     * @param <T> the type of callback
+     * @param callback the callback
+     * @return the ChainCallback
+     */
     @SuppressWarnings("unchecked")
     private <T extends CallbackI> IChainCallback<T> getChainCallback(T callback) {
         CallbackKeeper callbackKeeper = defaultInitializer.getCallbackKeeper();
@@ -164,10 +206,20 @@ public class Window {
         }
     }
 
+    /**
+     * Adds a callback.
+     * @param <T> the type of callback
+     * @param callback the callback
+     */
     public <T extends CallbackI> void addCallback(T callback) {
         getChainCallback(callback).add(callback);
     }
 
+    /**
+     * Removes a callback
+     * @param <T> the type of callback
+     * @param callback the callback
+     */
     public <T extends CallbackI> void removeCallback(T callback) {
         IChainCallback<T> chainCallback = getChainCallback(callback);
         if (chainCallback.contains(callback)) {
@@ -176,6 +228,9 @@ public class Window {
     }
 
 
+    /**
+     * Restores this Window's state
+     */
     public void restoreState() {
         glClearColor(0.f, 0.f, 0.f, 0.f);
         glEnable(GL_DEPTH_TEST);
@@ -185,53 +240,101 @@ public class Window {
         applyOptions();
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
+    /**
+     * Gets the window handle.
+     * @return the window handle
+     */
     public long getWindowHandle() {
         return windowHandle;
     }
 
+    /**
+     * Gets the width.
+     * @return the width
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * Gets the height.
+     * @return the height
+     */
+    public int getHeight() {
+        return height;
+    }
+    
+    /**
+     * Sets the title.
+     * @param title the title
+     */
     public void setTitle(String title) {
         this.title = title;
         glfwSetWindowTitle(windowHandle, title);
     }
 
+    /**
+     * Gets the title.
+     * @return the title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Determines if this Window should close.
+     * @return if this Window should close
+     */
     public boolean shouldClose() {
         return glfwWindowShouldClose(windowHandle);
     }
 
+    /**
+     * Sets if this Window should close
+     * @param shouldClose if this Window should close
+     */
     public void setShouldClose(boolean shouldClose) {
         glfwSetWindowShouldClose(windowHandle, shouldClose);
     }
 
+    /**
+     * Gets this Window's projection matrix.
+     * @return the projection matrix
+     */
     public final Matrix4f getProjectionMatrix() {
         return projectionMatrix;
     }
 
+    /**
+     * Updates this Window's projection matrix.
+     */
     public final Matrix4f updateProjectionMatrix(float fov, float zNear, float zFar) {
         float aspectRatio = (float) width / height;
         return projectionMatrix.identity().setPerspective(fov, aspectRatio, zNear, zFar);
     }
 
+    /**
+     * Sets the Window's option.
+     * @param option the option to set
+     * @param turnedOn if the option is turned on
+     */
     public void setOption(int option, boolean turnedOn) {
         options.setOption(option, turnedOn);
     }
 
+    /**
+     * Determines if an option is turned on.
+     * @param option the option to check
+     * @return if the option is turned on
+     */
     public boolean optionIsTurnedOn(int option) {
         return options.isTurnedOn(option);
     }
 
 
+    /**
+     * Applies any oustanding options.
+     */
     public void applyOptions() {
         if (options.isTurnedOn(Options.CULL_FACES)) {
             glEnable(GL_CULL_FACE);
@@ -259,6 +362,9 @@ public class Window {
         }
     }
 
+    /**
+     * Updates the window
+     */
     public void update() {
         defaultInitializer.getContext().updateGlfwWindow();
         defaultInitializer.getFrame().setSize(width, height);
@@ -267,20 +373,47 @@ public class Window {
         glfwSwapBuffers(windowHandle);
     }
 
+        /**
+     * Clears the window.
+     */
+    public void clear() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    }
+
+    /**
+     * Determines if this Window is full screen.
+     * @return whether or not this Window is full screen
+     */
     private boolean isFullScreen() {
         return glfwGetWindowMonitor(windowHandle) != NULL;
     }
 
     public static class Options {
+        /** A map containing if each option is turned on */
         private Map<Integer, Boolean> optionsMap;
+        
 
+        /** Backfaced culling */
         public static final int CULL_FACES = 1;
+
+        /** Displaying triangles only */
         public static final int DISPLAY_TRIANGLES = 2;
+
+        /** Displaying FPS counter */
         public static final int DISPLAY_FPS = 3;
+
+        /** Displaying cursor */
         public static final int SHOW_CURSOR = 4;
+
+        /** Anti-aliasing for GUI */
         public static final int ANTI_ALIASING = 5;
+
+        /** If V-SYNC is enabled */
         public static final int ENABLE_VSYNC = 6;
 
+        /**
+         * Constructs default Window options.
+         */
         private Options() {
             optionsMap = new HashMap<>();
             optionsMap.put(DISPLAY_FPS, true);
@@ -289,17 +422,23 @@ public class Window {
             optionsMap.put(ENABLE_VSYNC, true);
         }
 
+        /**
+         * Determines if an option is turned on.
+         * @param option the option to check
+         * @return if the option is turned on
+         */
         public boolean isTurnedOn(int option) {
             //Default is option turned off
             return optionsMap.keySet().contains(option) && optionsMap.get(option);
         }
 
+        /**
+         * Sets an option.
+         * @param option the option to set
+         * @param turnedOn if the option is turned on
+         */
         public void setOption(int option, boolean turnedOn) {
             optionsMap.put(option, turnedOn);
         }
-    }
-
-    public void clear() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 }
