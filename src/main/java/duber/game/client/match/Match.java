@@ -38,7 +38,7 @@ import duber.game.gameobjects.GunType;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.gameobjects.WeaponsInventory;
-import duber.game.gameobjects.Player.MovementState;
+import duber.game.gameobjects.Player.PlayerData.MovementState;
 import duber.game.phases.MatchPhaseManager;
 import duber.game.MatchData;
 import duber.game.client.GameState;
