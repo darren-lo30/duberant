@@ -50,7 +50,6 @@ public abstract class GUI extends GameState {
     public void enter() {
         getWindow().setOption(Window.Options.SHOW_CURSOR, true);
         getWindow().applyOptions();
-
         frame.getContainer().clearChildComponents();
         createGuiElements();
     }
@@ -69,7 +68,6 @@ public abstract class GUI extends GameState {
     public void render() {
         guiRenderer.render(frame, context);
         systemEventProcessor.processEvents(frame, context);
-        
         EventProcessorProvider.getInstance().processEvents();
         LayoutManager.getInstance().layout(frame);
         AnimatorProvider.getAnimator().runAnimations();

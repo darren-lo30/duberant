@@ -56,7 +56,7 @@ public class MainMenu extends GUI {
      * Creates the GUI elements, placing them in the frame
      */
     public void createGuiElements() {
-        
+        /** 
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
         getFrame().getContainer().getStyle().setDisplay(DisplayType.FLEX);
@@ -130,7 +130,76 @@ public class MainMenu extends GUI {
         
         mainPanel.add(matchButton);
         getFrame().getContainer().add(mainPanel);
+        */
+        getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
+        getFrame().getContainer().setFocusable(false);
+
+        Component frameContainer = getFrame().getContainer();
+        frameContainer.getStyle().getBackground().setColor(ColorConstants.gray());
+        frameContainer.getStyle().setPadding(10);
+        frameContainer.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
+        frameContainer.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
+        frameContainer.getStyle().setDisplay(DisplayType.FLEX);
+
+        Panel mainPanel= new Panel();
+        mainPanel.getStyle().getBackground().setColor(ColorConstants.lightGray());
+        mainPanel.getStyle().getFlexStyle().setJustifyContent(JustifyContent.CENTER);
+        mainPanel.getStyle().getFlexStyle().setAlignItems(AlignItems.CENTER);
+        mainPanel.getStyle().setDisplay(DisplayType.FLEX);
+        mainPanel.getStyle().setWidth(LengthType.percent(100));
+        mainPanel.getStyle().setHeight(LengthType.percent(100));
+        frameContainer.add(mainPanel);
+
+        TextArea namesText= new TextArea(250,250,250,250);
+        namesText.getStyle().setMinHeight(250f);
+        namesText.getStyle().setMinWidth(100f);
+        namesText.getStyle().setPosition(PositionType.RELATIVE);
+        TextArea killsText= new TextArea(250,250,250,250);
+        killsText.getStyle().setMinWidth(100f);
+        killsText.getStyle().setMinHeight(250f);
+        killsText.getStyle().setPosition(PositionType.RELATIVE);
+        TextArea deathsText=new TextArea(250,250,250,250);
+        deathsText.getStyle().setMinHeight(250f);
+        deathsText.getStyle().setMinWidth(100f);
+        deathsText.getStyle().setPosition(PositionType.RELATIVE);
         
+        namesText.setVerticalScrollBarVisible(false);
+        namesText.setHorizontalScrollBarVisible(false);
+        killsText.setVerticalScrollBarVisible(false);
+        killsText.setHorizontalScrollBarVisible(false);
+        deathsText.setVerticalScrollBarVisible(false);
+        deathsText.setHorizontalScrollBarVisible(false);
+  
+        namesText.setEditable(false);
+        killsText.setEditable(false);
+        deathsText.setEditable(false);
+        String currName="Name\n\n";
+        String currKills="Kills\n"+"Red-"+"3\n";
+        String currDeaths="Deaths\n\n";
+
+        
+        for(int team = 0; team < 2; team++) {
+            for(int player = 0; player < 5; player++) {
+                if (team==1&&player==0){
+                    currName=currName+"\n";
+                    currKills=currKills+"Blue-"+"2"+"\n";
+                    currDeaths=currDeaths+"\n";
+                }
+                int kills= 13;
+                int deaths= 2;
+                String name= "tester";
+
+                currName=currName+name+"\n";
+                currKills= currKills+Integer.toString(kills)+"\n";
+                currDeaths= currDeaths+Integer.toString(deaths)+"\n";
+            }
+        }
+        namesText.getTextState().setText(currName);
+        killsText.getTextState().setText(currKills);
+        deathsText.getTextState().setText(currDeaths);
+        mainPanel.add(namesText);
+        mainPanel.add(killsText);
+        mainPanel.add(deathsText);
     }
 
     private boolean login(String username) {
