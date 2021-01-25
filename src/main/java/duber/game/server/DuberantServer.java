@@ -24,21 +24,59 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
 
+/**
+ * A server that connects players.
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class DuberantServer {
+    /**
+     * The number of loops per second to run.
+     */
     private static final int TARGET_UPS = 10;
 
+    /**
+     * Whether or not the server is running.
+     */
     private volatile boolean running;
+
+    /**
+     * The server network used to connect to clients with.
+     */
     private ServerNetwork serverNetwork;
 
+    /**
+     * The Users seraching for a match.
+     */
     private Set<User> usersSearchingForMatch = new LinkedHashSet<>();
+
+    /**
+     * The Users in a match.
+     */
     private Set<User> usersInMatch = new HashSet<>();
+
+    /**
+     * The users that are connected and logged.
+     */
     private Map<Connection, User> connectedUsers = new ConcurrentHashMap<>();
+
+    /**
+     * The ongoing matches.
+     */
     private Set<MatchManager> matchManagers = new HashSet<>();
-    
-    public DuberantServer() throws IOException {
-        serverNetwork = new ServerNetwork(5000);
+
+    /**
+     * Constructs a new server listening on port 5000.
+     * @param port the port to listen on
+     * @throws IOException if the ServerNetwork could not start
+     */
+    public DuberantServer(int port) throws IOException {
+        serverNetwork = new ServerNetwork(port);
     }
 
+    /**
+     * Starts the server.
+     */
     public void start() {
         running = true;
         serverNetwork.start();
@@ -63,10 +101,17 @@ public class DuberantServer {
         }
     }
 
+    /**
+     * Stops the server.
+     */
     public void stop() {
         running = false;
     }
 
+    /**
+     * Listens for client packets and responds to them.
+     * @throws InterruptedException if the Thread is interupted
+     */
     public void serverLoop() throws InterruptedException {
         Timer serverLoopTimer = new Timer();
 
@@ -96,11 +141,18 @@ public class DuberantServer {
         } 
     }
 
+    /**
+     * Gets the User associated with a connection.
+     * @param connection the connection to qeury
+     * @return the associated User
+     */
     private User getUser(Connection connection) {
         return connectedUsers.get(connection);
     }
 
-
+    /**
+     * Removes any disconnected users from the Users searching for a match.
+     */
     private void cleanUsersSearchingMatches() {
         for(Iterator<User> i = usersSearchingForMatch.iterator(); i.hasNext();) {
             User user = i.next();
@@ -110,6 +162,9 @@ public class DuberantServer {
         }
     }
 
+    /**
+     * Initializes a match when enough Users are in the match queue.
+     */
     private void initializeMatches() {
         cleanUsersSearchingMatches();
         Iterator<User> userIterator = usersSearchingForMatch.iterator();
@@ -139,6 +194,9 @@ public class DuberantServer {
         }
     }
 
+    /**
+     * Removes any matches that have ended from the ongoing matches.
+     */
     private void cleanupMatches() {
         for(Iterator<MatchManager> i = matchManagers.iterator(); i.hasNext();) {
             MatchManager match = i.next();
@@ -153,6 +211,11 @@ public class DuberantServer {
         }
     }
 
+    /**
+     * Processes all the packets from a connection.
+     * @param connection the connection
+     * @param packets the packets they sent
+     */
     private void processAllPackets(Connection connection, Queue<Object> packets) {
         //Only process certain requests, leave other requests up to the match manager
         while(!packets.isEmpty()) {
@@ -169,6 +232,11 @@ public class DuberantServer {
         }
     }
 
+    /**
+     * Processes a login packet. 
+     * @param connection the Connection that sent the packet
+     * @param userConnectPacket the data required to login
+     */
     private void processPacket(Connection connection, LoginPacket userConnectPacket) {
         String username = userConnectPacket.username;
         System.out.println("Connected with username: " + username);
@@ -183,6 +251,11 @@ public class DuberantServer {
         connectedUsers.put(connection, registeredUser);
     }
 
+    /**
+     * Processes a match queue packet.
+     * @param user the User that sent the packet
+     * @param matchQueuePacket the data about the Users action with the match queue
+     */
     private void processPacket(User user, MatchQueuePacket matchQueuePacket) {
         if (matchQueuePacket.joinQueue) {
             //Join match queue
@@ -193,10 +266,13 @@ public class DuberantServer {
         }
     }
 
-
+    /**
+     * Runs a server.
+     * @param args the args from the command line
+     */
     public static void main(String[] args) {
         try {
-            DuberantServer server = new DuberantServer();
+            DuberantServer server = new DuberantServer(5000);
             server.start();
         } catch (IOException ioe) {
             System.out.println("IO error occured while starting server");

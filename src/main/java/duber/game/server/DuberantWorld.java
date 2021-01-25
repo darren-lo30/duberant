@@ -20,34 +20,76 @@ import duber.game.gameobjects.Player;
 
 /**
  * A class that manages the entities in the duberant match. This includes most of the game logic used to simulate the game.
+ * @author Darren Lo
+ * @version 1.0
  */
 public class DuberantWorld extends PhysicsWorld {
+    /**
+     * The min bounds of the world in 1D.
+     */
     private static final float MIN_BOUNDS_VALUE = -10000.0f;
+
+    /**
+     * The max bounds of the world in 1D.
+     */
     private static final float MAX_BOUNDS_VALUE = 10000.0f;
 
+    /**
+     * The 3D min bounds of the world.
+     */
     private static final Vector3f minBounds = new Vector3f(MIN_BOUNDS_VALUE, MIN_BOUNDS_VALUE, MIN_BOUNDS_VALUE); 
+
+    /**
+     * The 3D max bounds of the world.
+     */
     private static final Vector3f maxBounds = new Vector3f(MAX_BOUNDS_VALUE, MAX_BOUNDS_VALUE, MAX_BOUNDS_VALUE);
 
+    /**
+     * The set of dynamic entities in the world.
+     */
     private final Set<Entity> dynamicEntities = new HashSet<>();
+
+    /**
+     * An octree that stores all the constant entities in the world.
+     */
     private final Octree constantEntities = new Octree(minBounds, maxBounds);
-    
+
+    /**
+     * Constructs an emtpy game world.
+     */
     public DuberantWorld() {
         super();        
         setCollisionHandler(new DuberantCollisionHandler(constantEntities));
     }
 
+    /**
+     * Adds a dynamic entity to the game world.
+     * @param entity the entity to add.
+     */
     public void addDynamicEntity(Entity entity) {
         dynamicEntities.add(entity);
     }
 
+    /**
+     * Removes a dynamic entity from the game world.
+     * @param entity the entity to remove.
+     */
     public void removeDynamicEntity(Entity entity) {
         dynamicEntities.remove(entity);
     }
 
+    /**
+     * Adds a constant entity to the world.
+     * @param entity the entity to add
+     */
     public void addConstantEntity(Entity entity) {
         constantEntities.addEntity(entity, entity.getComponent(Transform.class));
     }
 
+    /**
+     * Simulates a Player shooting.
+     * @param shootingPlayer the Player that is shooting
+     */
     public void simulateShot(Player shootingPlayer) {
         shootingPlayer.shoot();
         
@@ -88,6 +130,12 @@ public class DuberantWorld extends PhysicsWorld {
         }
     }
 
+    /**
+     * Determines whether or not a bullet hits a Player.
+     * @param hitPlayer the Player that may be hit
+     * @param bulletRay the ray representing the bullet
+     * @return whether or not the Player is hit
+     */
     private boolean bulletHitsPlayer(Player hitPlayer, RayAabIntersection bulletRay) {
         for(ColliderPart colliderPart : hitPlayer.getComponent(Collider.class).getColliderParts()) {
             Box colliderBox = colliderPart.getBox();
@@ -101,6 +149,11 @@ public class DuberantWorld extends PhysicsWorld {
         return false;
     }
 
+    /**
+     * Updates the vision of an Entity.
+     * @param entityVision the Entity's Vision component
+     * @param entity the Entity to update
+     */
     private void updateVisionPosition(Vision entityVision, Entity entity) {
         Transform entityTransform = entity.getComponent(Transform.class);
         Transform cameraTransform = entityVision.getCamera().getComponent(Transform.class);
@@ -109,6 +162,10 @@ public class DuberantWorld extends PhysicsWorld {
         cameraTransform.getPosition().add(entityVision.getCameraOffset());
     }
 
+    /**
+     * Updates a Players gun relative to their position.
+     * @param player the Players whose gun to update
+     */
     private void updatePlayerGunTransform(Player player) {
         Gun equippedGun = player.getWeaponsInventory().getEquippedGun();
         if (equippedGun != null) {
@@ -129,6 +186,9 @@ public class DuberantWorld extends PhysicsWorld {
     }
 
 
+    /**
+     * Updates all the entities in the world.
+     */
     @Override
     public void update() {
         for(Entity entity : dynamicEntities) {

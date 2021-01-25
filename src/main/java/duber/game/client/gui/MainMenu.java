@@ -79,35 +79,10 @@ public class MainMenu extends GUI {
 
         SimpleLineBorder border = new SimpleLineBorder(ColorConstants.black(), 1);
 
-        Button loginButton = new Button("Login");
-        loginButton.getStyle().setMinWidth(160f);
-        loginButton.getStyle().setMinHeight(30f);
-        loginButton.getStyle().setBorder(border);
-        loginButton.getStyle().setMarginTop(250f);
-        loginButton.getStyle().setLeft(25f);
-        loginButton.getStyle().setPosition(PositionType.RELATIVE);
-        
-        TextInput loginInput= new TextInput();
-        loginInput.getStyle().setMinWidth(150f);
-        loginInput.getStyle().setMinHeight(30f);
-        loginInput.getStyle().setBorder(border);
-        loginInput.getStyle().setMarginTop(250f);
-        loginInput.getStyle().setRight(25f);
-        loginInput.getStyle().setPosition(PositionType.RELATIVE);
         Button matchButton = new Button("Find Match");
         matchButton.getStyle().setMinWidth(480f);
         matchButton.getStyle().setMinHeight(90f);
         matchButton.getStyle().setBorder(border);
-        loginButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
-            if (event.getAction() == MouseClickAction.RELEASE && !loggingIn && !getGame().isLoggedIn()) {
-                loggingIn = true;
-                new Thread(new LoginRequest(loginInput.getTextState().getText())).start();
-                loginButton.getParent().remove(loginButton);
-                loginInput.getParent().remove(loginInput);  
-                
-            }
-        });
-        
         matchButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
             if (getGame().isLoggedIn() && event.getAction() == MouseClickAction.RELEASE) {
                 inMatchQueue = !inMatchQueue;
@@ -119,46 +94,60 @@ public class MainMenu extends GUI {
                 }
             }
         });
-        mainPanel.add(matchButton);
-        mainPanel.add(loginInput);
-        mainPanel.add(loginButton);
+
         
+        if(!getGame().isLoggedIn()) {
+            TextInput loginInput= new TextInput();
+            loginInput.getStyle().setMinWidth(150f);
+            loginInput.getStyle().setMinHeight(30f);
+            loginInput.getStyle().setBorder(border);
+            loginInput.getStyle().setMarginTop(250f);
+            loginInput.getStyle().setRight(25f);
+            loginInput.getStyle().setPosition(PositionType.RELATIVE);
+
+            Button loginButton = new Button("Login");
+            loginButton.getStyle().setMinWidth(160f);
+            loginButton.getStyle().setMinHeight(30f);
+            loginButton.getStyle().setBorder(border);
+            loginButton.getStyle().setMarginTop(250f);
+            loginButton.getStyle().setLeft(25f);
+            loginButton.getStyle().setPosition(PositionType.RELATIVE);
+            
+            loginButton.getListenerMap().addListener(MouseClickEvent.class, event -> {
+                if (event.getAction() == MouseClickAction.RELEASE && !loggingIn && !getGame().isLoggedIn()) {
+                    loggingIn = true;
+                    if(login(loginInput.getTextState().getText())) {
+                        loginButton.getParent().remove(loginButton);
+                        loginInput.getParent().remove(loginInput);  
+                    }
+                    
+                }
+            });
+            mainPanel.add(loginInput);
+            mainPanel.add(loginButton);
+        }
+        
+        mainPanel.add(matchButton);
         getFrame().getContainer().add(mainPanel);
     }
 
-
-    private class LoginRequest implements Runnable {
-        private String username;
-
-        public LoginRequest(String username) {
-            this.username = username;
-        }
-
-        @Override
-        /**
-         * Runs the Main menu
-         */
-        public void run() {
-            
-            // If the game is not already connected to the server, attempt to connect
-            // Send in login request to server
-            try {
-                if (!getGame().isConnected()) {
-                    getGame().getClientNetwork().connect(1000);
-                }
-
-                //Send user login packet with username
-                if (!getGame().isLoggedIn()) { 
-                    getGame().getClientNetwork().getClient().sendTCP(new LoginPacket(username));       
-                }
-            } catch (IOException ioe) {
-                //Failed to connect
-                System.out.println("Failed to connect to server!");
-            } finally {
-                loggingIn = false;
+    private boolean login(String username) {
+        try {
+            if (!getGame().isConnected()) {
+                getGame().getClientNetwork().connect(1000);
             }
-
+    
+            //Send user login packet with username
+            if (!getGame().isLoggedIn()) { 
+                getGame().getClientNetwork().getClient().sendTCP(new LoginPacket(username));       
+            }
+        } catch (IOException ioe) {
+            //Failed to connect
+            return false;
+        } finally {
+            loggingIn = false;
         }
-    }
 
+        return true;
+    }
 }

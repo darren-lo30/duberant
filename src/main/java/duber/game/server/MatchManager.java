@@ -43,6 +43,11 @@ import duber.game.phases.LoadingPhase;
 import duber.game.phases.MatchPhase;
 import duber.game.phases.MatchPhaseManager;
 
+/**
+ * A class that manages a match between players
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class MatchManager implements Runnable, MatchPhaseManager {
     public static final int TARGET_UPS = 30;
     
