@@ -56,6 +56,7 @@ public class MainMenu extends GUI {
      * Creates the GUI elements, placing them in the frame
      */
     public void createGuiElements() {
+        
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
         getFrame().getContainer().getStyle().setDisplay(DisplayType.FLEX);
@@ -129,6 +130,7 @@ public class MainMenu extends GUI {
         
         mainPanel.add(matchButton);
         getFrame().getContainer().add(mainPanel);
+        
     }
 
     private boolean login(String username) {

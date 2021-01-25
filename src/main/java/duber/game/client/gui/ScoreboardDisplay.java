@@ -91,11 +91,12 @@ public class ScoreboardDisplay extends GUI {
         namesText.setEditable(false);
         killsText.setEditable(false);
         deathsText.setEditable(false);
-        String currName="Name\n\n";
-        String currKills="Kills\n\n";
-        String currDeaths="Deaths\n\n";
-
         Scoreboard scoreboard = getMatchScoreboard();
+        String currName="\nName\n\n";
+        String currKills="Blue-"+scoreboard.getWins(0)+"\nKills\n\n";
+        String currDeaths="Red-"+scoreboard.getWins(1)+"\nDeaths\n\n";
+
+        
         for(int team = 0; team < 2; team++) {
             for(int player = 0; player < scoreboard.getScores(team).size(); player++) {
                 if (team==1&&player==0){
