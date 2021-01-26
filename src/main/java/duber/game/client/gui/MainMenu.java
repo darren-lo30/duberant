@@ -21,7 +21,9 @@ import org.liquidengine.legui.style.Style.PositionType;
 import org.liquidengine.legui.style.flex.FlexStyle.*;
 import org.liquidengine.legui.style.length.LengthType;
 
-
+/**
+ * CLass that creates the main menu GUI
+ */
 public class MainMenu extends GUI {
     private volatile boolean loggingIn = false;
     private volatile boolean inMatchQueue = false;

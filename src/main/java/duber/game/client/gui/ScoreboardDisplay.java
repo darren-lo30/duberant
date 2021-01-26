@@ -14,7 +14,9 @@ import org.liquidengine.legui.style.flex.FlexStyle.*;
 import org.liquidengine.legui.style.length.LengthType;
 
 
-
+/**
+ * Class that creates the scoreboard GUI
+ */
 public class ScoreboardDisplay extends GUI {
     @Override
     /**

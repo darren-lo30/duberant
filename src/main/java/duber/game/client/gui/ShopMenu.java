@@ -16,6 +16,10 @@ import org.liquidengine.legui.style.Style.PositionType;
 import org.liquidengine.legui.style.flex.FlexStyle.*;
 import org.liquidengine.legui.style.length.LengthType;
 import duber.game.gameobjects.Buyable;
+
+/**
+ * Class that creates the shop GUI
+ */
 public class ShopMenu extends GUI {
     private Match match;
 
