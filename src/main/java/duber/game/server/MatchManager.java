@@ -276,8 +276,8 @@ public class MatchManager implements Runnable, MatchPhaseManager {
         };
 
         Vector3f[] bluePositions = new Vector3f[] {
-            new Vector3f(150, 0, 0),
-            new Vector3f(200, 0, 0)
+            new Vector3f(-110, -39, -700),
+            new Vector3f(-140, -39, -700),
         };
         
         gameMap = new GameMap(map, skyBox, gameLighting, redPositions, bluePositions);   

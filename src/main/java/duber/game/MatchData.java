@@ -40,7 +40,7 @@ public class MatchData {
     /**
      * The number of rounds in a match.
      */
-    public static final int NUM_ROUNDS = 3;
+    public static final int NUM_ROUNDS = 25;
 
     /**
      * The number of rounds to win a match.

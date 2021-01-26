@@ -14,7 +14,7 @@ public class BuyPhase extends MatchPhase {
     /**
      * The amount of time the BuyPhase should last
      */
-    private static final int TIME_TO_LAST = 25;
+    private static final int TIME_TO_LAST = 15;
 
     /**
      * A constructor for a BuyPhase.
