@@ -100,7 +100,7 @@ public class GameMap {
     }
 
     /**
-     * Used for Kryonet
+     * Used by Kryonet
      */
     @SuppressWarnings("unused")
     private GameMap() {}

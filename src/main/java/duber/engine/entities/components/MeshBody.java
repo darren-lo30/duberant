@@ -1,7 +1,6 @@
 package duber.engine.entities.components;
 
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import duber.engine.graphics.Mesh;
 import duber.engine.entities.Face;
@@ -97,12 +96,5 @@ public class MeshBody extends Component {
 
     public Face[] getFaces() {
         return faces;
-    }
-
-    public void makeColoured(Vector4f colour) {
-        for(Mesh mesh : meshes) {
-            mesh.getMaterial().setTexture(null);
-            mesh.getMaterial().setColour(colour);
-        }
     }
 }

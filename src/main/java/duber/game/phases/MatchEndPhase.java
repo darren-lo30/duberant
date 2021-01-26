@@ -70,7 +70,7 @@ public class MatchEndPhase extends MatchPhase {
     }    
 
     /**
-     * Used for Kryonet
+     * Used by Kryonet
      */
     @SuppressWarnings("unused")
     private MatchEndPhase() {}

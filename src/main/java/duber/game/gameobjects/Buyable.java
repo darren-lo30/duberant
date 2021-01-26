@@ -30,7 +30,7 @@ public class Buyable extends Component {
     }
 
     /**
-     * Used for Kryonet
+     * Used by Kryonet
      */
     @SuppressWarnings("unused")
     private Buyable() {}

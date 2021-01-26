@@ -166,7 +166,7 @@ public class Player extends Entity {
     }
 
     /**
-     * Used for Kryonet
+     * Used by Kryonet
      */
     @SuppressWarnings("unused")
     private Player(){}

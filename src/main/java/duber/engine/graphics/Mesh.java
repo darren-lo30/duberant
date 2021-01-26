@@ -39,31 +39,76 @@ import duber.engine.entities.Face;
 import duber.engine.entities.components.MeshBody;
 import duber.engine.utilities.Utils;
 
+/**
+ * A Mesh of a 3D object
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class Mesh implements Cleansable {    
+
+    /** The maximum number of weights. */
     public static final int MAX_WEIGHTS = 4;
     
+    /** The position of vertices. */
     private final float[] positions;
+
+    /** The texture coordinates. */
     private final float[] textureCoords;
+
+    /** The normals of vertices */
     private final float[] normals;
+
+    /** The indices of the vertices. */
     private final int[] indices;
+
+    /** The indices of the joints. */
     private final int[] jointIndices;
+
+    /** The weights. */
     private final float[] weights;
 
+    /** The number of non-unique vertices. */
     private final int vertexCount;
 
+    /** The faces of this Mesh. */
     private final Face[] faces;
+
+    /** The unique vertices of this Mesh. */
     private final Vector3f[] vertices;
     
+    /** The Vertex Array Object id of this Mesh. */
     private int vaoId;
-    private List<Integer> vboIdList;    
+
+    /** The List of Vertex buffer Object ids for this Mesh. */
+    private List<Integer> vboIdList; 
+    
+    /**
+     * The Material used for this Mesh.
+     */
     private Material material;
 
+    /**
+     * Constructs a Mesh without animations.
+     * @param positions the vertex positions
+     * @param textureCoords the texture coordinates
+     * @param normals the vertex normals
+     * @param indices the vertex indices
+     */
     public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
         this(positions, textureCoords, normals, indices, 
             Utils.buildIntArray(MAX_WEIGHTS * positions.length / 3, 0),
             Utils.buildFloatArray(MAX_WEIGHTS * positions.length / 3, 0));
     }
 
+    /**
+     * Constructs a Mesh with animations.
+     * @param positions the vertex positions
+     * @param textureCoords the texture coordinates
+     * @param normals the vertex normals
+     * @param indices the vertex indices
+     * @param jointIndices the joint indices
+     * @param weights the weights
+     */
     public Mesh(float[] positions, float[] textureCoords, float[] normals, int[] indices, int[] jointIndices, float[] weights) {
         vertexCount = indices.length;
 
@@ -93,30 +138,57 @@ public class Mesh implements Cleansable {
         }
     }
     
+    /**
+     * Determines if the Mesh is renderable.
+     */
     public boolean isRenderable() {
         return vboIdList != null;
     }
 
+    /**
+     * Gets the number of non-unique vertices.
+     * @return the number of non-unique vertices
+     */
     public int getVertexCount() {
         return vertexCount;
     }
     
+    /**
+     * Gets all the vertices.
+     * @return the vertices
+     */
     public Vector3f[] getVertices() {
         return vertices;
     }
 
+    /**
+     * Gets all the faces.
+     * @return the faces
+     */
     public Face[] getFaces() {
         return faces;
     }
 
+    /**
+     * Gets the material.
+     * @return the material
+     */
     public Material getMaterial() {
         return material;
     }
 
+    /**
+     * Sets the material.
+     * @param material the material
+     */
     public void setMaterial(Material material) {
         this.material = material;
     }
 
+    /**
+     * Makes this Mesh renderable.
+     * @return if this Mesh was made renderable
+     */
     public final boolean makeRenderable() {
         if (isRenderable()) {
             return false;
@@ -218,6 +290,9 @@ public class Mesh implements Cleansable {
     }
 
 
+    /**
+     * Called before this Mesh is rendered.
+     */
     private void initRender() {
         if (!isRenderable()) {
             throw new IllegalStateException("Make the mesh renderable before rendering!");
@@ -243,6 +318,9 @@ public class Mesh implements Cleansable {
         glEnableVertexAttribArray(4);
     }
 
+    /**
+     * Called after this Mesh is rendered.
+     */
     private void endRender() {
         //Restore state by unbinding everything
         glDisableVertexAttribArray(0);
@@ -255,12 +333,20 @@ public class Mesh implements Cleansable {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
+    /**
+     * Renders this Mesh.
+     */
     public void render() {
         initRender();
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
         endRender();
     }
 
+    /**
+     * Renders a List of Entities with this Mesh.
+     * @param entities the List of Entities to render
+     * @param consumer the consumer to use before rendering
+     */
     public void render(List<Entity> entities, Consumer<Entity> consumer) {
         initRender();
         for(Entity entity: entities) {
@@ -273,12 +359,20 @@ public class Mesh implements Cleansable {
         endRender();
     }
 
+    /**
+     * Frees a buffer.
+     * @param buffer the buffer to free
+     */
     private void freeBuffer(Buffer buffer) {
         if (buffer != null) {
             MemoryUtil.memFree(buffer);
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void cleanup() {
         if (!isRenderable()) {
             return;

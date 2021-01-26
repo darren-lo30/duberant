@@ -13,11 +13,26 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 import static org.lwjgl.stb.STBImage.*;
 
+/**
+ * A texture for a Material
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class Texture implements Cleansable {
+    /** The id of this Texture. */
     private int id;
+    
+    /** The width of this Texture. */
     private int width;
+
+    /** The height of this Texture. */
     private int height;
 
+    /**
+     * Loads a Texture from a file.
+     * @param fileName the file to load from
+     * @throws LWJGLException if the Texture could not be loaded
+     */
     public Texture(String fileName) throws LWJGLException {
         ByteBuffer textureBuffer;
         //Load the texture
@@ -42,14 +57,26 @@ public class Texture implements Cleansable {
     }
 
 
+    /**
+     * Gets the id of this Texture.
+     * @return the id of this Texture
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Binds this Texture.
+     */
     public void bind() {
         glBindTexture(GL_TEXTURE_2D, id);
     }
     
+    /**
+     * Creates a Texture from a ByteBuffer.
+     * @param textureBuffer the buffer containing the texture data
+     * @return the id of the texture created
+     */
     private int createTexture(ByteBuffer textureBuffer) {
         int textureId = glGenTextures();
 
@@ -64,6 +91,10 @@ public class Texture implements Cleansable {
         return textureId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void cleanup() {
         glDeleteTextures(id);
     }
