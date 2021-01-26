@@ -1,7 +1,12 @@
 package duber.engine.audio;
 
 import org.joml.Vector3f;
-import static org.lwjgl.openal.AL10.*;
+import static org.lwjgl.openal.AL10.alListener3f;
+import static org.lwjgl.openal.AL10.AL_POSITION;
+import static org.lwjgl.openal.AL10.AL_VELOCITY;
+import static org.lwjgl.openal.AL10.AL_ORIENTATION;
+import static org.lwjgl.openal.AL10.alListenerfv;
+
 
 
 /**

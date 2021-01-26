@@ -12,7 +12,6 @@ public final class GameEngine implements Runnable, Cleansable {
 
     /** The target updates per second to achieve. */
     private static final int TARGET_UPS = 30;
-    
 
     /**
      * The title of the game.

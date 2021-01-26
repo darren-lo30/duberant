@@ -7,13 +7,14 @@ import duber.game.gameobjects.GunType;
 import org.liquidengine.legui.event.MouseClickEvent;
 import org.liquidengine.legui.event.MouseClickEvent.MouseClickAction;
 import org.liquidengine.legui.component.Button;
+import org.liquidengine.legui.component.Component;
 import org.liquidengine.legui.style.border.SimpleLineBorder;
 import org.liquidengine.legui.style.color.ColorConstants;
+import org.liquidengine.legui.style.flex.FlexStyle.AlignItems;
+import org.liquidengine.legui.style.flex.FlexStyle.JustifyContent;
 import org.liquidengine.legui.component.Panel;
-import org.liquidengine.legui.component.*;
 import org.liquidengine.legui.style.Style.DisplayType;
 import org.liquidengine.legui.style.Style.PositionType;
-import org.liquidengine.legui.style.flex.FlexStyle.*;
 import org.liquidengine.legui.style.length.LengthType;
 import duber.game.gameobjects.Buyable;
 

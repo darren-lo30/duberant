@@ -3,17 +3,27 @@ package duber.engine.audio;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import static org.lwjgl.openal.AL10.*;
 import org.lwjgl.stb.STBVorbisInfo;
 import java.nio.ShortBuffer;
-import static org.lwjgl.stb.STBVorbis.*;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import duber.engine.Cleansable;
 import duber.engine.utilities.Utils;
 
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.openal.AL10.alGenBuffers;
+import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
+import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
+import static org.lwjgl.openal.AL10.alDeleteBuffers;
+import static org.lwjgl.openal.AL10.alBufferData;
+
+import static org.lwjgl.system.MemoryUtil.NULL;
+
+import static org.lwjgl.stb.STBVorbis.stb_vorbis_open_memory;
+import static org.lwjgl.stb.STBVorbis.stb_vorbis_get_info;
+import static org.lwjgl.stb.STBVorbis.stb_vorbis_stream_length_in_samples;
+import static org.lwjgl.stb.STBVorbis.stb_vorbis_get_samples_short_interleaved;
+import static org.lwjgl.stb.STBVorbis.stb_vorbis_close;
 
 /**
  * A buffer that stores sound data.

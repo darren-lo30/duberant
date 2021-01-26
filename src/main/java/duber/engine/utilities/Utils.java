@@ -19,7 +19,7 @@ import java.util.Scanner;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
-import static org.lwjgl.BufferUtils.*;
+import static org.lwjgl.BufferUtils.createByteBuffer;
 
 public class Utils {
     private Utils() {}

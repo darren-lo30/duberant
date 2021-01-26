@@ -1,17 +1,20 @@
 package duber.game.client.gui;
 
-
 import duber.game.MatchData;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.client.match.Match;
+
+import org.liquidengine.legui.component.Component;
 import org.liquidengine.legui.component.Panel;
-import org.liquidengine.legui.component.*;
+import org.liquidengine.legui.component.TextArea;
+
 import duber.engine.entities.components.Named;
 import org.liquidengine.legui.style.color.ColorConstants;
+import org.liquidengine.legui.style.flex.FlexStyle.AlignItems;
+import org.liquidengine.legui.style.flex.FlexStyle.JustifyContent;
 import org.liquidengine.legui.style.Style.DisplayType;
 import org.liquidengine.legui.style.Style.PositionType;
-import org.liquidengine.legui.style.flex.FlexStyle.*;
 import org.liquidengine.legui.style.length.LengthType;
 
 

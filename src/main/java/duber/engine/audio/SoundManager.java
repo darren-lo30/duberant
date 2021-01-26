@@ -7,17 +7,23 @@ import java.util.Map;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.openal.AL;
-import static org.lwjgl.openal.AL10.*;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
 
-import static org.lwjgl.openal.ALC10.*;
 
 import duber.engine.Cleansable;
 import duber.engine.entities.components.Transform;
 import duber.engine.graphics.MatrixTransformer;
 
 import static org.lwjgl.system.MemoryUtil.NULL;
+
+import static org.lwjgl.openal.AL10.alDistanceModel;
+
+import static org.lwjgl.openal.ALC10.alcOpenDevice;
+import static org.lwjgl.openal.ALC10.alcCreateContext;
+import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
+import static org.lwjgl.openal.ALC10.alcDestroyContext;
+import static org.lwjgl.openal.ALC10.alcCloseDevice;
 
 
 /**

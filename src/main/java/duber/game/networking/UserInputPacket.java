@@ -14,7 +14,6 @@ public class UserInputPacket extends Packet{
 
     /** The clients mouse input. */
     public MouseInput mouseInput;
-
     
     /**
      * Constructs a UserInputPacket.
