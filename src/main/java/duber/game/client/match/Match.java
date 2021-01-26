@@ -55,22 +55,45 @@ import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_B;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 
-
+/**
+ * A match inside the game
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class Match extends GameState implements Cleansable, MatchPhaseManager {    
+    /** The renderer to render the game. */
     private Renderer renderer;
+
+    /** The HUD during the match. */
     private HUD hud;
+
+    /** The match scene. */
     private Scene gameScene;
+
+    /** The main player. */
     private Player mainPlayer;
     
+    /** All the players mapped by their id's. */
     private Map<Integer, Player> playersById = new HashMap<>();
 
+    /** The scoreboard containing all the Player's scores. */
     private Scoreboard scoreboard;
+
+    /** The current match phase. */
     private MatchPhase currMatchPhase;
+
+    /** The match sounds. */
     private MatchSounds matchSounds;
 
+    /** The user's mouse input data. */
     private MouseInput mouseInput;
+
+    /** The user's keyboard input data. */
     private KeyboardInput keyboardInput;
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init() {
         try {
@@ -91,6 +114,9 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         configureKeyboardCallbacks();
     }
 
+    /**
+     * Configures mouse callbacks used during the match.
+     */
     private void configureMouseCallbacks() {
         List<CallbackI> callbacks = getCallbacks();
         
@@ -112,6 +138,9 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         callbacks.add(mouseButtonCallback);
     }
 
+    /**
+     * Configures keyboard callbacks used during the match.
+     */
     private void configureKeyboardCallbacks() {
         List<CallbackI> callbacks = getCallbacks();
 
@@ -146,6 +175,9 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         callbacks.add(keyboardCallback);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void startup() {
         mainPlayer = null;
@@ -159,6 +191,9 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         matchSounds.clear();
@@ -167,6 +202,9 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void enter() {
         glfwSetCursorPos(getWindow().getWindowHandle(), 0, 0);
@@ -179,12 +217,18 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         getWindow().applyOptions();  
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void exit() {
         mouseInput.clear();
         keyboardInput.clear();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void update() {       
         mouseInput.updateCursorDisplacement(); 
@@ -200,6 +244,9 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     }
     
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void render() {
         if (isInitialized()) {
@@ -209,34 +256,66 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         }
     }
 
+    /**
+     * Gets the match scoreboard.
+     * @return the match scoreboard
+     */
     public Scoreboard getScoreboard() {
         return scoreboard;
     }
 
+    /**
+     * Gets a Player by id.
+     * @param playerId the id of the Player
+     * @return the Player with the id
+     */
     public Player getPlayerById(int playerId) {
         return playersById.get(playerId);
     }
 
+    /**
+     * Gets a Collection of Players.
+     * @return the Collection of Players
+     */
     public Collection<Player> getPlayers() {
         return playersById.values();
     }
 
+    /**
+     * Gets the current match phase.
+     * @return the current match phase
+     */
     public MatchPhase getCurrMatchPhase() {
         return currMatchPhase;
     }
 
+    /**
+     * Gets the main player.
+     * @return the main player
+     */
     public Player getMainPlayer() {
         return mainPlayer;
     }
 
+    /**
+     * Gets the match sounds.
+     * @return the match sounds
+     */
     public MatchSounds getMatchSounds() {
         return matchSounds;
     }
 
+    /**
+     * Determines if the match is initialized.
+     * @return if the match is initialized
+     */
     public boolean isInitialized() {
         return mainPlayer != null && currMatchPhase != null;
     }
 
+    /**
+     * Sends packets to the server.
+     */
     public void sendPackets() {
         if (isInitialized() && currMatchPhase.playerCanMove()) {
             UserInputPacket matchCommands = new UserInputPacket(keyboardInput, mouseInput);
@@ -244,15 +323,25 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         }
     }
 
+    /**
+     * Renders the game scene.
+     */
     public void renderGameScene() {
         renderer.render(getWindow(), mainPlayer.getComponent(Vision.class).getCamera(), gameScene);
         hud.displayMatchHud(this);
     }
 
+    /**
+     * Gets the HUD.
+     * @return the HUD.
+     */
     public HUD getHud() {
         return hud;
     }
 
+    /**
+     * Updates the animations for the Players.
+     */
     public void updateAnimations() {
         for(Player player: getPlayers()) {
             MovementState playerMovement = player.getPlayerData().getPlayerMovement();
@@ -262,6 +351,9 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         }
     }
 
+    /**
+     * Receives and processes packets from the server.
+     */
     public void receivePackets() {
         while(!getGame().getClientNetwork().getPackets().isEmpty()){
             Object packet = getGame().getClientNetwork().getPackets().poll();
@@ -278,6 +370,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         }
     }
 
+    /**
+     * Processes a MatchInitializePacket
+     * @param matchInitializePacket the MatchInitializePacket.
+     */
     private void processPacket(MatchInitializePacket matchInitializePacket) {        
         List<Player> players = matchInitializePacket.players;
         for(Player player: players) {
@@ -333,6 +429,10 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         matchSounds.addMatchPlayers();
     }
 
+    /**
+     * Processes a PlayerUpdatePacket.
+     * @param playerUpdatePacket the PlayerUpdatePacket
+     */
     private void processPacket(PlayerUpdatePacket playerUpdatePacket) {
         if (!isInitialized()) {
             return;
@@ -367,6 +467,11 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
         }
     }
 
+    /**
+     * Updates a player's weapons.
+     * @param weaponsInventory the players current weapons
+     * @param upddatedWeaponsInventory the update weapons
+     */
     private void updatePlayerWeapons(WeaponsInventory weaponsInventory, WeaponsInventory updatedWeaponsInventory) {
         gameScene.removeRenderableEntity(weaponsInventory.getPrimaryGun());
         gameScene.removeRenderableEntity(weaponsInventory.getSecondaryGun());
@@ -384,27 +489,47 @@ public class Match extends GameState implements Cleansable, MatchPhaseManager {
     } 
 
     
+    /**
+     * Processes a MatchPhasePacket.
+     * @param matchPhasePacket the matchPhasePacket
+     */
     private void processPacket(MatchPhasePacket matchPhasePacket) {
         changeMatchPhase(matchPhasePacket.currMatchPhase);
     }
 
+    /**
+     * Processes a GunFirePacket.
+     * @param gunFirePacket the GunFirePacket
+     */
     private void processPacket(GunFirePacket gunFirePacket) {
         matchSounds.playGunSounds(getPlayerById(gunFirePacket.shooterId));
     }
 
+    /**
+     * Sends a gun purchase request to the server.
+     */
     public void sendGunPurchaseRequest(GunType gunType) {
         getGame().getUser().getConnection().sendTCP(new GunPurchasePacket(gunType));
     }
 
+    /** 
+     * Leaves the match.
+     */
     public void leave() {
         setShouldClose(true);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void cleanup() {
         renderer.cleanup();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void changeMatchPhase(MatchPhase nextMatchPhase) {
         currMatchPhase = nextMatchPhase;
