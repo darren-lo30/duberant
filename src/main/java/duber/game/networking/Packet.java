@@ -1,5 +1,8 @@
 package duber.game.networking;
 
-public abstract class Packet {
-    
-}
+/**
+ * A Packet used by Kryonet to communicate between client and server.
+ * @author Darren Lo
+ * @version 1.0
+ */
+public abstract class Packet {}
