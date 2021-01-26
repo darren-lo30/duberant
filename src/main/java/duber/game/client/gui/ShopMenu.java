@@ -17,35 +17,38 @@ import org.liquidengine.legui.style.flex.FlexStyle.*;
 import org.liquidengine.legui.style.length.LengthType;
 import duber.game.gameobjects.Buyable;
 
+
 /**
- * Class that creates the shop GUI
+ * The GUI for a shop used to buy guns inside a match.
+ * @author Andy Tian
+ * @version 1.0
  */
 public class ShopMenu extends GUI {
     private Match match;
 
-    @Override
     /**
-     * Initialization 
+     * {@inheritDoc}
      */
+    @Override
     public void init() {
         super.init();
         match = (Match) GameStateOption.MATCH.getGameState();
     }
 
-    @Override
     /**
-     * Updated the buy phase
+     * {@inheritDoc}
      */
+    @Override
     public void update() {
         if (!match.getCurrMatchPhase().playerCanBuy()) {
             setShouldClose(true);
         }
     }
 
-    @Override
-     /**
-     * Creates the GUI elements, placing them in the frame
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);

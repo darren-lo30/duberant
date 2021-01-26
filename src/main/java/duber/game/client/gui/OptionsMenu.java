@@ -12,15 +12,19 @@ import org.liquidengine.legui.style.Style.PositionType;
 import org.liquidengine.legui.style.flex.FlexStyle.*;
 import org.liquidengine.legui.style.length.LengthType;
 
+
 /**
- * Class that creates the options menu GUI
+ * The GUI for the options menu that can be accessed anywhere in the game
+ * @author Andy Tian
+ * @version 1.0
  */
 public class OptionsMenu extends GUI {
 
-    @Override
-     /**
+    /**
+     * {@inheritDoc}
      * Creates the GUI elements, placing them in the frame
      */
+    @Override
 	public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
@@ -58,10 +62,10 @@ public class OptionsMenu extends GUI {
 		
 	}
 
-    @Override
     /**
-     * Empty update func
+     * {@inheritDoc}
      */
+    @Override
     public void update() {
         //Nothing to update
     }

@@ -15,7 +15,7 @@ import duber.game.SoundData.SoundFile;
 import duber.game.gameobjects.Gun;
 import duber.game.gameobjects.Player;
 import duber.game.gameobjects.GunType;
-import duber.game.gameobjects.Player.MovementState;
+import duber.game.gameobjects.Player.PlayerData.MovementState;
 
 public class MatchSounds  {
     private Match match;

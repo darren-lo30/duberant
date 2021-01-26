@@ -21,17 +21,22 @@ import org.liquidengine.legui.style.Style.PositionType;
 import org.liquidengine.legui.style.flex.FlexStyle.*;
 import org.liquidengine.legui.style.length.LengthType;
 
+
 /**
- * CLass that creates the main menu GUI
+ * The GUI used for the main menu
+ * @author Darren Lo and Andy Tian
+ * @version 1.0
  */
 public class MainMenu extends GUI {
+    /**  */
     private volatile boolean loggingIn = false;
     private volatile boolean inMatchQueue = false;
     
-    @Override
     /**
-     * Updates the loginStatus/connection status of the user
+     * {@inheritDoc}
+     * Updates the login status of the user
      */
+    @Override
     public void update() {
         Queue<Object> receivedPackets = getGame().getClientNetwork().getPackets();
         
@@ -52,11 +57,12 @@ public class MainMenu extends GUI {
             }
         }
     }
-
-    @Override
+    
     /**
+     * {@inheritDoc}
      * Creates the GUI elements, placing them in the frame
      */
+    @Override
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
@@ -134,6 +140,11 @@ public class MainMenu extends GUI {
         
     }
 
+    /**
+     * Logs the user into the server.
+     * @param username the username to login with
+     * @return whether or not the login was succesful.
+     */
     private boolean login(String username) {
         try {
             if (!getGame().isConnected()) {

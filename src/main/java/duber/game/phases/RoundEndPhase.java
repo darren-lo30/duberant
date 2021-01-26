@@ -36,6 +36,7 @@ public class RoundEndPhase extends MatchPhase {
     @Override
     public void makeClientLogic(Match match) {
         setPhaseLogic(new ClientRoundEndLogic(match));
+        match.getScoreboard().addWin(winningTeam);
     }
 
     /**

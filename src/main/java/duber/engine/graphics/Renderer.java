@@ -20,19 +20,40 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+/**
+ * A renderer for a 3D world
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class Renderer implements Cleansable {    
+    /** The maximum number of point lights. */
     private static final int MAX_POINT_LIGHTS = 100;
+    /** The maximum number of spot lights. */
     private static final int MAX_SPOT_LIGHTS = 100;
     
+    /** The field of view. */
     private static final float FOV = (float) Math.toRadians(60.0f);
+
+    /** The distance of the closest objects to render. */
     private static final float Z_NEAR = 0.01f;
+
+    /** The distance of the furthest objects to render */
     private static final float Z_FAR = 6000.0f;
 
+    /** The program used to render scenes. */
     private ShaderProgram sceneShaderProgram;
+
+    /** The program used to render the sky box.*/
     private ShaderProgram skyBoxShaderProgram;
 
+    /** The MatrixTransformer used to compute matrices for rendering. */
     private final MatrixTransformer matrixTransformer;
 
+    /**
+     * Constructs a renderer.
+     * @throws LWJGLException if this Renderer could not be intialized
+     * @throws IOException if an IO error occurs while initializing this Renderer
+     */
     public Renderer() throws LWJGLException, IOException {
         //Intiialize vertex transformer
         matrixTransformer = new MatrixTransformer();
@@ -40,6 +61,11 @@ public class Renderer implements Cleansable {
         setUpSceneShader();    
     }
 
+    /**
+     * Sets up a scene shader program.
+     * @throws LWJGLException if the scene shader could not be intialized
+     * @throws IOException if an IO error occurs while initializing the scene shader
+     */
     private void setUpSceneShader() throws LWJGLException, IOException {
         sceneShaderProgram = new ShaderProgram();
 
@@ -70,6 +96,11 @@ public class Renderer implements Cleansable {
         sceneShaderProgram.createDirectionalLightUniform("directionalLight");  
     }
 
+    /**
+     * Sets up a sky box shader program.
+     * @throws LWJGLException if the sky box shader could not be intialized
+     * @throws IOException if an IO error occurs while initializing the sky box shader
+     */
     private void setUpSkyBoxShader() throws LWJGLException, IOException {
         skyBoxShaderProgram = new ShaderProgram();
         skyBoxShaderProgram.createVertexShader(Utils.loadResource("/shaders/sky_box_vertex.vs"));
@@ -89,6 +120,12 @@ public class Renderer implements Cleansable {
         skyBoxShaderProgram.createUniform("colour");
     }
 
+    /**
+     * Renders to a window.
+     * @param window the window to display on
+     * @param camera the Camera to view from
+     * @param scene the Scene to render
+     */
     public void render(Window window, Camera camera, Scene scene) {        
         //Update camera view matrix
         camera.updateViewMatrix();
@@ -98,6 +135,11 @@ public class Renderer implements Cleansable {
         renderScene(window, camera, scene);
     }
 
+    /**
+     * Renders all the meshes in a scene.
+     * @param scene the scene to render
+     * @param viewMatrix the viewMatrix to transform the scene with
+     */
     private void renderMeshes(Scene scene, Matrix4f viewMatrix) {
         Map<Mesh, List<Entity>> meshMap = scene.getMeshMap();
 
@@ -128,7 +170,12 @@ public class Renderer implements Cleansable {
         }
     }
 
-
+    /**
+     * Renders a scene.
+     * @param window the window to display on
+     * @param camera the Camera to view from
+     * @param scene the Scene to render
+     */
     private void renderScene(Window window, Camera camera, Scene scene) {
         sceneShaderProgram.bind();
 
@@ -154,6 +201,11 @@ public class Renderer implements Cleansable {
         renderSkyBox(window, camera, scene);
     }
 
+    /**
+     * Renders lighting inside a Scene.
+     * @param viewMatrix the matrix to transform the lighting with
+     * @param sceneLighting the scene lighting
+     */
     private void renderLights(Matrix4f viewMatrix, SceneLighting sceneLighting) {
         //Update light uniforms for ambient lighting
         sceneShaderProgram.setUniform("ambientLight", sceneLighting.getAmbientLight());
@@ -164,6 +216,11 @@ public class Renderer implements Cleansable {
         renderDirectionalLight(viewMatrix, sceneLighting.getDirectionalLight()); 
     }
 
+    /**
+     * Renders point lights.
+     * @param viewMatrix the matrix to transform the point lights with
+     * @param pointLights the array of PointLights
+     */
     private void renderPointLights(Matrix4f viewMatrix, PointLight[] pointLights) {
         if (pointLights == null) {
             return;
@@ -189,6 +246,11 @@ public class Renderer implements Cleansable {
         }
     }
 
+    /**
+     * Renders spot lights.
+     * @param viewMatrix the matrix to transform the spot lights with
+     * @param spotLights the array of SpotLights
+     */
     private void renderSpotLights(Matrix4f viewMatrix, SpotLight[] spotLights) {
         if (spotLights == null) {
             return;
@@ -219,6 +281,11 @@ public class Renderer implements Cleansable {
         }
     }
 
+    /**
+     * Renders the directional light.
+     * @param viewMatrix the matrix to transform the directional light with
+     * @param directionalLight the directional light.
+     */
     private void renderDirectionalLight(Matrix4f viewMatrix, DirectionalLight directionalLight) {
         if (directionalLight == null) {
             return;
@@ -235,7 +302,13 @@ public class Renderer implements Cleansable {
 
         sceneShaderProgram.setUniform("directionalLight", viewDirectionalLight);
     }
-
+    
+    /**
+     * Renders the skybox.
+     * @param window the window the render to
+     * @param camera the camera to view from
+     * @param scene the scene whose SkyBox to render
+     */
     private void renderSkyBox(Window window, Camera camera, Scene scene) {  
         Entity skyBox = scene.getSkyBox();
 
@@ -282,9 +355,11 @@ public class Renderer implements Cleansable {
         //Restore the state
         skyBoxShaderProgram.unbind();
     }
-
-
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void cleanup() {
         if (sceneShaderProgram != null) {
             sceneShaderProgram.cleanup();

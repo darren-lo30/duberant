@@ -19,17 +19,37 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
 
 
+/**
+ * The game logic used to run the main game.
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class Duberant extends GameLogic {
+    /** The Window used to display the game. */
     private Window window;
+
+    /** The User logged in and that is playing the game. */
     private User user;
+    
+    /** The ClientNetork used to connect to the server with. */
     private ClientNetwork clientNetwork;
+
+    /** The manager of the game's GameStates. */
     private GameStateManager gameStateManager;
+
+    /** The manager of the audio played in the game. */
     private SoundManager soundManager;
     
+    /**
+     * Constructs a new instance of the game.
+     */
     public Duberant() {
         clientNetwork = new ClientNetwork();
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(Window window) throws LWJGLException {
         this.window = window;
@@ -50,48 +70,89 @@ public class Duberant extends GameLogic {
         configureOptionsMenuCallback();
     }
 
+    /**
+     * Gets the game window.
+     * @return the game window
+     */
     public Window getWindow() {
         return window;
     }
     
+    /**
+     * Gets the user playing the game.
+     * @return the user playing the game
+     */
     public User getUser() {
         return user;
     }
 
-    public ClientNetwork getClientNetwork() {
-        return clientNetwork;
-    }
-
-    public GameStateManager getGameStateManager() {
-        return gameStateManager;
-    }
-
-    public SoundManager getSoundManager() {
-        return soundManager;
-    }
-
+    /**
+     * Sets the user that is playing the game.
+     * @param user the user playing the game
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Gets the client network used to connect to the server.
+     * @return the client network
+     */
+    public ClientNetwork getClientNetwork() {
+        return clientNetwork;
+    }
+
+    /**
+     * Gets the manager that manages all the GameStates.
+     * @return the game state manager
+     */
+    public GameStateManager getGameStateManager() {
+        return gameStateManager;
+    }
+
+    /**
+     * Gets the manager that manages game sounds.
+     * @return the sound manager
+     */
+    public SoundManager getSoundManager() {
+        return soundManager;
+    }
+
+    /**
+     * Determines if the game is connected to a server.
+     * @return whether or not the game is connected to a server
+     */
     public boolean isConnected() {
         return clientNetwork.isConnected();
     }
 
+    /**
+     * Determines if the game is logged in to a user account.
+     * @return whether or not the game is logged in
+     */
     public boolean isLoggedIn() {
         return user != null && user.isLoggedIn();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void update() {
         gameStateManager.update();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void render() {
         gameStateManager.render();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void cleanup() {
         clientNetwork.close();
@@ -99,6 +160,9 @@ public class Duberant extends GameLogic {
         soundManager.cleanup();
     }
 
+    /**
+     * Configures the callbacks used to open the OptionsMenu.
+     */
     private void configureOptionsMenuCallback() {
         GLFWKeyCallbackI optionsCallback = (windowHandle, keyCode, scanCode, action, mods) -> {
             GameState optionMenu = GameStateOption.OPTIONS_MENU.getGameState();
@@ -114,6 +178,10 @@ public class Duberant extends GameLogic {
         window.addCallback(optionsCallback);
     }
 
+    /**
+     * Runs the game in 1920x1080 resolution.
+     * @param args the argiments from the command line
+     */
     public static void main(String[] args) {
         try {
             GameLogic gameLogic = new Duberant();

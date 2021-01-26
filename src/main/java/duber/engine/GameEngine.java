@@ -3,34 +3,53 @@ package duber.engine;
 import duber.engine.exceptions.LWJGLException;
 import duber.engine.utilities.Timer;
 
+/**
+ * A game engine used to run a game loop.
+ */
 public final class GameEngine implements Runnable, Cleansable {
-    //Targeted FPS
+    /** The target frames per second to acheive. */
     private static final int TARGET_FPS = 60;
 
-    //Targetted amount of updates per second
+    /** The target updates per second to achieve. */
     private static final int TARGET_UPS = 30;
-
-    String windowTitle;
     
+
+    /**
+     * The title of the game.
+     */
+    String gameTitle;
+    
+    /** The window used to display the game. */
     private final Window window;
     
+    /** The timer used for the game loop. */
     private final Timer updateTimer;
     
+    /** The GameLogic used to run the game. */
     private final GameLogic gameLogic;    
 
+    /** The Timer used to calculate the frames per second. */
     private final Timer fpsTimer;
     
+    /** The number of frames per second of the game. */
     private int fps;
-
+    
+    /** The interpolation factor of the render. */
     private float interpolationFactor;
 
-    
-    public GameEngine(String windowTitle, int width, int height, GameLogic gameLogic) {
-        this.windowTitle = windowTitle;
+    /**
+     * Constructs a GameEngine.
+     * @param gameTitle the title of the game and the initial title of the window.
+     * @param width the width of the window
+     * @param height the height of the window
+     * @param gameLogic the game running in the GameEngine
+     */
+    public GameEngine(String gameTitle, int width, int height, GameLogic gameLogic) {
+        this.gameTitle = gameTitle;
         this.gameLogic = gameLogic;
         gameLogic.setGameEngine(this);
 
-        window = new Window(windowTitle, width, height);
+        window = new Window(gameTitle, width, height);
         updateTimer = new Timer();
         
         
@@ -38,10 +57,17 @@ public final class GameEngine implements Runnable, Cleansable {
         fpsTimer = new Timer();
     }
 
+    /**
+     * Gets the interpolation factor.
+     * @return the interpolation factor
+     */
     public float getInterpolationFactor() {
         return interpolationFactor;
     }
 
+    /**
+     * Runs the game loop
+     */
     @Override
     public void run() {
         try {
@@ -56,10 +82,17 @@ public final class GameEngine implements Runnable, Cleansable {
         System.exit(0);
     }
 
+    /**
+     * Initializes the GameEngine when it runs.
+     * @throws LWJGLException if the GameEngine could not be initialized
+     */
     private void init() throws LWJGLException {
         gameLogic.init(window);
     }
 
+    /**
+     * The game loop that constantly updates and renders the game.
+     */
     private void gameLoop() {
         float elapsedTime;
         float accumulator = 0f;
@@ -86,9 +119,12 @@ public final class GameEngine implements Runnable, Cleansable {
         }
     }
 
+    /**
+     * Syncs the game so that there are no extra renders.
+     */
     private void sync() {
         float loopSlot = 1.0f/TARGET_FPS;
-        double endTime = updateTimer.getLastLoopTime() + loopSlot;
+        double endTime = updateTimer.getLastRecordedTime() + loopSlot;
         while(updateTimer.getTime() < endTime) {
             try {
                 Thread.sleep(1);
@@ -99,21 +135,30 @@ public final class GameEngine implements Runnable, Cleansable {
         }
     }
 
+    /**
+     * Updates the game
+     */
     public void update() {
         gameLogic.update();
     }
 
+    /**
+     * Calculates and displays the frames per second.
+     */
     private void calculateAndDisplayFps() {
         if (fpsTimer.secondHasPassed()) {
             fpsTimer.getElapsedTimeAndUpdate();
             if (window.optionIsTurnedOn(Window.Options.DISPLAY_FPS)) {
-                window.setTitle(windowTitle + " - " + fps + " FPS");
+                window.setTitle(gameTitle + " - " + fps + " FPS");
             }
             fps = 0;
         }
         fps++;
     }
 
+    /**
+     * Renders the game.
+     */
     public void render() {
         window.clear();        
         calculateAndDisplayFps();        
@@ -121,6 +166,10 @@ public final class GameEngine implements Runnable, Cleansable {
         window.update();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void cleanup() {
         gameLogic.cleanup();
     }

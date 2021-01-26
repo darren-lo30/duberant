@@ -117,7 +117,7 @@ public class User {
     }
 
     /**
-     * A constructor used for Kryonet
+     * A constructor Used by Kryonet
      */
     @SuppressWarnings("unused")
     private User() {}    

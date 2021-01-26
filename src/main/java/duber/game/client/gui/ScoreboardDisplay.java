@@ -1,6 +1,7 @@
 package duber.game.client.gui;
 
 
+import duber.game.MatchData;
 import duber.game.client.GameStateManager.GameStateOption;
 import duber.game.gameobjects.Scoreboard;
 import duber.game.client.match.Match;
@@ -14,14 +15,18 @@ import org.liquidengine.legui.style.flex.FlexStyle.*;
 import org.liquidengine.legui.style.length.LengthType;
 
 
+
 /**
- * Class that creates the scoreboard GUI
+ * The GUI for the Scoreboard inside a match.
+ * @author Andy Tian
+ * @version 1.0
  */
 public class ScoreboardDisplay extends GUI {
-    @Override
     /**
-     * Enter a match
+     * {@inheritDoc}
+     * Enters the match
      */
+    @Override
     public void enter() {
         super.enter();
         if (!getManager().getState(GameStateOption.MATCH).isOpened()) {
@@ -31,25 +36,27 @@ public class ScoreboardDisplay extends GUI {
         getMatchScoreboard().updateScoreboard();
     }
 
-    @Override
     /**
-     * Empty update func
+     * {@inheritDoc}
      */
+    @Override
     public void update() {
         //Nothing to update
     }
 
     /**
+     * Gets the match scoreboard
      * @return the scoreboard
      */
     private Scoreboard getMatchScoreboard() {
         return ((Match)getManager().getState(GameStateOption.MATCH)).getScoreboard();
     }
 
-    @Override
-     /**
+    /**
+     * {@inheritDoc}
      * Creates the GUI elements, placing them in the frame
      */
+    @Override
     public void createGuiElements() {
         getFrame().getContainer().getStyle().getBackground().setColor(ColorConstants.gray());
         getFrame().getContainer().setFocusable(false);
@@ -95,15 +102,14 @@ public class ScoreboardDisplay extends GUI {
         deathsText.setEditable(false);
         Scoreboard scoreboard = getMatchScoreboard();
         String currName="Name\n\n";
-        String currKills="Kills\n"+"Red-"+scoreboard.getWins(1)+"\n";
+        String currKills="Kills\n"+"Red-"+scoreboard.getWins(MatchData.RED_TEAM)+"\n";
         String currDeaths="Deaths\n\n";
 
-        
         for(int team = 0; team < 2; team++) {
             for(int player = 0; player < scoreboard.getScores(team).size(); player++) {
                 if (team==1&&player==0){
                     currName=currName+"\n";
-                    currKills=currKills+"Blue-"+scoreboard.getWins(1)+"\n";
+                    currKills=currKills+"Blue-"+scoreboard.getWins(MatchData.BLUE_TEAM)+"\n";
                     currDeaths=currDeaths+"\n";
                 }
                 int kills= scoreboard.getScores(team).get(player).getKills();
