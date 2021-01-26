@@ -7,34 +7,49 @@ import duber.engine.physics.collisions.Box;
 import duber.engine.physics.collisions.CollisionResponse;
 import duber.engine.physics.collisions.EntityFace;
 
+/**
+ * A ColliderPart in the shape of a sphere.
+ * @author Darren Lo
+ * @version 1.0
+ */
 public class SphereCollider extends ColliderPart {
+    /** The unscaled radius of the sphere. */
     private float unscaledRadius;
+
+    /** The offset the collider has from the Entity. */
     private Vector3f colliderOffset;
     
+    /**
+     * Constructs a SphereCollider.
+     * @param unscaledRadius the unscaled radius
+     * @param colliderOffset the sphere's offset from the Entity
+     */
     public SphereCollider(float unscaledRadius, Vector3f colliderOffset) {
         this.unscaledRadius = unscaledRadius;
         this.colliderOffset = colliderOffset;
     }
 
-    private Transform getEntityTransform() {
-        return getCollider().getEntity().getComponent(Transform.class);
-    }
-
-
+    /**
+     * Gets the scaled radius/actual radius.
+     * @return the actual radius
+     */
     public float getRadius() {
         return unscaledRadius * getEntityTransform().getScale();
     }
 
-    public void setUnscaledRadius(float unscaledRadius) {
-        this.unscaledRadius = unscaledRadius;
-    }
-
+    /**
+     * Gets the scaled and shifted position of this SphereCollider.
+     * @return the actual position of this SphereCollider
+     */
     public Vector3f getColliderPosition() {
         return new Vector3f(colliderOffset)
             .mul(getEntityTransform().getScale())
             .add(getEntityTransform().getPosition());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Box getBox() {
         Vector3f position = getColliderPosition();
@@ -51,46 +66,52 @@ public class SphereCollider extends ColliderPart {
         return box;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CollisionResponse checkCollision(Edge edge, Vector3f contactPoint, CollisionResponse response) {
-        Vector3f vTmp1 = new Vector3f();
-        Vector3f vTmp2 = new Vector3f();
-        Vector3f vTmp3 = new Vector3f();
+        Vector3f v1 = new Vector3f();
+        Vector3f v2 = new Vector3f();
+        Vector3f v3 = new Vector3f();
 
-        vTmp1.set(contactPoint);
-        vTmp1.sub(edge.getPoint1());
-        float dot = vTmp1.dot(edge.getNormal());
+        v1.set(contactPoint);
+        v1.sub(edge.getPoint1());
+        float dot = v1.dot(edge.getNormal());
         
-        vTmp1.set(edge.getNormal());
-        vTmp1.mul(-dot);
-        vTmp1.add(contactPoint);
+        v1.set(edge.getNormal());
+        v1.mul(-dot);
+        v1.add(contactPoint);
         
         // keep contact point inside edge
-        vTmp3.set(edge.getPoint2());
-        vTmp3.sub(edge.getPoint1());
-        vTmp2.set(vTmp1);
-        vTmp2.sub(edge.getPoint1());
+        v3.set(edge.getPoint2());
+        v3.sub(edge.getPoint1());
+        v2.set(v1);
+        v2.sub(edge.getPoint1());
 
-        double dot1 = vTmp3.dot(vTmp3);
-        double dot2 = vTmp3.dot(vTmp2);
+        double dot1 = v3.dot(v3);
+        double dot2 = v3.dot(v2);
         if (dot2 < 0) {
-            vTmp1.set(edge.getPoint1());
+            v1.set(edge.getPoint1());
         }
         else if (dot2 > dot1) {
-            vTmp1.set(edge.getPoint2());
+            v1.set(edge.getPoint2());
         }
         
-        vTmp2.set(getColliderPosition());
-        vTmp2.sub(vTmp1);
+        v2.set(getColliderPosition());
+        v2.sub(v1);
         
-        response.setCollides(vTmp2.length() <= getRadius());
-        response.getContactPoint().set(vTmp1);
-        response.getContactNormal().set(vTmp2);
+        response.setCollides(v2.length() <= getRadius());
+        response.getContactPoint().set(v1);
+        response.getContactNormal().set(v2);
         response.getContactNormal().normalize();
-        response.getContactNormal().mul(getRadius() - vTmp2.length());
+        response.getContactNormal().mul(getRadius() - v2.length());
         return response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CollisionResponse checkCollision(EntityFace entityFace) {
         CollisionResponse response = new CollisionResponse(getCollider().getEntity(), entityFace.getEntity());
@@ -98,33 +119,40 @@ public class SphereCollider extends ColliderPart {
 
         Face face = entityFace.getFace();
         
-        Vector3f vTmp = new Vector3f();
-        vTmp.set(colliderPosition); // contact point in the triangle plane
-        vTmp.sub(face.getVertices()[0]);
+        Vector3f vec = new Vector3f();
+        
+        //Contact point in the triangle plane
+        vec.set(colliderPosition);
+        vec.sub(face.getVertices()[0]);
 
-        float dist = vTmp.dot(face.getNormal()); //Distance between sphere and plane
+        //Distance between sphere and plane
+        float dist = vec.dot(face.getNormal()); 
 
-        vTmp.set(face.getNormal());
-        vTmp.mul(-dist);
-        vTmp.add(colliderPosition); //Projected spheres center onto the triangles plane
+        //Project sphere onto triangle
+        vec.set(face.getNormal());
+        vec.mul(-dist);
+        vec.add(colliderPosition);
 
         
         response.getFaceNormal().set(face.getNormal());
         
         for (Edge edge : face.getEdges()) {
-            if (!edge.isInside(vTmp)) {
-                return checkCollision(edge, vTmp, response);
+            if (!edge.isInside(vec)) {
+                return checkCollision(edge, vec, response);
             }
         }
         
         response.setCollides(Math.abs(dist) <= getRadius());
-        response.getContactPoint().set(vTmp);
+        response.getContactPoint().set(vec);
         response.getContactNormal().set(face.getNormal());
         response.getContactNormal().mul(getRadius() - dist);
 
         return response;
     }
 
+    /**
+     * Used by Kryonet.
+     */
     @SuppressWarnings("unused")
     private SphereCollider(){}
 }
