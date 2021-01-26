@@ -13,10 +13,22 @@ import duber.engine.utilities.Utils;
 
 import static org.lwjgl.system.MemoryUtil.*;
 
-public class SoundBuffer {
+/**
+ * A buffer that stores sound data.
+ * @author Darren Lo
+ * @version 1.0
+ */
+public class SoundBuffer implements Cleansable {
+    /** This sound buffer's id. */
     private final int id;
+
+    /** This sound buffer's pcm. */
     private ShortBuffer pulseCodedModulation;
 
+    /**
+     * Constructs a SoundBuffer from a file.
+     * @throws IOException if the sound file could not be loaded
+     */
     public SoundBuffer(String file) throws IOException {
         id = alGenBuffers();
         try(STBVorbisInfo info = STBVorbisInfo.malloc()){
@@ -26,10 +38,21 @@ public class SoundBuffer {
         }
     }
 
+    /**
+     * Gets this SoundBuffer's id.
+     * @return the id
+     */
     public int getId(){
         return id;
     }
 
+    /**
+     * Reads a vorbis file.
+     * @param file the file to read
+     * @param bufferSize the size of the buffer
+     * @param info the vorbis info
+     * @throws IOException if the file could not be loaded
+     */
     private ShortBuffer readVorbis(String file, int bufferSize, STBVorbisInfo info) throws IOException {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer vorbis = Utils.ioResourceToByteBuffer(file, bufferSize);
@@ -54,6 +77,10 @@ public class SoundBuffer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void cleanup(){
         alDeleteBuffers(id);
         if (pulseCodedModulation != null){
