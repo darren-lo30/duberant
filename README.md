@@ -4,4 +4,9 @@ A CSGO/Valorant like 3D game using LWJGL which is a Java wrapper for OpenGL. Run
 Server: game/server/DuberantServer.java
 Client: game/client/Duberant.java
 
+Credits:
+Setting up LWJGL: https://github.com/lwjglgamedev/lwjglbook-bookcontents
+https://github.com/leonardo-ono/Java3DFirstPersonShooterGameTest
+
+
 Runs on Java 11
