@@ -6,13 +6,13 @@ Server: game/server/DuberantServer.java
 Client: game/client/Duberant.java
 
 ## Credits
-Check out these were I drew inspiration from
+Check out these repositories that helped me learn how to make a 3D game.
 
-Setting up LWJGL (I used a lot of code from here for the engine): https://github.com/lwjglgamedev/lwjglbook-bookcontents
+Setting up LWJGL: https://github.com/lwjglgamedev/lwjglbook-bookcontents
 
-I used a modified version of this for collisions: https://github.com/leonardo-ono/Java3DFirstPersonShooterGameTest
+Collision detection: https://github.com/leonardo-ono/Java3DFirstPersonShooterGameTest
 
-Map and models from CSGO and Valorant
+Map, models and sounds from CSGO and Valorant
 
 
 Runs on Java 11
